@@ -29,22 +29,36 @@ class Enso
      */
     public function __init(): void
     {
-        $this->arguments = $_SERVER['argv'];
-
         $this->_relay = new Relay([
+            /**
+             * First element of Application middlewares queue
+             */
             function (Request $request, callable $next): Response
             {
-                return $next->handle(new Request([$request->body, 'post' => $_POST]));
+                header('Content-type: application/json');
+
+                return $next->handle(
+                    new Request($request->body)
+                );
             }
         ]);
 
     }
 
+    /**
+     *
+     * @return \Enso\System\User
+     */
     public function __get_systemUser(): System\User
     {
         return new System\User();
     }
 
+    /**
+     *
+     * @param \Enso\callable $middleware
+     * @return \self
+     */
     public function addMiddleware(callable $middleware): self
     {
         $this->_relay->add($middleware);
@@ -52,6 +66,11 @@ class Enso
         return $this;
     }
 
+    /**
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function run(Request $request = null): Response
     {
         return $this->_relay->handle($request);

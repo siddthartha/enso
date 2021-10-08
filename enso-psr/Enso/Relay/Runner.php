@@ -35,10 +35,10 @@ class Runner
             $queue = iterator_to_array($queue, true);
         }
 
-//        if (empty($queue))
-//        {
-//            throw new \Exception('$queue cannot be empty');
-//        }
+        if (empty($queue))
+        {
+            throw new \Exception('$queue cannot be empty');
+        }
 
         $this->queue = $queue;
 
@@ -53,6 +53,12 @@ class Runner
         $this->resolver = $resolver;
     }
 
+    /**
+     *
+     * @param \Enso\Relay\Request $request
+     * @return \Enso\Relay\Response
+     * @throws \Exception
+     */
     public function handle(Request $request): Response
     {
         $entry = current($this->queue);
@@ -81,9 +87,13 @@ class Runner
         );
     }
 
+    /**
+     *
+     * @param \Enso\Relay\Request $request
+     * @return \Enso\Relay\Response
+     */
     public function __invoke(Request $request): Response
     {
-        echo "Runner::__invoke\n";
         return $this->handle($request);
     }
 }

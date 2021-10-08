@@ -56,6 +56,10 @@ trait Subject
         $this->__properties[$property] = $value;
     }
 
+    /**
+     *
+     * @return array
+     */
     public function __get_attributes(): array
     {
         return $this->__properties;

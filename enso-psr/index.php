@@ -15,34 +15,28 @@ use Enso\Relay\Response;
  */
 $app = new Enso();
 
-$request = new Request(['initial request content']);
+$request = new Request([]);
 
 $app
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            return $next->handle(new Request(['requestBody' => $request->body]));
-        }
-    )
-    ->addMiddleware(
-        function (Request $request, callable $next): Response
-        {
-            $response = $next->handle(new Request(array_merge($request->body, ['before' => 'second start'])));
+            $response = $next->handle(new Request(array_merge($request->body, ['before' => 'GET IN'])));
 
-            $response->body = array_merge($response->body, ['after' => 'second end']);
+            $response->body = array_merge($response->body, ['after' => 'GET OUT']);
+
             return $response;
         }
     )
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            return $next->handle(new Request([$request->body, ['user' => (string) (new \Enso\System\User())]]));
+            return $next->handle(new Request(array_merge($request->body, ['user' => (new \Enso\System\User())->__get_attributes()])));
         }
     )
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            header('Content-type: application/json');
             return new Response($request->body);
         }
     );

@@ -18,13 +18,12 @@ class Request
 {
     use Subject;
 
+    /**
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
         $this->__properties['body'] = $data;
-    }
-
-    public function __toString(): string
-    {
-        return json_encode($this->__properties['body']);
     }
 }
