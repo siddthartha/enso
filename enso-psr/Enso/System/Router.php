@@ -17,6 +17,12 @@ use Enso\Relay\Response;
  */
 class Router implements \Enso\Relay\MiddlewareInterface
 {
+    protected $_routes;
+
+    public function __construct(array $routes = [])
+    {
+        $this->_routes = $routes;
+    }
 
     /**
      *
@@ -24,8 +30,21 @@ class Router implements \Enso\Relay\MiddlewareInterface
      * @param callable $next
      * @return Response
      */
-    public function handle(Request $request, callable $next = null): Response
+    public function handle(Request $request, mixed $next = null): Response
     {
-        return $next->handle($request);
+        foreach ($request->route as $path)
+        {
+            $entry = $this->_routes[$path];
+            $this->_routes = $this->_routes[$path];
+        }
+
+        if ($entry instanceof Entry)
+        {
+            $action = $entry->getInstance();
+
+            return $action->handle($request);
+        }
+
+        throw new \BadMethodCallException("No route found.");
     }
 }

@@ -59,7 +59,7 @@ class Enso
      * @param \Enso\callable $middleware
      * @return \self
      */
-    public function addMiddleware(callable $middleware): self
+    public function addMiddleware(mixed $middleware): self
     {
         $this->_relay->add($middleware);
 

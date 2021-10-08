@@ -20,7 +20,25 @@ class WebRequest extends \Enso\Relay\Request
 
         $this->post = $_POST;
         $this->get = $_GET;
-        $this->uri = explode('?', $_SERVER['REQUEST_URI']);
+
+        [
+            $this->uri,
+            $this->query
+        ] = explode('?', $_SERVER['REQUEST_URI'] . "?");
+
+        $this->route = $this->getRoute();
     }
 
+    /**
+     *
+     * @return array
+     */
+    public function getRoute(): array
+    {
+        $path = explode('/', trim($this->uri, " \t\n\r\0\x0B\/"));
+
+        return count($path) == 1 && $path[0] == ""
+            ? []
+            : $path;
+    }
 }

@@ -14,7 +14,7 @@ namespace Enso\Relay;
 class Relay extends RequestHandler
 {
 
-    public function add(callable $middleware): void
+    public function add(mixed $middleware): void
     {
         $this->_queue[] = $middleware;
     }

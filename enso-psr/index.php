@@ -21,9 +21,11 @@ $app
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            $response = $next->handle(new Request(array_merge($request->attributes, ['before' => 'GET IN'])));
+            $request->before = 'GET IN';
 
-            $response->body = array_merge($response->attributes, ['after' => 'GET OUT']);
+            $response = $next->handle($request);
+
+            $response->after = 'GET OUT';
 
             return $response;
         }
@@ -31,15 +33,16 @@ $app
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            return $next->handle(new Request(array_merge($request->attributes, ['user' => (new \Enso\System\User())->__get_attributes()])));
+            $request->system = ['user' => (new \Enso\System\User())->__get_attributes()];
+
+            return $next->handle($request);
         }
     )
-    ->addMiddleware(
-        function (Request $request, callable $next): Response
-        {
-            return new Response($request->attributes);
-        }
-    );
+    ->addMiddleware(new \Enso\System\Router([
+        'some' => [
+            'action' => new \Enso\System\Entry(\Enso\System\ActionHandler::class),
+        ],
+    ]));
 
 
 $response = $app->run($request);
