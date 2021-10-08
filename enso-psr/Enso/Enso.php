@@ -38,7 +38,7 @@ class Enso
                 header('Content-type: application/json');
 
                 return $next->handle(
-                    new Request($request->body)
+                    $request
                 );
             }
         ]);

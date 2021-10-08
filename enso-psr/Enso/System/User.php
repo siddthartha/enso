@@ -6,6 +6,9 @@
 
 namespace Enso\System;
 
+use function \posix_getuid;
+use function \posix_getpwuid;
+
 /**
  * Description of User
  *

@@ -9,6 +9,7 @@ namespace Enso\Relay;
 
 use InvalidArgumentException;
 use TypeError;
+
 use function is_array;
 use function is_iterable;
 use function iterator_to_array;
@@ -44,7 +45,8 @@ abstract class RequestHandler
             $queue = iterator_to_array($queue);
         }
 
-        if (empty($queue)) {
+        if (empty($queue))
+        {
             throw new InvalidArgumentException('$queue cannot be empty');
         }
 

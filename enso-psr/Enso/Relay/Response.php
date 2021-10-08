@@ -24,7 +24,7 @@ class Response
      */
     public function __construct(array $data)
     {
-        $this->__properties['body'] = $data;
+        $this->__properties = $data;
     }
 
     /**
@@ -33,6 +33,6 @@ class Response
      */
     public function __toString(): string
     {
-        return json_encode($this->attributes['body']);
+        return json_encode($this->attributes);
     }
 }

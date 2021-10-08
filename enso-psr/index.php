@@ -15,15 +15,15 @@ use Enso\Relay\Response;
  */
 $app = new Enso();
 
-$request = new Request([]);
+$request = new \Enso\System\WebRequest();
 
 $app
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            $response = $next->handle(new Request(array_merge($request->body, ['before' => 'GET IN'])));
+            $response = $next->handle(new Request(array_merge($request->attributes, ['before' => 'GET IN'])));
 
-            $response->body = array_merge($response->body, ['after' => 'GET OUT']);
+            $response->body = array_merge($response->attributes, ['after' => 'GET OUT']);
 
             return $response;
         }
@@ -31,13 +31,13 @@ $app
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            return $next->handle(new Request(array_merge($request->body, ['user' => (new \Enso\System\User())->__get_attributes()])));
+            return $next->handle(new Request(array_merge($request->attributes, ['user' => (new \Enso\System\User())->__get_attributes()])));
         }
     )
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            return new Response($request->body);
+            return new Response($request->attributes);
         }
     );
 
