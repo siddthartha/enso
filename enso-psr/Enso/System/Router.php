@@ -34,8 +34,8 @@ class Router implements \Enso\Relay\MiddlewareInterface
     {
         foreach ($request->route as $path)
         {
-            $entry = $this->_routes[$path];
-            $this->_routes = $this->_routes[$path];
+            $entry = $this->_routes[$path] ?? null;
+            $this->_routes = $this->_routes[$path] ?? null;
         }
 
         if ($entry instanceof Entry)

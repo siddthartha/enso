@@ -17,7 +17,7 @@ class ActionHandler implements \Enso\Relay\MiddlewareInterface
     /**
      *
      * @param \Enso\Relay\Request $request
-     * @param \Enso\System\callable $next
+     * @param callable $next
      * @return \Enso\Relay\Response
      */
     public function handle(\Enso\Relay\Request $request, ?callable $next = null): \Enso\Relay\Response

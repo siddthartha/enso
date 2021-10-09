@@ -38,7 +38,7 @@ class WebRequest extends \Enso\Relay\Request
         $path = explode('/', trim($this->uri, " \t\n\r\0\x0B\/"));
 
         return count($path) == 1 && $path[0] == ""
-            ? []
+            ? ['default', 'action']
             : $path;
     }
 }

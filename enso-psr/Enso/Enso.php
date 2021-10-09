@@ -35,7 +35,7 @@ class Enso
              */
             function (Request $request, callable $next): Response
             {
-                header('Content-type: application/json');
+                header('Content-type: application/json; charset=utf-8');
 
                 return $next->handle(
                     $request
@@ -73,6 +73,22 @@ class Enso
      */
     public function run(Request $request = null): Response
     {
-        return $this->_relay->handle($request);
+        try
+        {
+            return $this->_relay->handle($request);
+        }
+        catch (\Exception $exc)
+        {
+            http_response_code(404);
+
+            return new Response([
+                'class' => $exc::class,
+                'message' => $exc->getMessage(),
+                'file' => $exc->getFile(),
+                'line' => $exc->getLine(),
+//                'trace' => $exc->getTrace(),
+            ]);
+        }
+
     }
 }
