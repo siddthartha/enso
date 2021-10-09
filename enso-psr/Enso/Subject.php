@@ -34,7 +34,7 @@ trait Subject
             return $this->__properties[$property];
         }
 
-        throw new \BadMethodCallException();
+        throw new \BadMethodCallException("Attribute $property not found.");
     }
 
     /**

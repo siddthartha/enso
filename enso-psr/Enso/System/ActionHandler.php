@@ -7,12 +7,16 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Relay\Request;
+use Enso\Relay\Response;
+use Enso\Relay\MiddlewareInterface;
+
 /**
  * Description of ActionInterface
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class ActionHandler implements \Enso\Relay\MiddlewareInterface
+class ActionHandler implements MiddlewareInterface
 {
     /**
      *
@@ -20,8 +24,8 @@ class ActionHandler implements \Enso\Relay\MiddlewareInterface
      * @param callable $next
      * @return \Enso\Relay\Response
      */
-    public function handle(\Enso\Relay\Request $request, ?callable $next = null): \Enso\Relay\Response
+    public function handle(Request $request, ?callable $next = null): Response
     {
-        return new \Enso\Relay\Response($request->attributes);
+        return new Response($request->attributes);
     }
 }

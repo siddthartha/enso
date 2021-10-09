@@ -35,6 +35,7 @@ class Enso
              */
             function (Request $request, callable $next): Response
             {
+                header_remove();
                 header('Content-type: application/json; charset=utf-8');
 
                 return $next->handle(

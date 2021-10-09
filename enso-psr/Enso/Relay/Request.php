@@ -24,7 +24,7 @@ class Request
      */
     public function __construct(array $data)
     {
-        $this->__properties['body'] = $data;
+        $this->__properties = $data;
     }
 
     /**

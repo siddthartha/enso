@@ -18,13 +18,17 @@ class WebRequest extends \Enso\Relay\Request
     {
         parent::__construct([]);
 
-        $this->post = $_POST;
-        $this->get = $_GET;
+        [ $uri, $query ] = explode('?', $_SERVER['REQUEST_URI'] . "?");
 
-        [
-            $this->uri,
-            $this->query
-        ] = explode('?', $_SERVER['REQUEST_URI'] . "?");
+        $this->input = [
+            'headers' => apache_request_headers(),
+            'method' => $_SERVER['REQUEST_METHOD'],
+            'post' => $_POST,
+            'get' => $_GET,
+            'files' => $_FILES,
+            'uri' => $uri,
+            'query' => $query,
+        ];
 
         $this->route = $this->getRoute();
     }
@@ -35,7 +39,7 @@ class WebRequest extends \Enso\Relay\Request
      */
     public function getRoute(): array
     {
-        $path = explode('/', trim($this->uri, " \t\n\r\0\x0B\/"));
+        $path = explode('/', trim($this->input['uri'], " \t\n\r\0\x0B\/"));
 
         return count($path) == 1 && $path[0] == ""
             ? ['default', 'action']

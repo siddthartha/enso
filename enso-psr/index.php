@@ -4,49 +4,39 @@ declare(ticks = 1);
 
 require_once './vendor/autoload.php';
 
-use Enso\Enso;
+use Enso\Enso as Application;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
+use Enso\System\Router;
+use Enso\System\Entry;
+use Enso\System\ActionHandler;
 
 /**
  *
  * Sphere test project entry point
  *
  */
-$app = new Enso();
+$app = new Application();
 
-$request = new \Enso\System\WebRequest();
+$request = php_sapi_name() == "cli"
+    ? new \Enso\System\CliRequest()
+    : new \Enso\System\WebRequest();
 
 $app
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            $request->before = 'GET IN';
-
-            $response = $next->handle($request);
-
-            $response->after = 'GET OUT';
-
-            return $response;
-        }
-    )
-    ->addMiddleware(
-        function (Request $request, callable $next): Response
-        {
-            $request->system = ['user' => (new \Enso\System\User())->__get_attributes()];
+            $request->system = ['user' => (new \Enso\System\User())->attributes];
 
             return $next->handle($request);
         }
     )
-    ->addMiddleware(new \Enso\System\Router([
-        'some' => [
-            'action' => new \Enso\System\Entry(\Enso\System\ActionHandler::class),
+    ->addMiddleware(new Router([
+        'default' => [
+            'action' => new Entry(ActionHandler::class),
         ],
     ]));
 
-
 $response = $app->run($request);
 
-
 print ($response);
-
