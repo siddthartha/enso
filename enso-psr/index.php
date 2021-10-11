@@ -2,14 +2,13 @@
 declare(strict_types = 1);
 declare(ticks = 1);
 
-require_once './vendor/autoload.php';
-
 use Enso\Enso as Application;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\System\Router;
 use Enso\System\Entry;
-use Enso\System\ActionHandler;
+
+require_once './preload.php';
 
 /**
  *
@@ -33,10 +32,12 @@ $app
     )
     ->addMiddleware(new Router([
         'default' => [
-            'action' => new Entry(ActionHandler::class),
+            'action' => new Entry(\Application\SomeAction::class),
+            'index' => new Entry(\Application\SomeAnotherAction::class),
         ],
     ]));
 
 $response = $app->run($request);
 
+// Emit..
 print ($response);

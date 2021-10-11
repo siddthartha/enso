@@ -9,6 +9,7 @@ namespace Enso\System;
 
 use Enso\Relay\Request;
 use Enso\Relay\Response;
+use Enso\Helpers\A;
 
 /**
  * Description of Router
@@ -32,10 +33,10 @@ class Router implements \Enso\Relay\MiddlewareInterface
      */
     public function handle(Request $request, mixed $next = null): Response
     {
-        foreach ($request->route as $path)
+        foreach ($request->getRoute() as $path)
         {
-            $entry = $this->_routes[$path] ?? null;
-            $this->_routes = $this->_routes[$path] ?? null;
+            $entry = A::get($this->_routes, $path, null);
+            $this->_routes = A::get($this->_routes, $path, null);
         }
 
         if ($entry instanceof Entry)

@@ -18,14 +18,26 @@ use Enso\Relay\MiddlewareInterface;
  */
 class ActionHandler implements MiddlewareInterface
 {
+    protected $_request;
+
     /**
      *
      * @param \Enso\Relay\Request $request
      * @param callable $next
      * @return \Enso\Relay\Response
      */
-    public function handle(Request $request, ?callable $next = null): Response
+    public function handle(Request $request, callable $next = null): Response
     {
-        return new Response($request->attributes);
+        $this-> _request = $request;
+
+        return new Response(($this)());
+    }
+
+    /**
+     *
+     */
+    public function __invoke()
+    {
+        return null;
     }
 }

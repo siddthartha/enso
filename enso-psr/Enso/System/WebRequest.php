@@ -29,8 +29,15 @@ class WebRequest extends \Enso\Relay\Request
             'uri' => $uri,
             'query' => $query,
         ];
+    }
 
-        $this->route = $this->getRoute();
+    /**
+     *
+     * @return string
+     */
+    public function getMethod(): string
+    {
+        return $_SERVER['REQUEST_METHOD'];
     }
 
     /**

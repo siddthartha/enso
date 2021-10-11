@@ -3,13 +3,25 @@
     "description": "Commons of Enso",
     "type": "project",
     "license": "BSD-3-Clause",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable" : true,
     "require": {
-        "relay/relay": "~2.0"
+        "php": "^8.0",
+        "relay/relay": "~2.0",
+        "vlucas/phpdotenv": "^5.3",
+        "yiisoft/di": "3.0.x-dev",
+        "yiisoft/config": "1.0.x-dev",
+        "yiisoft/active-record": "3.0.x-dev",
+        "yiisoft/db-mysql": "3.0.x-dev",
+        "guzzlehttp/guzzle": "^7.3",
+        "yiisoft/log-target-file": "^1.0",
+        "yiisoft/log-target-syslog": "^1.0",
+        "yiisoft/aliases": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "Enso\\": "Enso/"
+            "Enso\\": "Enso/",
+            "Application\\": "Application/"
         }
     },
     "autoload-dev": {
@@ -21,6 +33,15 @@
         "process-timeout": 1800,
         "fxp-asset": {
             "enabled": false
+        }
+    },
+    "extra": {
+        "config-plugin-options": {
+            "source-directory": "config"
+        },
+        "config-plugin": {
+            "common": "common/*.php",
+            "params": "params.php"
         }
     }
 }

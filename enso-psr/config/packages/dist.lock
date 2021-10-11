@@ -1,0 +1,32 @@
+{
+    "yiisoft/aliases": {
+        "version": "2.0.0",
+        "params.php": "438593225862690b00d87fbccaa99bf8",
+        "common.php": "1c3045e19fad0f6a45dbeb59136c4144"
+    },
+    "yiisoft/cache": {
+        "version": "1.0.1",
+        "common.php": "46175aab966be00c21b0d8424fab2f30"
+    },
+    "yiisoft/log": {
+        "version": "1.0.2",
+        "events-console.php": "dba155a1e9ddff313d6899eebe684799",
+        "events-web.php": "550b5ab87519380102e93143cee95913"
+    },
+    "yiisoft/log-target-file": {
+        "version": "1.0.4",
+        "common.php": "fbf6e77468feae493f3ed6afd83942cc",
+        "params.php": "16e4ea41a7d8964fff91d711bc5bb173"
+    },
+    "yiisoft/log-target-syslog": {
+        "version": "1.0.2",
+        "common.php": "12b4eab00b43e47e2cb0e1350edf5b3d",
+        "params.php": "e36e7f87d7bf173f2ab0b76982c58409"
+    },
+    "yiisoft/profiler": {
+        "version": "1.0.0",
+        "common.php": "2123a9974b089ef8f249b8c004a70c8e",
+        "events-web.php": "4c43138ab4d6bfa896e48e606c362ddc",
+        "params.php": "d62d1a018bd5504d38a811d24d6ab7e2"
+    }
+}
