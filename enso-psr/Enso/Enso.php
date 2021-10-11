@@ -13,6 +13,7 @@ use Yiisoft\ErrorHandler\ErrorHandler;
 use Yiisoft\Definitions\Exception\NotFoundException;
 
 use function dirname;
+use function http_response_code;
 
 /**
  * Класс Enso
@@ -59,7 +60,6 @@ class Enso
             $this->_config->get('common')
         );
 
-//        $logger = new Logger([new FileTarget(dirname(__DIR__) . '/runtime/logs/app.log')]);
         $this->_logger = $this->_container->get(LoggerInterface::class);
 
         $this->_relay = new Relay([

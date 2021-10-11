@@ -24,6 +24,6 @@ class SomeAction extends \Enso\System\ActionHandler
      */
     public function __invoke(): array
     {
-        return $this->_request->attributes;
+        return \Enso\Helpers\A::merge($this->_request->attributes, ['work' => 'done']);
     }
 }

@@ -24,6 +24,6 @@ class SomeAnotherAction extends \Enso\System\ActionHandler
      */
     public function __invoke(): array
     {
-        return ['fuck' => ['them' => 'all']];
+        return ['before' => $this->_request->before, 'fuck' => ['them' => 'all']];
     }
 }

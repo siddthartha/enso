@@ -25,9 +25,14 @@ $app
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-            $request->system = ['user' => (new \Enso\System\User())->attributes];
+//            $request->system = ['user' => (new \Enso\System\User())->attributes];
 
-            return $next->handle($request);
+            $request->before = microtime(true);
+
+            $response = $next->handle($request);
+
+            $response->after = microtime(true);
+            return $response;
         }
     )
     ->addMiddleware(new Router([
