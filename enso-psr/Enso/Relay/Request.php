@@ -7,32 +7,42 @@
 
 namespace Enso\Relay;
 
-use \Enso\Subject;
+use Enso\Subject;
+use Psr\Http\Message\ServerRequestInterface;
+use GuzzleHttp\Psr7\CachingStream;
+use GuzzleHttp\Psr7\LazyOpenStream;
 
 /**
  * Description of Request
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class Request
+class Request extends \GuzzleHttp\Psr7\ServerRequest
 {
     use Subject;
 
     /**
-     *
-     * @param array $data
+     * Return a ServerRequest populated with superglobals:
+     * $_GET
+     * $_POST
+     * $_COOKIE
+     * $_FILES
+     * $_SERVER
      */
-    public function __construct(array $data)
+    public static function fromGlobals(): ServerRequestInterface
     {
-        $this->__properties = $data;
-    }
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $headers = getallheaders();
+        $uri = self::getUriFromGlobals();
+        $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
+        $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
 
-    /**
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return json_encode($this->__properties);
+        $serverRequest = new static($method, $uri, $headers, $body, $protocol, $_SERVER);
+
+        return $serverRequest
+            ->withCookieParams($_COOKIE)
+            ->withQueryParams($_GET)
+            ->withParsedBody($_POST)
+            ->withUploadedFiles(self::normalizeFiles($_FILES));
     }
 }

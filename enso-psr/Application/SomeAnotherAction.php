@@ -18,12 +18,12 @@ use Enso\Relay\Response;
 class SomeAnotherAction extends \Enso\System\ActionHandler
 {
 
-    /**
-     *
-     * @return string
-     */
+    #[Route("/default/index", methods: ["GET"])]
     public function __invoke(): array
     {
-        return ['before' => $this->_request->before, 'fuck' => ['them' => 'all']];
+        return [
+            'before' => $this->_request->before,
+            'fuck' => ['them' => 'all']
+        ];
     }
 }

@@ -5,15 +5,15 @@ namespace Enso;
 use Enso\Relay\Relay;
 use Enso\Relay\Response;
 use Enso\Relay\Request;
+use Enso\System\WebEmitter;
 
 use Psr\Log\LoggerInterface;
 use Yiisoft\Config\Config;
 use Yiisoft\Di\Container;
-use Yiisoft\ErrorHandler\ErrorHandler;
-use Yiisoft\Definitions\Exception\NotFoundException;
+use Yiisoft\Http\Method;
+use Yiisoft\Http\Status;
 
 use function dirname;
-use function http_response_code;
 
 /**
  * Класс Enso
@@ -26,7 +26,7 @@ class Enso
     /**
      * Use Enso behavior traits
      */
-    use \Enso\Single;   // singleton
+//    use \Enso\Single;   // singleton
 
     use \Enso\Subject;  // properties
 
@@ -42,7 +42,7 @@ class Enso
      * Singleton magic constructor
      * runs only once if no copy of object found
      */
-    public function __init(): void
+    public function __construct()
     {
         $this->_config = new Config(
             dirname(__DIR__),
@@ -104,21 +104,25 @@ class Enso
         }
         catch (\Throwable $exc)
         {
-            http_response_code(404);
-//                $handler = new ThrowableHandler($throwable);
-//                /**
-//                 * @var ResponseInterface
-//                 * @psalm-suppress MixedMethodCall
-//                 */
-//                $response = $container->get(ErrorCatcher::class)->process($request, $handler);
-//                $this->emit($request, $response);
+            $body = (new \GuzzleHttp\Psr7\BufferStream());
+            $body->write(
+                json_encode([
+                    'class' => $exc::class,
+                    'message' => $exc->getMessage(),
+                    'file' => $exc->getFile(),
+                    'line' => $exc->getLine(),
+                    'trace' => $exc->getTrace()
+                ])
+            );
 
-            return new Response([
-                'class' => $exc::class,
-                'message' => $exc->getMessage(),
-                'file' => $exc->getFile(),
-                'line' => $exc->getLine(),
-            ]);
+            $response = (new \GuzzleHttp\Psr7\Response())
+                ->withStatus(Status::INTERNAL_SERVER_ERROR, $exc->getMessage())
+                ->withHeader('Content-type', 'application/json')
+                ->withBody($body);
+
+            (new WebEmitter())->emit($response, $request->getMethod() === Method::HEAD);
+
+            exit(1);
         }
         finally
         {

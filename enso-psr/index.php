@@ -15,18 +15,16 @@ require_once './preload.php';
  * Sphere test project entry point
  *
  */
-$app = new Application();
+$app = (static fn () => new Application()); // we should be re-enterable
 
 $request = php_sapi_name() == "cli"
     ? new \Enso\System\CliRequest()
-    : new \Enso\System\WebRequest();
+    : \Enso\System\WebRequest::fromGlobals();
 
-$app
+$response = $app()
     ->addMiddleware(
         function (Request $request, callable $next): Response
         {
-//            $request->system = ['user' => (new \Enso\System\User())->attributes];
-
             $request->before = microtime(true);
 
             $response = $next->handle($request);
@@ -40,9 +38,11 @@ $app
             'action' => new Entry(\Application\SomeAction::class),
             'index' => new Entry(\Application\SomeAnotherAction::class),
         ],
-    ]));
+    ]))
+    ->run($request);
 
-$response = $app->run($request);
+// $response = $app()
+//     ->run($request);
 
 // Emit..
 print ($response);

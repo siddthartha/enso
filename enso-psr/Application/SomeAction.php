@@ -18,10 +18,7 @@ use Enso\Relay\Response;
 class SomeAction extends \Enso\System\ActionHandler
 {
 
-    /**
-     *
-     * @return array
-     */
+    #[Route("/default/action", methods: ["GET"])]
     public function __invoke(): array
     {
         return \Enso\Helpers\A::merge($this->_request->attributes, ['work' => 'done']);
