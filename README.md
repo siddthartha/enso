@@ -1,29 +1,34 @@
-# README #
+# PHP8 micro framework #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+The main goal is to get some template for making fast and tiny REST or Asynchronous services on PHP8:
+* inside immutable docker containers
+* with Swoole for multi-threading
+* with Redis for queue
+* with WebSockets for web/mobile clients
+* without local FS dependency (should put logs and files to some cloud storages only)
+* using [PSR-compatible](https://www.php-fig.org/psr/) components
 
-### What is this repository for? ###
+### Basics ###
 
-* Quick summary
-* Version
-* [Some link](https://...)
+Immutable docker containers with:
+* PHP8
+* Swoole
+* XDebug 3
+* Mysql/Postgresql
+* Redis
+* Websockets
+
+Framework code using:
+* Yiisoft components:
+  - PSR-11 DI Container
+  - PSR-3 Logger
+  - PSR-6 Cache
+* Guzzle components for HTTP:
+  - PSR-7/17 Messages/Factories
+  - PSR-15 Middlewares
+  - PSR-18 Client
+
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+```docker-compose up -d --build```
