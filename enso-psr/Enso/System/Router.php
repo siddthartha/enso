@@ -39,7 +39,7 @@ class Router implements \Enso\Relay\MiddlewareInterface
             $this->_routes = A::get($this->_routes, $path, null);
         }
 
-        if ($entry instanceof Entry)
+        if ($entry instanceof Target)
         {
             $action = $entry->getInstance();
 

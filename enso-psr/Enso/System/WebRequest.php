@@ -21,7 +21,7 @@ class WebRequest extends \Enso\Relay\Request
      */
     public function getRoute(): array
     {
-        $path = explode('/', trim($this->getUri()->getPath(), " \t\n\r\0\x0B\/"));
+        $path = explode('/', trim($this->getOrigin()->getUri()->getPath(), " \t\n\r\0\x0B\/"));
 
         return count($path) == 1 && $path[0] == ""
             ? ['default', 'action']

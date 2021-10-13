@@ -11,15 +11,23 @@ use Enso\Subject;
 use Psr\Http\Message\ServerRequestInterface;
 use GuzzleHttp\Psr7\CachingStream;
 use GuzzleHttp\Psr7\LazyOpenStream;
+use GuzzleHttp\Psr7\ServerRequest;
+use Yiisoft\Http\Method;
 
 /**
  * Description of Request
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class Request extends \GuzzleHttp\Psr7\ServerRequest
+class Request
 {
     use Subject;
+
+    private $_requestOrigin;
+
+    public function __construct()
+    {
+    }
 
     /**
      * Return a ServerRequest populated with superglobals:
@@ -29,20 +37,36 @@ class Request extends \GuzzleHttp\Psr7\ServerRequest
      * $_FILES
      * $_SERVER
      */
-    public static function fromGlobals(): ServerRequestInterface
+    public static function fromGlobals(): Request
     {
-        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET;
+
         $headers = getallheaders();
-        $uri = self::getUriFromGlobals();
-        $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
-        $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
 
-        $serverRequest = new static($method, $uri, $headers, $body, $protocol, $_SERVER);
+        $uri = ServerRequest::getUriFromGlobals();
 
-        return $serverRequest
+        $body = new CachingStream(
+            new LazyOpenStream('php://input', 'r+')
+        );
+
+        $protocol = isset($_SERVER['SERVER_PROTOCOL'])
+            ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL'])
+            : '1.1';
+
+        $request = new static();
+
+        $request->_requestOrigin = (new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER))
             ->withCookieParams($_COOKIE)
             ->withQueryParams($_GET)
             ->withParsedBody($_POST)
-            ->withUploadedFiles(self::normalizeFiles($_FILES));
+            ->withUploadedFiles(ServerRequest::normalizeFiles($_FILES));
+
+
+        return $request;
+    }
+
+    public function getOrigin(): ServerRequestInterface
+    {
+        return $this->_requestOrigin;
     }
 }

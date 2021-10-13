@@ -14,7 +14,7 @@ use function class_exists;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class Entry
+class Target
 {
     protected $_className;
 
