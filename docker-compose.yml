@@ -20,6 +20,8 @@ services:
     container_name: php
     working_dir: /var/www/html
     restart: always
+    env_file:
+      - ./.env
     volumes:
       - ./.composer-cache:/root/.composer/cache:delegated
       - ./php/php.ini:/usr/local/etc/php/php.ini
@@ -27,7 +29,6 @@ services:
       - ./wait-for-it.sh:/wait-for-it.sh
     expose:
       - "9000"
-      - "9003"
     command: >
         bash -c "composer install -o
         && docker-php-entrypoint php-fpm"

@@ -8,10 +8,14 @@
 namespace Enso\Relay;
 
 use Enso\Subject;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+
 use GuzzleHttp\Psr7\CachingStream;
 use GuzzleHttp\Psr7\LazyOpenStream;
 use GuzzleHttp\Psr7\ServerRequest;
+
+use HttpSoft\Message\RequestTrait;
 use Yiisoft\Http\Method;
 
 /**
@@ -19,15 +23,13 @@ use Yiisoft\Http\Method;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class Request
+class Request implements RequestInterface
 {
+    use RequestTrait;
+
     use Subject;
 
     private $_requestOrigin;
-
-    public function __construct()
-    {
-    }
 
     /**
      * Return a ServerRequest populated with superglobals:
@@ -55,16 +57,21 @@ class Request
 
         $request = new static();
 
-        $request->_requestOrigin = (new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER))
-            ->withCookieParams($_COOKIE)
-            ->withQueryParams($_GET)
-            ->withParsedBody($_POST)
-            ->withUploadedFiles(ServerRequest::normalizeFiles($_FILES));
+        $request->_requestOrigin =
+            (new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER))
+                ->withCookieParams($_COOKIE)
+                ->withQueryParams($_GET)
+                ->withParsedBody($_POST)
+                ->withUploadedFiles(ServerRequest::normalizeFiles($_FILES));
 
 
         return $request;
     }
 
+    /**
+     *
+     * @return ServerRequestInterface
+     */
     public function getOrigin(): ServerRequestInterface
     {
         return $this->_requestOrigin;

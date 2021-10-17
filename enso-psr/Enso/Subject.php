@@ -2,6 +2,8 @@
 
 namespace Enso;
 
+use Enso\Helpers\Internal;
+
 /**
  * Класс Subject
  *
@@ -9,51 +11,54 @@ namespace Enso;
  */
 trait Subject
 {
+//    public const MAGIC_GETTER_PREFIX = '__get_';
+//    public const MAGIC_SETTER_PREFIX = '__set_';
+
     /**
      * All the properties storage
      *
      * @var array
      */
-    protected $__properties = [];
+    protected $__attributes = [];
 
     /**
      * Magic getter
      *
-     * @param string $property
+     * @param string $attribute
      * @return mixed
      */
-    public function __get(string $property): mixed
+    public function __get(string $attribute): mixed
     {
-        if (method_exists($this, '__get_' . $property))
+        if (method_exists($this, Internal::MAGIC_GETTER_PREFIX . $attribute))
         {
-            return $this->{'__get_' . $property}();
+            return $this->{Internal::MAGIC_GETTER_PREFIX . $attribute}();
         }
 
-        if (isset($this->__properties[$property]))
+        if (isset($this->__attributes[$attribute]))
         {
-            return $this->__properties[$property];
+            return $this->__attributes[$attribute];
         }
 
-        throw new \BadMethodCallException("Attribute $property not found.");
+        throw new \BadMethodCallException("Attribute $attribute not found.");
     }
 
     /**
      * Magic setter
      *
-     * @param string $property
+     * @param string $attribute
      * @param mixed $value
      * @return mixed
      */
-    public function __set(string $property, $value): void
+    public function __set(string $attribute, $value): void
     {
-        if (method_exists($this, '__set_' . $property))
+        if (method_exists($this, Internal::MAGIC_SETTER_PREFIX . $attribute))
         {
-            $this->{'__set_' . $property}($value);
+            $this->{Internal::MAGIC_SETTER_PREFIX . $attribute}($value);
 
-            return ;
+            return;
         }
 
-        $this->__properties[$property] = $value;
+        $this->__attributes[$attribute] = $value;
     }
 
     /**
@@ -62,6 +67,6 @@ trait Subject
      */
     public function __get_attributes(): array
     {
-        return $this->__properties;
+        return $this->__attributes;
     }
 }

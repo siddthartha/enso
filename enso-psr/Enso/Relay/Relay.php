@@ -6,6 +6,10 @@
 
 namespace Enso\Relay;
 
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+
 /**
  * Description of Relay
  *
@@ -19,7 +23,7 @@ class Relay extends RequestHandler
         $this->_queue[] = $middleware;
     }
 
-    public function handle(Request $request, callable $next = null): Response
+    public function handle(RequestInterface $request, callable $next = null): ResponseInterface
     {
         reset($this->_queue);
 

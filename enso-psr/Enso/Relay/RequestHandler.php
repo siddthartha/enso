@@ -7,6 +7,9 @@ declare(strict_types = 1);
 
 namespace Enso\Relay;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+
 use InvalidArgumentException;
 use TypeError;
 
@@ -66,5 +69,5 @@ abstract class RequestHandler
     /**
      * Handles the current entry in the middleware queue and advances.
      */
-    abstract public function handle(Request $request): Response;
+    abstract public function handle(RequestInterface $request): ResponseInterface;
 }

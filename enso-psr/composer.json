@@ -17,7 +17,8 @@
         "yiisoft/log-target-file": "^1.0",
         "yiisoft/log-target-syslog": "^1.0",
         "yiisoft/aliases": "^2.0",
-        "yiisoft/http": "^1.1"
+        "yiisoft/http": "^1.1",
+        "httpsoft/http-message": "^1.0"
     },
     "autoload": {
         "psr-4": {

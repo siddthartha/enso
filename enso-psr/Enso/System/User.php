@@ -20,11 +20,11 @@ class User
 
     public function __construct()
     {
-        $this->__properties = posix_getpwuid(posix_getuid());
+        $this->__attributes = posix_getpwuid(posix_getuid());
     }
 
     public function __toString(): string
     {
-        return json_encode($this->__properties);
+        return json_encode($this->__attributes);
     }
 }

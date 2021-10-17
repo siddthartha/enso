@@ -33,6 +33,8 @@ class Router implements \Enso\Relay\MiddlewareInterface
      */
     public function handle(Request $request, mixed $next = null): Response
     {
+        $entry = false;
+        
         foreach ($request->getRoute() as $path)
         {
             $entry = A::get($this->_routes, $path, null);

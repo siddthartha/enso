@@ -22,13 +22,7 @@ use function dirname;
  */
 class Enso
 {
-
-    /**
-     * Use Enso behavior traits
-     */
-//    use \Enso\Single;   // singleton
-
-    use \Enso\Subject;  // properties
+    use \Enso\Subject;  // attach "magic" properties getter/setter
 
     private $_config;
 
@@ -64,16 +58,16 @@ class Enso
 
         $this->_relay = new Relay([
             /**
-             * First element of Application middlewares queue
+             * First Application middleware layer in queue
              */
             function (Request $request, callable $next): Response
             {
-                header_remove();
-                header('Content-type: application/json; charset=utf-8');
-
-                return $next->handle(
+                $response = $next->handle(
                     $request
                 );
+
+                return $response
+                    ->withHeader('Content-type', 'application/json');
             }
         ]);
 
@@ -115,7 +109,7 @@ class Enso
                 ])
             );
 
-            $response = (new \GuzzleHttp\Psr7\Response())
+            $response = (new Response())
                 ->withStatus(Status::INTERNAL_SERVER_ERROR, $exc->getMessage())
                 ->withHeader('Content-type', 'application/json')
                 ->withBody($body);
