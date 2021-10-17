@@ -13,6 +13,8 @@ use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Http\Status;
 use Yiisoft\Http\Method;
 
+use Enso\Helpers\Runtime;
+
 use function flush;
 use function in_array;
 use function sprintf;
@@ -62,13 +64,15 @@ final class WebEmitter
         }
 
         // We can't send headers if they are already sent.
-        if (headers_sent()) {
+        if (headers_sent() && !Runtime::isCLI())
+        {
             throw new \Exception("Headers have been sent");
         }
-        header_remove();
+
+        $this->clearHeaders();
 
         // Send HTTP Status-Line.
-        header(sprintf(
+        $this->sendHeader(sprintf(
             'HTTP/%s %d %s',
             $response->getProtocolVersion(),
             $status,
@@ -79,7 +83,7 @@ final class WebEmitter
         foreach ($response->getHeaders() as $header => $values) {
             $replaceFirst = strtolower($header) !== 'set-cookie';
             foreach ($values as $value) {
-                header("{$header}: {$value}", $replaceFirst);
+                $this->sendHeader("{$header}: {$value}", $replaceFirst);
                 $replaceFirst = false;
             }
         }
@@ -88,7 +92,7 @@ final class WebEmitter
             if (!$withoutContentLength && !$response->hasHeader('Content-Length')) {
                 $contentLength = $response->getBody()->getSize();
                 if ($contentLength !== null) {
-                    header("Content-Length: {$contentLength}", true);
+                    $this->sendHeader("Content-Length: {$contentLength}", true);
                 }
             }
 
@@ -130,5 +134,38 @@ final class WebEmitter
             }
         }
         return true;
+    }
+
+    private function areHeaderSent(): bool
+    {
+        return headers_sent();
+    }
+
+    private function sendHeader(string $string, bool $replace = true, int $code = null): void
+    {
+        if (Runtime::isCLI())
+        {
+            return;
+        }
+
+        if ($code !== null)
+        {
+            header($string, $replace, $code);
+        }
+        else
+        {
+            header($string, $replace);
+        }
+
+    }
+
+    private function clearHeaders()
+    {
+        if (Runtime::isCLI())
+        {
+            return;
+        }
+
+        header_remove();
     }
 }

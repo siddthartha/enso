@@ -32,6 +32,14 @@ class Request implements RequestInterface
     private $_requestOrigin;
 
     /**
+     *
+     */
+    public function __construct(array $data = [])
+    {
+        $this->__attributes = $data;
+    }
+
+    /**
      * Return a ServerRequest populated with superglobals:
      * $_GET
      * $_POST

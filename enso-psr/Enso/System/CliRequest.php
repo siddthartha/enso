@@ -14,9 +14,9 @@ namespace Enso\System;
  */
 class CliRequest extends \Enso\Relay\Request
 {
-    public function __construct()
+    public function __construct(array $data = [])
     {
-        parent::__construct([]);
+        parent::__construct($data);
 
         $this->arguments = $_SERVER['argv'];
         $this->route = $this->getRoute();

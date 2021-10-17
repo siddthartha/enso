@@ -56,4 +56,14 @@ final class Runtime
             require_once $c3;
         }
     }
+
+    /**
+     * Are'nt we inside CLI call now?
+     *
+     * @return bool
+     */
+    static public function isCLI(): bool
+    {
+        return PHP_SAPI === 'cli';
+    }
 }

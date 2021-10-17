@@ -1,4 +1,5 @@
 !.env
 .composer-cache/
 enso-psr/vendor/
+nginx/nginx-logs/*
 nbproject

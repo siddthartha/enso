@@ -24,42 +24,58 @@ require_once __DIR__ . '/preload.php';
 
 $preloaded_ts = microtime(true);
 
-/**
- *
- * Sphere test project entry point
- *
- */
-$app = (static fn () => new Application())(); // we should be re-enterable
+$responses = [];
 
-$request = php_sapi_name() == "cli"
-    ? new \Enso\System\CliRequest()
-    : \Enso\System\WebRequest::fromGlobals();
+foreach ([1, 2, 3] as $key => $value)
+{
+    /**
+     *
+     * Sphere test project entry point
+     *
+     */
+    $app = (static fn () => new Application())(); // we should be re-enterable
 
-$response = $app
-    ->addMiddleware(
-        function (Request $request, callable $next): Response
-        {
-            $request->before = microtime(true);
+    $request = php_sapi_name() == "cli"
+        ? new \Enso\System\CliRequest()
+        : \Enso\System\WebRequest::fromGlobals();
 
-            $response = $next->handle($request);
+    $response = $app
+        ->addMiddleware(
+            function (Request $request, callable $next): Response
+            {
+                $request->before = microtime(true);
 
-            $response->after = microtime(true);
-            return $response;
-        }
-    )
-    ->addMiddleware(new Router([
-        'default' => [
-            'action' => new Target(\Application\SomeAction::class),
-            'index' => new Target(\Application\SomeAnotherAction::class),
-        ],
-    ]))
-    ->run($request);
+                $response = $next->handle($request);
 
-$response->preloadDuration = $preloaded_ts - $started_ts;
-$response->taskDuration = $response->after - $response->before;
+                $response->after = microtime(true);
+                return $response;
+            }
+        )
+        ->addMiddleware(new Router([
+            'default' => [
+                'action' => new Target(\Application\SomeAction::class),
+                'index' => new Target(\Application\SomeAnotherAction::class),
+            ],
+        ]))
+        ->run($request);
 
-// Emit..
-$body = (new \GuzzleHttp\Psr7\BufferStream());
-$body->write((string) $response);
+    $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . " ms";
+    $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . " ms";
 
-(new WebEmitter())->emit($response->withBody($body));
+    $responses[] = $response;
+
+    gc_collect_cycles();
+}
+
+foreach ($responses as $_response)
+{
+    // Emit responses..
+    $body = (new \GuzzleHttp\Psr7\BufferStream());
+    $body->write((string) $_response);
+
+    (new WebEmitter())->emit($_response->withBody($body));
+    
+    echo "\n";
+}
+
+echo "\n";
