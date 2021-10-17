@@ -22,7 +22,7 @@ class SomeAnotherAction extends \Enso\System\ActionHandler
     public function __invoke(): array
     {
         return [
-            'before' => $this->_request->before,
+            'before' => $this->getRequest()->before,
             'fuck' => ['them' => 'all']
         ];
     }

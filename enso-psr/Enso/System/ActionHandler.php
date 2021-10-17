@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Psr\Http\Message\RequestInterface;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\Relay\MiddlewareInterface;
@@ -31,6 +32,11 @@ class ActionHandler implements MiddlewareInterface
         $this-> _request = $request;
 
         return new Response(($this)());
+    }
+
+    public function getRequest(): RequestInterface
+    {
+        return $this->_request;
     }
 
     /**

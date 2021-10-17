@@ -55,6 +55,7 @@ foreach ([1, 2, 3] as $key => $value)
             'default' => [
                 'action' => new Target(\Application\SomeAction::class),
                 'index' => new Target(\Application\SomeAnotherAction::class),
+                'tele' => new Target(\Application\TelegramAction::class),
             ],
         ]))
         ->run($request);
@@ -74,7 +75,7 @@ foreach ($responses as $_response)
     $body->write((string) $_response);
 
     (new WebEmitter())->emit($_response->withBody($body));
-    
+
     echo "\n";
 }
 

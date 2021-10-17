@@ -114,7 +114,7 @@ class Enso
                 ->withHeader('Content-type', 'application/json')
                 ->withBody($body);
 
-            (new WebEmitter())->emit($response, $request->getOrigin()->getMethod() === Method::HEAD);
+            (new WebEmitter())->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
 
             exit(1);
         }

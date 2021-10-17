@@ -12,6 +12,12 @@ use count;
 use trim;
 use explode;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Yiisoft\Http\Method;
+use GuzzleHttp\Psr7\CachingStream;
+use GuzzleHttp\Psr7\LazyOpenStream;
+use GuzzleHttp\Psr7\ServerRequest;
+
 /**
  * Description of WebRequest
  *
@@ -19,6 +25,53 @@ use explode;
  */
 class WebRequest extends \Enso\Relay\Request
 {
+
+    /**
+     * Return a ServerRequest populated with superglobals:
+     * $_GET
+     * $_POST
+     * $_COOKIE
+     * $_FILES
+     * $_SERVER
+     */
+    public static function fromGlobals(): \Enso\Relay\Request
+    {
+        $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET;
+
+        $headers = getallheaders();
+
+        $uri = ServerRequest::getUriFromGlobals();
+
+        $body = new CachingStream(
+            new LazyOpenStream('php://input', 'r+')
+        );
+
+        $protocol = isset($_SERVER['SERVER_PROTOCOL'])
+            ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL'])
+            : '1.1';
+
+        $request = new static();
+
+        $request->_requestOrigin =
+            (new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER))
+                ->withCookieParams($_COOKIE)
+                ->withQueryParams($_GET)
+                ->withParsedBody($_POST)
+                ->withUploadedFiles(ServerRequest::normalizeFiles($_FILES));
+
+
+        return $request;
+    }
+
+    /**
+     *
+     * @return ServerRequestInterface
+     */
+    public function getOrigin(): ServerRequestInterface
+    {
+        return $this->_requestOrigin;
+    }
+
 
     /**
      *
