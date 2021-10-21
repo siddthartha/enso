@@ -22,8 +22,8 @@ class Response implements ResponseInterface
     use Subject;
 
     /**
-     *
      * @param array $data
+     * @param int $statusCode
      */
     public function __construct(array $data = [], int $statusCode = 200)
     {
@@ -35,7 +35,6 @@ class Response implements ResponseInterface
         $reasonPhrase = '';
 
         $this->init($statusCode, $reasonPhrase, $headers, $body, $protocol);
-
     }
 
     /**

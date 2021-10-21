@@ -21,4 +21,3 @@ RUN apt-get update && apt-get upgrade -y \
     && usermod -u 1000 www-data
 
 EXPOSE 9000
-EXPOSE 9003

@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Relay\MiddlewareInterface;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\Helpers\A;
@@ -16,7 +17,7 @@ use Enso\Helpers\A;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class Router implements \Enso\Relay\MiddlewareInterface
+class Router implements MiddlewareInterface
 {
     protected $_routes;
 

@@ -22,8 +22,6 @@ abstract class Request implements RequestInterface
 
     use Subject;
 
-    private $_requestOrigin;
-
     /**
      *
      */
@@ -33,4 +31,5 @@ abstract class Request implements RequestInterface
     }
 
     abstract public function getRoute(): array;
+    abstract public function getOrigin(): RequestInterface;
 }

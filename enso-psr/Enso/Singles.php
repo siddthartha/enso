@@ -14,7 +14,7 @@ class Singles
      *
      * @var array
      */
-    private static $__handles = [];
+    private static array $__handles = [];
 
     /**
      * Turn off constructor
@@ -37,7 +37,7 @@ class Singles
      *
      * @param Object &$object
      */
-    public static function storeSingle(&$object): void
+    public static function storeSingle(object &$object): void
     {
         if (!isset(static::$__handles[get_class($object)]))
         {
@@ -45,6 +45,10 @@ class Singles
         }
     }
 
+    /**
+     * @param string $class_name
+     * @return bool
+     */
     public static function hasSingle(string $class_name): bool
     {
         return isset(static::$__handles[$class_name]);
@@ -53,10 +57,11 @@ class Singles
     /**
      * Get singleton object
      *
-     * @param  string $class_name
-     * @return Single
+     * @param string $class_name
+     * @return SingleTrait
+     * @throws \Exception
      */
-    public static function getSingle($class_name)
+    public static function getSingle(string $class_name): object
     {
         if (isset(static::$__handles[$class_name]))
         {

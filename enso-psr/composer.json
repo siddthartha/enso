@@ -7,6 +7,7 @@
     "prefer-stable" : true,
     "require": {
         "php": "^8.0",
+        "ext-mbstring": "*",
         "relay/relay": "~2.0",
         "vlucas/phpdotenv": "^5.3",
         "yiisoft/di": "3.0.x-dev",

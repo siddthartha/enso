@@ -9,13 +9,14 @@ namespace Application;
 
 use Enso\Relay\Request;
 use Enso\Relay\Response;
+use Enso\System\ActionHandler;
 
 /**
- * Description of SomeAnotherAction
+ * Description of IndexAction
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class SomeAnotherAction extends \Enso\System\ActionHandler
+class IndexAction extends ActionHandler
 {
 
     #[Route("/default/index", methods: ["GET"])]

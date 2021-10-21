@@ -7,6 +7,9 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use HttpSoft\Message\Request;
+use Psr\Http\Message\RequestInterface;
+
 /**
  * Description of CliRequest
  *
@@ -33,4 +36,8 @@ class CliRequest extends \Enso\Relay\Request
             : ['default', 'action'];
     }
 
+    public function getOrigin(): RequestInterface
+    {
+        return new Request();// TODO: Implement getOrigin() method.
+    }
 }

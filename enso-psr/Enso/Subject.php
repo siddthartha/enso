@@ -2,6 +2,7 @@
 
 namespace Enso;
 
+use BadMethodCallException;
 use Enso\Helpers\Internal;
 
 /**
@@ -11,11 +12,8 @@ use Enso\Helpers\Internal;
  */
 trait Subject
 {
-//    public const MAGIC_GETTER_PREFIX = '__get_';
-//    public const MAGIC_SETTER_PREFIX = '__set_';
-
     /**
-     * All the properties storage
+     * All the attributes storage
      *
      * @var array
      */
@@ -39,7 +37,7 @@ trait Subject
             return $this->__attributes[$attribute];
         }
 
-        throw new \BadMethodCallException("Attribute $attribute not found.");
+        throw new BadMethodCallException("Attribute $attribute not found.");
     }
 
     /**

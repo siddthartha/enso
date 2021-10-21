@@ -7,21 +7,23 @@ declare(strict_types = 1);
 
 namespace Application;
 
+use Enso\Helpers\A;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
+use Enso\System\ActionHandler;
 
 /**
- * Description of SomeAction
+ * Description of ViewAction
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class SomeAction extends \Enso\System\ActionHandler
+class ViewAction extends ActionHandler
 {
 
     #[Route("/default/action", methods: ["GET"])]
-    public function __invoke(): array
+    public function __invoke():     array
     {
-        return \Enso\Helpers\A::merge(
+        return A::merge(
             $this->getRequest()->attributes,
             ['work' => 'done', 'random' => rand(1000, 10000)]
         );

@@ -5,7 +5,7 @@ namespace Enso;
 /**
  * Класс Single
  *
- * NOTE: Magic constructor <b>YouClass</b>::<b>__init</b>() can be declared instead fo regular one!
+ * NOTE: Magic constructor <b>YouClass</b>::<b>__init</b>() can be declared instead of regular one!
  *
  * $object = <b>new</b> SingleClass();<br/>
  * $object->field = <i>3.141</i>;
@@ -15,7 +15,7 @@ namespace Enso;
  *
  * @author Anton Sadovnikov <sadovnikoff@gmail.com>
  */
-trait Single
+trait SingleTrait
 {
 
     /**
@@ -28,7 +28,7 @@ trait Single
     /**
      * Конструктор
      *
-     * @return Single
+     * @return SingleTrait
      */
     final function __construct()
     {
@@ -42,6 +42,8 @@ trait Single
             $object = Singles::getSingle(get_class($this));
             $this->__set_object_data($object->__get_object_data());
         }
+
+        return;
     }
 
     /**

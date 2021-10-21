@@ -7,24 +7,26 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
-use mb_ereg_replace;
-use count;
-use trim;
-use explode;
-
+use Enso\Relay\Request;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Http\Method;
 use GuzzleHttp\Psr7\CachingStream;
 use GuzzleHttp\Psr7\LazyOpenStream;
 use GuzzleHttp\Psr7\ServerRequest;
 
+use mb_ereg_replace;
+use count;
+use trim;
+use explode;
+
 /**
  * Description of WebRequest
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class WebRequest extends \Enso\Relay\Request
+class WebRequest extends Request
 {
+    private ServerRequestInterface $_requestOrigin;
 
     /**
      * Return a ServerRequest populated with superglobals:
@@ -34,7 +36,7 @@ class WebRequest extends \Enso\Relay\Request
      * $_FILES
      * $_SERVER
      */
-    public static function fromGlobals(): \Enso\Relay\Request
+    public static function fromGlobals(): Request
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET;
 
@@ -59,7 +61,6 @@ class WebRequest extends \Enso\Relay\Request
                 ->withParsedBody($_POST)
                 ->withUploadedFiles(ServerRequest::normalizeFiles($_FILES));
 
-
         return $request;
     }
 
@@ -71,7 +72,6 @@ class WebRequest extends \Enso\Relay\Request
     {
         return $this->_requestOrigin;
     }
-
 
     /**
      *

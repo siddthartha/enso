@@ -15,10 +15,10 @@ namespace Enso\Relay;
 class Runner
 {
     /** @var mixed[] */
-    protected $queue;
+    protected array $queue;
 
     /** @var callable */
-    protected $resolver;
+    protected \Closure $resolver;
 
     /**
      *

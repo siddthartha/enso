@@ -7,6 +7,8 @@ use Enso\Relay\Response;
 use Enso\Relay\Request;
 use Enso\System\WebEmitter;
 
+use GuzzleHttp\Psr7\BufferStream;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Config\Config;
 use Yiisoft\Di\Container;
@@ -22,15 +24,15 @@ use function dirname;
  */
 class Enso
 {
-    use \Enso\Subject;  // attach "magic" properties getter/setter
+    use Subject;  // attach "magic" properties getter/setter
 
-    private $_config;
+    private Config $_config;
 
-    private $_container;
+    private Container $_container;
 
-    private $_logger;
+    private LoggerInterface $_logger;
 
-    private $_relay;
+    private Relay $_relay;
 
     /**
      * Singleton magic constructor
@@ -87,10 +89,10 @@ class Enso
 
     /**
      *
-     * @param Request $request
+     * @param Request|null $request
      * @return Response
      */
-    public function run(Request $request = null): Response
+    public function run(Request $request = null): ResponseInterface
     {
         try
         {
@@ -98,7 +100,7 @@ class Enso
         }
         catch (\Throwable $exc)
         {
-            $body = (new \GuzzleHttp\Psr7\BufferStream());
+            $body = (new BufferStream());
             $body->write(
                 json_encode([
                     'class' => $exc::class,
