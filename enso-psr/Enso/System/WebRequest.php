@@ -90,7 +90,7 @@ class WebRequest extends Request
         );
 
         return count($uriPath) == 0 || (count($uriPath) == 1 && $uriPath[0] == "")
-            ? ['default', 'action']
+            ? parent::getRoute()
             : $uriPath;
     }
 }

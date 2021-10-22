@@ -33,7 +33,7 @@ class CliRequest extends \Enso\Relay\Request
     {
         return isset($this->arguments[1])
             ? explode('/', $this->arguments[1])
-            : ['default', 'action'];
+            : parent::getRoute();
     }
 
     public function getOrigin(): RequestInterface

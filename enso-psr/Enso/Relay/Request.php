@@ -30,6 +30,10 @@ abstract class Request implements RequestInterface
         $this->__attributes = $data;
     }
 
-    abstract public function getRoute(): array;
     abstract public function getOrigin(): RequestInterface;
+
+    public function getRoute(): array
+    {
+        return ['default', 'index'];
+    }
 }
