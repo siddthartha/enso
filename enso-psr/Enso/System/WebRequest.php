@@ -10,9 +10,8 @@ namespace Enso\System;
 use Enso\Relay\Request;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Http\Method;
-use GuzzleHttp\Psr7\CachingStream;
-use GuzzleHttp\Psr7\LazyOpenStream;
-use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\
+    {CachingStream, LazyOpenStream, ServerRequest};
 
 use mb_ereg_replace;
 use count;

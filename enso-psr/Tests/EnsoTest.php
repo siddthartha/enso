@@ -1,9 +1,8 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 use Enso\Helpers\A;
 use Enso\Enso;
-
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 

@@ -2,18 +2,14 @@
 
 namespace Enso;
 
-use Enso\Relay\Relay;
-use Enso\Relay\Response;
-use Enso\Relay\Request;
+use Enso\Relay\
+    {MiddlewareInterface, Relay, Response, Request};
 use Enso\System\WebEmitter;
-
-use GuzzleHttp\Psr7\BufferStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use Yiisoft\Config\Config;
-use Yiisoft\Di\Container;
-use Yiisoft\Http\Method;
-use Yiisoft\Http\Status;
+use GuzzleHttp\Psr7\BufferStream;
+use Yiisoft\
+    {Config\Config, Di\Container, Http\Method, Http\Status};
 
 use function dirname;
 
@@ -37,14 +33,17 @@ class Enso
     /**
      * Singleton magic constructor
      * runs only once if no copy of object found
+     *
+     * @throws \Yiisoft\Definitions\Exception\InvalidConfigException
+     * @throws \ErrorException
      */
     public function __construct()
     {
         $this->_config = new Config(
             dirname(__DIR__),
-            '/config/packages', // Configs path.
-            null,
-            [
+            configsPath: '/config/packages', // Configs path.
+            environment: null,
+            recursiveMergeGroups: [
                 'params',
                 'events',
                 'events-web',
@@ -64,6 +63,7 @@ class Enso
              */
             function (Request $request, callable $next): Response
             {
+                /** @var MiddlewareInterface $next */
                 $response = $next->handle(
                     $request
                 );
@@ -118,7 +118,7 @@ class Enso
 
             (new WebEmitter())->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
 
-            exit(1);
+            exit(-1);
         }
         finally
         {

@@ -1,5 +1,4 @@
-<?php
-declare(strict_types = 1);
+<?php declare(strict_types = 1);
 /**
  * Class Enso\Relay\RequestHandler
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
@@ -7,8 +6,8 @@ declare(strict_types = 1);
 
 namespace Enso\Relay;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\
+    {ResponseInterface, RequestInterface};
 
 use InvalidArgumentException;
 use TypeError;
@@ -31,8 +30,8 @@ abstract class RequestHandler
     protected $_resolver;
 
     /**
-     * @param iterable<mixed> $queue    A queue of middleware entries.
-     * @param callable        $resolver Converts a given queue entry to a callable or MiddlewareInterface instance.
+     * @param iterable<mixed> $queue A queue of middleware entries.
+     * @param callable $resolver Converts a given queue entry to a callable or MiddlewareInterface instance.
      *
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */

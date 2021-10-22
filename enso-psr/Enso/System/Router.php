@@ -7,9 +7,8 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
-use Enso\Relay\MiddlewareInterface;
-use Enso\Relay\Request;
-use Enso\Relay\Response;
+use Enso\Relay\
+    {MiddlewareInterface, Request, Response};
 use Enso\Helpers\A;
 
 /**
@@ -35,11 +34,16 @@ class Router implements MiddlewareInterface
     public function handle(Request $request, mixed $next = null): Response
     {
         $entry = false;
-        
+
         foreach ($request->getRoute() as $path)
         {
             $entry = A::get($this->_routes, $path, null);
             $this->_routes = A::get($this->_routes, $path, null);
+
+            if (!$this->_routes)
+            {
+                throw new \BadMethodCallException("No route found.");
+            }
         }
 
         if ($entry instanceof Target)

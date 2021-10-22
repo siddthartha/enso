@@ -6,17 +6,13 @@ $started_ts = microtime(true);
 
 use Enso\Enso as Application;
 use Enso\Helpers\Runtime;
-use Enso\Relay\Request;
-use Enso\Relay\Response;
-use Enso\System\CliRequest;
-use Enso\System\WebRequest;
-use Enso\System\WebEmitter;
-use Enso\System\Router;
-use Enso\System\Target;
+use Enso\Relay\
+    {MiddlewareInterface, Request, Response};
+use Enso\System\
+    {CliRequest, WebRequest, WebEmitter, Router, Target};
 use GuzzleHttp\Psr7\BufferStream;
-use Application\ViewAction;
-use Application\IndexAction;
-use Application\TelegramAction;
+use Application\
+    {ViewAction, IndexAction, TelegramAction};
 
 require_once __DIR__ . '/Enso/Helpers/Runtime.php';
 
@@ -40,9 +36,9 @@ foreach ([1, 2, 3] as $key => $value)
      * Sphere test project entry point
      *
      */
-    $app = (static fn () => new Application())(); // we should be re-enterable
+    $app = (static fn() => new Application()) /* run closure fabric */ (); // we should be re-enterable
 
-    $request = php_sapi_name() == "cli"
+    $request = (php_sapi_name() == "cli")
         ? new CliRequest()
         : WebRequest::fromGlobals();
 
@@ -52,19 +48,22 @@ foreach ([1, 2, 3] as $key => $value)
             {
                 $request->before = microtime(true);
 
+                /** @var MiddlewareInterface $next */
                 $response = $next->handle($request);
 
                 $response->after = microtime(true);
                 return $response;
             }
         )
-        ->addMiddleware(new Router([
-            'default' => [
-                'view' => new Target(ViewAction::class),
-                'index' => new Target(IndexAction::class),
-                'telegram' => new Target(TelegramAction::class),
-            ],
-        ]))
+        ->addMiddleware(
+            new Router([
+                'default' => [
+                    'view' => new Target(ViewAction::class),
+                    'index' => new Target(IndexAction::class),
+                    'telegram' => new Target(TelegramAction::class),
+                ],
+            ])
+        )
         ->run($request);
 
     $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . " ms";
@@ -81,7 +80,10 @@ foreach ($responses as $_response)
     $body = (new BufferStream());
     $body->write((string) $_response);
 
-    (new WebEmitter())->emit($_response->withBody($body));
+    (new WebEmitter())
+        ->emit(
+            $_response->withBody($body)
+        );
 
     echo "\n";
 }

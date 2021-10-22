@@ -40,7 +40,8 @@ final class WebEmitter
 
     public function __construct(int $bufferSize = null)
     {
-        if ($bufferSize !== null && $bufferSize <= 0) {
+        if ($bufferSize !== null && $bufferSize <= 0)
+        {
             throw new InvalidArgumentException('Buffer size must be greater than zero.');
         }
         $this->bufferSize = $bufferSize ?? self::DEFAULT_BUFFER_SIZE;
@@ -52,14 +53,15 @@ final class WebEmitter
      * @param ResponseInterface $response Response object to send.
      * @param bool $withoutBody If body should be ignored.
      *
-     * @throws HeadersHaveBeenSentException
+     * @throws \Exception
      */
     public function emit(ResponseInterface $response, bool $withoutBody = false): void
     {
         $status = $response->getStatusCode();
         $withoutBody = $withoutBody || !$this->shouldOutputBody($response);
         $withoutContentLength = $withoutBody || $response->hasHeader('Transfer-Encoding');
-        if ($withoutContentLength) {
+        if ($withoutContentLength)
+        {
             $response = $response->withoutHeader('Content-Length');
         }
 
@@ -80,18 +82,23 @@ final class WebEmitter
         ), true, $status);
 
         // Send headers.
-        foreach ($response->getHeaders() as $header => $values) {
+        foreach ($response->getHeaders() as $header => $values)
+        {
             $replaceFirst = strtolower($header) !== 'set-cookie';
-            foreach ($values as $value) {
+            foreach ($values as $value)
+            {
                 $this->sendHeader("{$header}: {$value}", $replaceFirst);
                 $replaceFirst = false;
             }
         }
 
-        if (!$withoutBody) {
-            if (!$withoutContentLength && !$response->hasHeader('Content-Length')) {
+        if (!$withoutBody)
+        {
+            if (!$withoutContentLength && !$response->hasHeader('Content-Length'))
+            {
                 $contentLength = $response->getBody()->getSize();
-                if ($contentLength !== null) {
+                if ($contentLength !== null)
+                {
                     $this->sendHeader("Content-Length: {$contentLength}", true);
                 }
             }
@@ -103,10 +110,12 @@ final class WebEmitter
     private function emitBody(ResponseInterface $response): void
     {
         $body = $response->getBody();
-        if ($body->isSeekable()) {
+        if ($body->isSeekable())
+        {
             $body->rewind();
         }
-        while (!$body->eof()) {
+        while (!$body->eof())
+        {
             echo $body->read($this->bufferSize);
             flush();
         }
@@ -114,22 +123,27 @@ final class WebEmitter
 
     private function shouldOutputBody(ResponseInterface $response): bool
     {
-        if (in_array($response->getStatusCode(), self::NO_BODY_RESPONSE_CODES, true)) {
+        if (in_array($response->getStatusCode(), self::NO_BODY_RESPONSE_CODES, true))
+        {
             return false;
         }
         // Check if body is empty.
         $body = $response->getBody();
-        if (!$body->isReadable()) {
+        if (!$body->isReadable())
+        {
             return false;
         }
         $size = $body->getSize();
-        if ($size !== null) {
+        if ($size !== null)
+        {
             return $size > 0;
         }
-        if ($body->isSeekable()) {
+        if ($body->isSeekable())
+        {
             $body->rewind();
             $byte = $body->read(1);
-            if ($byte === '' || $body->eof()) {
+            if ($byte === '' || $body->eof())
+            {
                 return false;
             }
         }
@@ -156,10 +170,9 @@ final class WebEmitter
         {
             header($string, $replace);
         }
-
     }
 
-    private function clearHeaders()
+    private function clearHeaders(): void
     {
         if (Runtime::isCLI())
         {
