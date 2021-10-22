@@ -62,7 +62,7 @@ foreach ([1, 2, 3] as $key => $value)
             'default' => [
                 'view' => new Target(ViewAction::class),
                 'index' => new Target(IndexAction::class),
-                'telegram-hook' => new Target(TelegramAction::class),
+                'telegram' => new Target(TelegramAction::class),
             ],
         ]))
         ->run($request);

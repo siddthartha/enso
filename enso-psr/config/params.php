@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'supportEmail' => 'support@example.com',
+    'supportEmail' => 'sadovnikoff@gmail.com',
 
     'yiisoft/aliases' => [
         'aliases' => [
@@ -15,8 +15,8 @@ return [
             '@public' => '@root/public',
             '@resources' => '@root/resources',
             '@runtime' => '@root/runtime',
-            '@src' => '@root/src',
-            '@tests' => '@root/tests',
+            '@src' => '@root',
+            '@tests' => '@root/Tests',
             '@views' => '@root/views',
             '@vendor' => '@root/vendor',
         ],

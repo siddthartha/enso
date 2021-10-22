@@ -15,9 +15,7 @@ nbproject
 #/composer.lock
 
 # local phpunit config
-/phpunit.xml
-# phpunit cache
-.phpunit.result.cache
+.phpunit.cache
 
 # Codeception
 c3.php

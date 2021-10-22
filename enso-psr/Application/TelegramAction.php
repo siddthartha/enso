@@ -52,7 +52,7 @@ class TelegramAction extends ActionHandler
      * @return array
      * @throws GuzzleException
      */
-    #[Route("/default/tele", methods: ["GET"])]
+    #[Route("/default/telegram", methods: ["POST"])]
     public function __invoke(): array
     {
         $request = $this->getRequest();

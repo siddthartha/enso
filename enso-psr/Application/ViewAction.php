@@ -20,7 +20,7 @@ use Enso\System\ActionHandler;
 class ViewAction extends ActionHandler
 {
 
-    #[Route("/default/action", methods: ["GET"])]
+    #[Route("/default/view", methods: ["GET"])]
     public function __invoke():     array
     {
         return A::merge(

@@ -3,3 +3,5 @@
 enso-psr/vendor/
 nginx/nginx-logs/*
 nbproject
+.idea
+*.sublime-*
