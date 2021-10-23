@@ -29,11 +29,7 @@ class WebRequest extends Request
 
     /**
      * Return a ServerRequest populated with superglobals:
-     * $_GET
-     * $_POST
-     * $_COOKIE
-     * $_FILES
-     * $_SERVER
+     * $_GET, $_POST, $_COOKIE, $_FILES, $_SERVER
      */
     public static function fromGlobals(): Request
     {
@@ -67,7 +63,7 @@ class WebRequest extends Request
      *
      * @return ServerRequestInterface
      */
-    public function getOrigin(): ServerRequestInterface
+    public function getPSR(): ServerRequestInterface
     {
         return $this->_requestOrigin;
     }
@@ -83,7 +79,7 @@ class WebRequest extends Request
         $uriPath = explode(
             '/',
             trim(
-                mb_ereg_replace("^($phpSelfPath)", '', $this->getOrigin()->getUri()->getPath()),
+                mb_ereg_replace("^($phpSelfPath)", '', $this->getPSR()->getUri()->getPath()),
                 '/'
             )
         );

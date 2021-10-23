@@ -31,9 +31,7 @@ abstract class RequestHandler
 
     /**
      * @param iterable<mixed> $queue A queue of middleware entries.
-     * @param callable $resolver Converts a given queue entry to a callable or MiddlewareInterface instance.
-     *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+     * @param callable|null $resolver Converts a given queue entry to a callable or MiddlewareInterface instance.
      */
     public function __construct($queue, ?callable $resolver = null)
     {

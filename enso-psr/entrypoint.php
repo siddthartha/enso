@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 declare(ticks = 1);
 
-$started_ts = microtime(true);
+$started_ts = microtime(as_float: true);
 
 use Enso\Enso as Application;
 use Enso\Helpers\Runtime;
@@ -25,16 +25,14 @@ require_once __DIR__ . '/preload.php';
 
 Runtime::supportC3();
 
-$preloaded_ts = microtime(true);
+$preloaded_ts = microtime(as_float: true);
 
 $responses = [];
 
 foreach ([1, 2, 3] as $key => $value)
 {
     /**
-     *
-     * Sphere test project entry point
-     *
+     * Enso application lifecycle entrypoint
      */
     $app = (static fn() => new Application()) /* run closure fabric */ (); // we should be re-enterable
 
@@ -43,20 +41,28 @@ foreach ([1, 2, 3] as $key => $value)
         : WebRequest::fromGlobals();
 
     $response = $app
-        ->addMiddleware(
-            function (Request $request, callable $next): Response
+        ->addLayer(
+            /**
+             * Add headers
+             *
+             * @param Request $request
+             * @param callable $next
+             * @return Response
+             */
+            middleware: function (Request $request, callable $next): Response
             {
-                $request->before = microtime(true);
-
                 /** @var MiddlewareInterface $next */
-                $response = $next->handle($request);
+                $response = $next->handle(
+                    $request
+                );
 
-                $response->after = microtime(true);
-                return $response;
+                return $response
+                    ->withHeader('Content-type', 'application/json');
             }
         )
-        ->addMiddleware(
-            new Router([
+        ->addLayer(
+
+            middleware: new Router([
                 'default' => [
                     'view' => new Target(ViewAction::class),
                     'index' => new Target(IndexAction::class),
@@ -74,18 +80,24 @@ foreach ([1, 2, 3] as $key => $value)
     gc_collect_cycles();
 }
 
-foreach ($responses as $_response)
+// Emit responses..
+foreach ($responses as &$_response)
 {
-    // Emit responses..
     $body = (new BufferStream());
     $body->write((string) $_response);
 
     (new WebEmitter())
         ->emit(
-            $_response->withBody($body)
+            response: $_response->withBody($body)
         );
 
-    echo "\n";
+    if (Runtime::isCLI())
+    {
+        echo "\n";
+    }
 }
 
-echo "\n";
+if (Runtime::isCLI())
+{
+    echo "\n";
+}

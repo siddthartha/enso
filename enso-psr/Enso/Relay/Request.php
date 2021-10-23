@@ -30,7 +30,7 @@ abstract class Request implements RequestInterface
         $this->__attributes = $data;
     }
 
-    abstract public function getOrigin(): RequestInterface;
+    abstract public function getPSR(): RequestInterface;
 
     public function getRoute(): array
     {

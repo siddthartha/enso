@@ -18,7 +18,7 @@ use Enso\Helpers\A;
  */
 class Router implements MiddlewareInterface
 {
-    protected $_routes;
+    protected array $_routes;
 
     public function __construct(array $routes = [])
     {
@@ -34,13 +34,14 @@ class Router implements MiddlewareInterface
     public function handle(Request $request, mixed $next = null): Response
     {
         $entry = false;
+        $routesList = $this->_routes;
 
-        foreach ($request->getRoute() as $path)
+        foreach ($request->getRoute() as $pathEntry)
         {
-            $entry = A::get($this->_routes, $path, null);
-            $this->_routes = A::get($this->_routes, $path, null);
+            $entry = A::get($routesList, $pathEntry, null);
+            $routesList = A::get($routesList, $pathEntry, null);
 
-            if (!$this->_routes)
+            if (!$routesList)
             {
                 throw new \BadMethodCallException("No route found.");
             }

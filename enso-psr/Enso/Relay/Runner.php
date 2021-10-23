@@ -7,6 +7,8 @@ declare(strict_types = 1);
 
 namespace Enso\Relay;
 
+use Closure;
+
 /**
  * Description of Runner
  *
@@ -17,8 +19,8 @@ class Runner
     /** @var mixed[] */
     protected array $queue;
 
-    /** @var callable */
-    protected \Closure $resolver;
+    /** @var Closure */
+    protected Closure $_resolver;
 
     /**
      *
@@ -27,7 +29,7 @@ class Runner
     {
         if (!is_iterable($queue))
         {
-            throw new TypeError('\$queue must be array or Traversable.');
+            throw new \TypeError('\$queue must be array or Traversable.');
         }
 
         if (!is_array($queue))
@@ -50,32 +52,32 @@ class Runner
             };
         }
 
-        $this->resolver = $resolver;
+        $this->_resolver = $resolver;
     }
 
     /**
      *
-     * @param \Enso\Relay\Request $request
-     * @return \Enso\Relay\Response
+     * @param Request $request
+     * @return Response
      * @throws \Exception
      */
     public function handle(Request $request): Response
     {
         $entry = current($this->queue);
-        $middleware = call_user_func($this->resolver, $entry);
+        $middleware = call_user_func($this->_resolver, $entry);
         next($this->queue);
 
         if ($middleware instanceof MiddlewareInterface)
         {
-            return $middleware->handle($request, $this);
+            return $middleware->handle(request: $request, next: $this);
         }
 
         if ($middleware instanceof RequestHandler)
         {
-            return $middleware->handle($request);
+            return $middleware->handle(request: $request);
         }
 
-        if (is_callable($middleware))
+        if (is_callable(value: $middleware, callable_name: $callableName))
         {
             return $middleware($request, $this);
         }
@@ -89,8 +91,8 @@ class Runner
 
     /**
      *
-     * @param \Enso\Relay\Request $request
-     * @return \Enso\Relay\Response
+     * @param Request $request
+     * @return Response
      */
     public function __invoke(Request $request): Response
     {

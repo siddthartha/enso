@@ -58,19 +58,16 @@ class Enso
         $this->_logger = $this->_container->get(LoggerInterface::class);
 
         $this->_relay = new Relay([
-            /**
-             * First Application middleware layer in queue
-             */
             function (Request $request, callable $next): Response
             {
-                /** @var MiddlewareInterface $next */
-                $response = $next->handle(
-                    $request
-                );
+                $request->before = microtime(true);
 
-                return $response
-                    ->withHeader('Content-type', 'application/json');
-            }
+                /** @var MiddlewareInterface $next */
+                $response = $next->handle($request);
+
+                $response->after = microtime(true);
+                return $response;
+            },
         ]);
 
     }
@@ -80,9 +77,11 @@ class Enso
      * @param mixed $middleware
      * @return \self
      */
-    public function addMiddleware(mixed $middleware): self
+    public function addLayer(mixed $middleware): self
     {
-        $this->_relay->add($middleware);
+        $this
+            ->getRelay()
+            ->add($middleware);
 
         return $this;
     }
@@ -96,7 +95,9 @@ class Enso
     {
         try
         {
-            return $this->_relay->handle($request);
+            return $this
+                ->getRelay()
+                ->handle($request);
         }
         catch (\Throwable $exc)
         {
@@ -123,5 +124,37 @@ class Enso
         finally
         {
         }
+    }
+
+    /**
+     * @return Container
+     */
+    public function getContainer(): Container
+    {
+        return $this->_container;
+    }
+
+    /**
+     * @return Relay
+     */
+    public function getRelay(): Relay
+    {
+        return $this->_relay;
+    }
+
+    /**
+     * @return array|mixed|object|LoggerInterface
+     */
+    public function getLogger(): mixed
+    {
+        return $this->_logger;
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig(): Config
+    {
+        return $this->_config;
     }
 }

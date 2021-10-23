@@ -66,7 +66,7 @@ class TelegramAction extends ActionHandler
             throw new \BadMethodCallException();
         }
 
-        $body = json_decode($request->getOrigin()->getBody()->getContents());
+        $body = json_decode($request->getPSR()->getBody()->getContents());
         $commits = A::getValue($body, 'commits', null);
 
         if (empty($commits))

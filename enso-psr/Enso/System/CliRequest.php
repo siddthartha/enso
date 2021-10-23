@@ -17,11 +17,13 @@ use Psr\Http\Message\RequestInterface;
  */
 class CliRequest extends \Enso\Relay\Request
 {
+    private array $_arguments;
+
     public function __construct(array $data = [])
     {
         parent::__construct($data);
 
-        $this->arguments = $_SERVER['argv'];
+        $this->_arguments = $_SERVER['argv'];
         $this->route = $this->getRoute();
     }
 
@@ -31,13 +33,24 @@ class CliRequest extends \Enso\Relay\Request
      */
     public function getRoute(): array
     {
-        return isset($this->arguments[1])
-            ? explode('/', $this->arguments[1])
+        return isset($this->_arguments[1])
+            ? explode('/', $this->_arguments[1])
             : parent::getRoute();
     }
 
-    public function getOrigin(): RequestInterface
+    /**
+     * @return RequestInterface
+     */
+    public function getPSR(): RequestInterface
     {
-        return new Request();// TODO: Implement getOrigin() method.
+        return new Request(); // @TODO
+    }
+
+    /**
+     * @return array
+     */
+    public function getArguments(): array
+    {
+        return $this->_arguments;
     }
 }
