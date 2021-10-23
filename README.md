@@ -35,3 +35,7 @@ Framework's code should use:
 ### How do I get set up? ###
 
 ```docker-compose up -d --build```
+
+### How do I run tests? ###
+
+```docker-compose exec php vendor/bin/codecept```
