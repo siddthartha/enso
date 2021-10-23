@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "361bc4e56b6ace1837d542ad7357a36a",
+    "content-hash": "05f3b06bfb5cae079e2892cf2f744dd3",
     "packages": [
         {
             "name": "graham-campbell/result-type",
@@ -5478,6 +5478,48 @@
             "time": "2021-06-02T22:15:26+00:00"
         },
         {
+            "name": "swoole/ide-helper",
+            "version": "4.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swoole/ide-helper.git",
+                "reference": "837a2b20242e3cebf0ba1168e876f0f1ca9a14e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swoole/ide-helper/zipball/837a2b20242e3cebf0ba1168e876f0f1ca9a14e3",
+                "reference": "837a2b20242e3cebf0ba1168e876f0f1ca9a14e3",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Team Swoole",
+                    "email": "team@swoole.com"
+                }
+            ],
+            "description": "IDE help files for Swoole.",
+            "support": {
+                "issues": "https://github.com/swoole/ide-helper/issues",
+                "source": "https://github.com/swoole/ide-helper/tree/4.8.0"
+            },
+            "funding": [
+                {
+                    "url": "https://gitee.com/swoole/swoole?donate=true",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/swoole",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-10-14T19:39:28+00:00"
+        },
+        {
             "name": "symfony/browser-kit",
             "version": "v5.3.4",
             "source": {
@@ -6678,7 +6720,8 @@
         "yiisoft/di": 20,
         "yiisoft/config": 20,
         "yiisoft/active-record": 20,
-        "yiisoft/db-mysql": 20
+        "yiisoft/db-mysql": 20,
+        "swoole/ide-helper": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

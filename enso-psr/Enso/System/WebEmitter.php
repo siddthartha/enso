@@ -3,7 +3,7 @@ declare(strict_types = 1);
 /**
  * Class Enso\System\WebEmitter
  * copied from Yiisoft\Yii\Web\SapiEmitter
- * @see https://github.com/yiisoft/yii-web/blob/master/src/SapiEmitter.php
+ * {@see https://github.com/yiisoft/yii-web/blob/master/src/SapiEmitter.php}
  */
 
 namespace Enso\System;
@@ -74,12 +74,16 @@ final class WebEmitter
         $this->clearHeaders();
 
         // Send HTTP Status-Line.
-        $this->sendHeader(sprintf(
-            'HTTP/%s %d %s',
-            $response->getProtocolVersion(),
-            $status,
-            $response->getReasonPhrase()
-        ), true, $status);
+        $this->sendHeader(
+            string: sprintf(
+                'HTTP/%s %d %s',
+                $response->getProtocolVersion(),
+                $status,
+                $response->getReasonPhrase()
+            ),
+            replace: true,
+            code: $status
+        );
 
         // Send headers.
         foreach ($response->getHeaders() as $header => $values)
@@ -92,19 +96,23 @@ final class WebEmitter
             }
         }
 
-        if (!$withoutBody)
+        if ($withoutBody)
         {
-            if (!$withoutContentLength && !$response->hasHeader('Content-Length'))
-            {
-                $contentLength = $response->getBody()->getSize();
-                if ($contentLength !== null)
-                {
-                    $this->sendHeader("Content-Length: {$contentLength}", true);
-                }
-            }
-
-            $this->emitBody($response);
+            return ;
         }
+
+        if (!$withoutContentLength && !$response->hasHeader('Content-Length'))
+        {
+            if (
+                ($contentLength = $response->getBody()->getSize())
+                !== null
+            )
+            {
+                $this->sendHeader("Content-Length: {$contentLength}", true);
+            }
+        }
+
+        $this->emitBody($response);
     }
 
     private function emitBody(ResponseInterface $response): void
@@ -147,6 +155,7 @@ final class WebEmitter
                 return false;
             }
         }
+
         return true;
     }
 

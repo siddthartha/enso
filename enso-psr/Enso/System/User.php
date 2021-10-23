@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 /**
  * Class Enso\System\User
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
@@ -21,6 +21,16 @@ class User
     public function __construct()
     {
         $this->__attributes = posix_getpwuid(posix_getuid());
+    }
+
+    public function getUid(): int
+    {
+        return posix_getuid();
+    }
+
+    public function setUid(int $uid): bool
+    {
+        return posix_setuid(user_id: $uid);
     }
 
     public function __toString(): string

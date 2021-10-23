@@ -19,7 +19,7 @@ final class Runtime
      *
      * @return void
      */
-    static public function isSapiAsIsHandled(): bool
+    public static function isSapiAsIsHandled(): bool
     {
         if (PHP_SAPI === 'cli-server')
         {
@@ -42,7 +42,7 @@ final class Runtime
      *
      * @return void
      */
-    static public function supportC3(): void
+    public static function supportC3(): void
     {
         if ($_ENV['YII_ENV'] !== 'test')
         {
@@ -62,7 +62,7 @@ final class Runtime
      *
      * @return bool
      */
-    static public function isCLI(): bool
+    public static function isCLI(): bool
     {
         return PHP_SAPI === 'cli';
     }

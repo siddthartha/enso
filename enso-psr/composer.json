@@ -19,7 +19,8 @@
         "yiisoft/log-target-syslog": "^1.0",
         "yiisoft/aliases": "^2.0",
         "yiisoft/http": "^1.1",
-        "httpsoft/http-message": "^1.0"
+        "httpsoft/http-message": "^1.0",
+      "ext-posix": "*"
     },
     "autoload": {
         "psr-4": {
@@ -52,6 +53,7 @@
         "codeception/c3": "^2.6",
         "codeception/module-rest": "^1.3",
         "codeception/module-phpbrowser": "^1.0",
-        "codeception/module-asserts": "^1.3"
+        "codeception/module-asserts": "^1.3",
+        "swoole/ide-helper": "@dev"
     }
 }

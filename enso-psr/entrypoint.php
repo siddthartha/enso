@@ -9,7 +9,7 @@ use Enso\Helpers\Runtime;
 use Enso\Relay\
     {MiddlewareInterface, Request, Response};
 use Enso\System\
-    {CliRequest, WebRequest, WebEmitter, Router, Target};
+{CliEmitter, CliRequest, WebRequest, WebEmitter, Router, Target};
 use GuzzleHttp\Psr7\BufferStream;
 use Application\
     {ViewAction, IndexAction, TelegramAction};
@@ -23,7 +23,7 @@ if (Runtime::isSapiAsIsHandled())
 
 require_once __DIR__ . '/preload.php';
 
-Runtime::supportC3();
+// Runtime::supportC3();
 
 $preloaded_ts = microtime(as_float: true);
 
@@ -36,7 +36,7 @@ foreach ([1, 2, 3] as $key => $value)
      */
     $app = (static fn() => new Application()) /* run closure fabric */ (); // we should be re-enterable
 
-    $request = (php_sapi_name() == "cli")
+    $request = Runtime::isCLI()
         ? new CliRequest()
         : WebRequest::fromGlobals();
 
@@ -61,7 +61,6 @@ foreach ([1, 2, 3] as $key => $value)
             }
         )
         ->addLayer(
-
             middleware: new Router([
                 'default' => [
                     'view' => new Target(ViewAction::class),
@@ -86,18 +85,16 @@ foreach ($responses as &$_response)
     $body = (new BufferStream());
     $body->write((string) $_response);
 
-    (new WebEmitter())
-        ->emit(
-            response: $_response->withBody($body)
-        );
+    (
+        Runtime::isCLI()
+        ? new CliEmitter()
+        : new WebEmitter()
+    )->emit(
+        response: $_response->withBody($body)
+    );
 
     if (Runtime::isCLI())
     {
         echo "\n";
     }
-}
-
-if (Runtime::isCLI())
-{
-    echo "\n";
 }

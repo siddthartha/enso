@@ -2,6 +2,8 @@
 
 namespace Enso;
 
+use Enso\Helpers\Runtime;
+use Enso\System\CliEmitter;
 use Enso\Relay\
     {MiddlewareInterface, Relay, Response, Request};
 use Enso\System\WebEmitter;
@@ -117,12 +119,21 @@ class Enso
                 ->withHeader('Content-type', 'application/json')
                 ->withBody($body);
 
-            (new WebEmitter())->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
+            $this->getEmitter()->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
 
             exit(-1);
         }
-        finally
+    }
+
+    public function getEmitter()
+    {
+        if(Runtime::isCLI())
         {
+            return new CliEmitter();
+        }
+        else
+        {
+            return new WebEmitter();
         }
     }
 
