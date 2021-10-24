@@ -8,6 +8,8 @@
 namespace Enso\Relay;
 
 use Enso\Subject;
+use HttpSoft\Message\Stream;
+use HttpSoft\Message\Uri;
 use Psr\Http\Message\RequestInterface;
 use HttpSoft\Message\RequestTrait;
 
@@ -28,6 +30,8 @@ abstract class Request implements RequestInterface
     public function __construct(array $data = [])
     {
         $this->__attributes = $data;
+        $this->stream = new Stream();
+        $this->uri = new Uri(''); // should we use '' on empty construction?
     }
 
     abstract public function getPSR(): RequestInterface;

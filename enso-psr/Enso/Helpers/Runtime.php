@@ -66,4 +66,15 @@ final class Runtime
     {
         return PHP_SAPI === 'cli';
     }
+
+    /**
+     * Are'nt we inside Swoole now?
+     * @TODO: improve
+     *
+     * @return bool
+     */
+    public static function isInSwoole(): bool
+    {
+        return function_exists('swoole_version') && is_string(swoole_version());
+    }
 }

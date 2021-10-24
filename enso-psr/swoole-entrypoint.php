@@ -1,11 +1,12 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
-use Enso\Relay\MiddlewareInterface;
-use Enso\Relay\Request as EnsoRequest;
-use Enso\Relay\Response as EnsoResponse;
-use GuzzleHttp\Psr7\BufferStream;
 use Enso\Helpers\Runtime;
+use Enso\Relay\
+    {MiddlewareInterface, Request as EnsoRequest, Response as EnsoResponse};
+use GuzzleHttp\Psr7\BufferStream;
+use Swoole\Http\Request;
+use Swoole\Http\Response;
+use Swoole\Http\Server;
 
 require_once __DIR__ . '/Enso/Helpers/Runtime.php';
 
@@ -16,24 +17,23 @@ if (Runtime::isSapiAsIsHandled())
 
 require_once __DIR__ . '/preload.php';
 
-$http = new \Swoole\Http\Server(host: "0.0.0.0", port: 9999);
+$httpServer = new Server(host: "0.0.0.0", port: 9999);
 
-$http->set(['log_level' => 2]);
+$httpServer->set(['log_level' => 2]);
 
-$http->on(
+$httpServer->on(
     event_name: "request",
-    callback: function (\Swoole\Http\Request $_request, \Swoole\Http\Response $_response)
+    callback: function (Request $_request, Response $_response)
     {
-        $started_ts = $preloaded_ts = microtime(as_float: true);
+        $started_ts = $_request->server['request_time'];
+        $preloaded_ts = microtime(as_float: true);
 
         /**
          * Enso application lifecycle entrypoint
          */
         $app = (static fn() => new \Enso\Enso()) /* run closure fabric */ (); // we should be re-enterable
 
-        $request = (php_sapi_name() == "cli")
-            ? new \Enso\System\CliRequest()
-            : \Enso\System\WebRequest::fromGlobals();
+        $request = \Enso\System\WebRequest::fromSwooleRequest($_request);
 
         $response = $app
             ->addLayer(
@@ -66,17 +66,24 @@ $http->on(
             )
             ->run($request);
 
-        $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . " ms";
-        $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . " ms";
+        if (!$response->isError())
+        {
+            $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . " ms";
+            $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . " ms";
 
-        $body = (new BufferStream());
-        $body->write((string) $response);
+            $body = (new BufferStream());
+            $body->write((string) $response);
+        }
 
+        $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
         $_response->header('Content-type', 'application/json');
-        $_response->end(content: $body->getContents());
+        $_response->end(content: ($response->isError()
+            ? $response->getBody()->getContents()
+            : $body->getContents()
+        ));
 
         gc_collect_cycles();
     }
 );
 
-$http->start();
+$httpServer->start();

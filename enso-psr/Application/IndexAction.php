@@ -24,7 +24,11 @@ class IndexAction extends ActionHandler
     {
         return [
             'before' => $this->getRequest()->before,
-            'fuck' => ['them' => 'all']
+            'context' => [
+                'sapi' => PHP_SAPI,
+                'swoole' => function_exists('swoole_version') ? swoole_version() : false,
+            ],
         ];
     }
+
 }

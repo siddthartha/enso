@@ -37,6 +37,11 @@ class Response implements ResponseInterface
         $this->init($statusCode, $reasonPhrase, $headers, $body, $protocol);
     }
 
+    public function isError(): bool
+    {
+        return ($this->getStatusCode() >= 400);
+    }
+
     /**
      *
      * @return string

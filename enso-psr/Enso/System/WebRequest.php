@@ -8,10 +8,11 @@ declare(strict_types = 1);
 namespace Enso\System;
 
 use Enso\Relay\Request;
+use HttpSoft\Message\Uri;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Http\Method;
 use GuzzleHttp\Psr7\
-    {CachingStream, LazyOpenStream, ServerRequest};
+    {BufferStream, CachingStream, LazyOpenStream, ServerRequest};
 
 use mb_ereg_replace;
 use count;
@@ -25,7 +26,12 @@ use explode;
  */
 class WebRequest extends Request
 {
-    private ServerRequestInterface $_requestOrigin;
+    private ?ServerRequestInterface $_requestOrigin = null;
+
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+    }
 
     /**
      * Return a ServerRequest populated with superglobals:
@@ -59,13 +65,42 @@ class WebRequest extends Request
         return $request;
     }
 
+    public static function fromSwooleRequest(\Swoole\Http\Request $swooleRequest): Request
+    {
+        $method = $swooleRequest->getMethod();
+
+        $headers = $swooleRequest->header;
+
+        $uri = new Uri($swooleRequest->server['request_uri']);
+
+        $body = (new BufferStream());
+        $body->write((string) $swooleRequest->rawContent());
+
+        $protocol = '1.1'; // @TODO: protocol detection
+
+        $request = new static();
+
+        $request->_requestOrigin =
+            (new ServerRequest($method, $uri, $headers ?? [], $body, $protocol, $_SERVER))
+                ->withCookieParams($swooleRequest->cookie ?? [])
+                ->withQueryParams($swooleRequest->get ?? [])
+                ->withParsedBody($swooleRequest->post ?? [])
+                ->withUploadedFiles(ServerRequest::normalizeFiles($swooleRequest->files ?? []));
+
+        $request->swooleRequestUri = $swooleRequest->server['request_uri'];
+
+        return $request;
+    }
+
+
     /**
      *
      * @return ServerRequestInterface
      */
     public function getPSR(): ServerRequestInterface
     {
-        return $this->_requestOrigin;
+        return $this->_requestOrigin
+            ?? ($this->_requestOrigin = new ServerRequest(Method::GET, ""));
     }
 
     /**
@@ -76,7 +111,7 @@ class WebRequest extends Request
     {
         $phpSelfPath = $_SERVER['PHP_SELF'];
 
-        $uriPath = explode(
+        $uriTarget = explode(
             '/',
             trim(
                 mb_ereg_replace("^($phpSelfPath)", '', $this->getPSR()->getUri()->getPath()),
@@ -84,8 +119,8 @@ class WebRequest extends Request
             )
         );
 
-        return count($uriPath) == 0 || (count($uriPath) == 1 && $uriPath[0] == "")
+        return count($uriTarget) == 0 || (count($uriTarget) == 1 && $uriTarget[0] == "")
             ? parent::getRoute()
-            : $uriPath;
+            : $uriTarget;
     }
 }

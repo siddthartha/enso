@@ -119,9 +119,14 @@ class Enso
                 ->withHeader('Content-type', 'application/json')
                 ->withBody($body);
 
-            $this->getEmitter()->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
+            if (!Runtime::isInSwoole())
+            {
+                $this->getEmitter()->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
 
-            exit(-1);
+                exit(-1);
+            }
+
+            return $response;
         }
     }
 
