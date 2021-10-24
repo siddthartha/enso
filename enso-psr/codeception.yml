@@ -8,6 +8,14 @@ suites:
                 - REST:
                     url: http://nginx
                     depends: PhpBrowser
+    api-sw:
+        actor: ApiTester
+        path: .
+        modules:
+            enabled:
+              - REST:
+                  url: http://nginx:81
+                  depends: PhpBrowser
 
 paths:
     tests: Tests
@@ -18,3 +26,14 @@ paths:
 settings:
     shuffle: false
     lint: true
+
+coverage:
+  enabled: true
+  #remote: true
+  #c3_url: 'http://nginx/'
+  include:
+    - Enso/*
+    - Application/*
+    - public/*
+  exclude:
+    - vendor/*

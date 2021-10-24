@@ -16,14 +16,14 @@ use Application\
 
 require_once __DIR__ . '/Enso/Helpers/Runtime.php';
 
+Runtime::supportC3();
+
 if (Runtime::isSapiAsIsHandled())
 {
     return false;
 }
 
 require_once __DIR__ . '/preload.php';
-
-// Runtime::supportC3();
 
 $preloaded_ts = microtime(as_float: true);
 

@@ -71,9 +71,10 @@ $httpServer->on(
             $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . " ms";
             $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . " ms";
 
-            $body = (new BufferStream());
-            $body->write((string) $response);
         }
+
+        $body = (new BufferStream());
+        $body->write((string) $response);
 
         $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
         $_response->header('Content-type', 'application/json');
