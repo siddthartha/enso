@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Enso;
 
@@ -33,8 +33,6 @@ class Enso
     private Relay $_relay;
 
     /**
-     * Singleton magic constructor
-     * runs only once if no copy of object found
      *
      * @throws \Yiisoft\Definitions\Exception\InvalidConfigException
      * @throws \ErrorException
@@ -43,7 +41,7 @@ class Enso
     {
         $this->_config = new Config(
             dirname(__DIR__),
-            configsPath: '/config/packages', // Configs path.
+            configsPath: '/config/packages',
             environment: null,
             recursiveMergeGroups: [
                 'params',
@@ -67,6 +65,7 @@ class Enso
                 /** @var MiddlewareInterface $next */
                 $response = $next->handle($request);
 
+                $response->before = $request->before;
                 $response->after = microtime(true);
                 return $response;
             },
@@ -99,7 +98,8 @@ class Enso
         {
             return $this
                 ->getRelay()
-                ->handle($request);
+                ->handle($request)
+                ->withHeader('Access-Control-Allow-Origin', '*');
         }
         catch (\Throwable $exc)
         {
@@ -114,8 +114,23 @@ class Enso
                 ])
             );
 
+            /**
+             * @OA\Schema(
+             *     schema="ExceptionResponse",
+             *     required={"class", "message"},
+             *     @OA\Property(
+             *         property="class",
+             *         type="string",
+             *     ),
+             *     @OA\Property(
+             *         property="message",
+             *         type="string"
+             *     )
+             * )
+             */
             $response = (new Response())
                 ->withStatus(Status::INTERNAL_SERVER_ERROR, $exc->getMessage())
+                ->withHeader('Access-Control-Allow-Origin', '*')
                 ->withHeader('Content-type', 'application/json')
                 ->withBody($body);
 

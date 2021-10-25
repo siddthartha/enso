@@ -13,25 +13,30 @@ use Enso\Relay\Response;
 use Enso\System\ActionHandler;
 
 /**
- * Description of ViewAction
+ * Description of OpenApiAction
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class ViewAction extends ActionHandler
+class OpenApiAction extends ActionHandler
 {
 
     /**
      * @OA\Get(
-     *     path="/default/view",
+     *     path="/default/open-api",
      *     @OA\Response(response="200", description="Just some action")
      * )
      */
-    #[Route("/default/view", methods: ["GET"])]
+    #[Route("/default/open-api", methods: ["GET"])]
     public function __invoke(): array
     {
-        return A::merge(
-            $this->getRequest()->attributes,
-            ['work' => 'done', 'random' => rand(1000, 10000)]
-        );
+        $openapi = \OpenApi\Generator::scan([
+            __DIR__ . '/../public',
+            __DIR__ . '/../Enso',
+            __DIR__ . '/../Application',
+        ]);
+
+        return json_decode($openapi->toJson(), true);
+        // @TODO: replace with unnecessary
+        // de/coding by Response creation
     }
 }

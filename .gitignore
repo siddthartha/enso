@@ -5,3 +5,4 @@ nginx/nginx-logs/*
 nbproject
 .idea
 *.sublime-*
+/.phpdoc/cache/

@@ -33,6 +33,8 @@ class TelegramAction extends ActionHandler
 
     public function __construct()
     {
+        parent::__construct();
+        
         $this->init();
     }
 
@@ -48,6 +50,16 @@ class TelegramAction extends ActionHandler
         return "{$this->telegramApiBaseUrl}/bot{$this->telegramBotId}:{$this->telegramBotApiKey}/";
     }
 
+
+    /**
+     * @OA\Schema(schema="GitlabEvent", required={"id"})
+     */
+    /**
+     * @OA\Post(
+     *     path="/default/telegram",
+     *     @OA\Response(response="200", description="An example resource")
+     * )
+     */
     /**
      * @return array
      * @throws GuzzleException
@@ -56,26 +68,27 @@ class TelegramAction extends ActionHandler
     public function __invoke(): array
     {
         $request = $this->getRequest();
+        $headers = $request->getHeaders();
 
-        $token = A::getValue($request->getHeaders(), 'X-Gitlab-Token', null);
-        $event = A::getValue($request->getHeaders(), 'X-Gitlab-Event', null);
+        $token = A::get($headers, 'X-Gitlab-Token', null);
+        $event = A::get($headers, 'X-Gitlab-Event', null);
 
-        if ($token != $this->telegramBotApiKey
-            || $event != "Push Hook"
-        ) {
-            throw new \BadMethodCallException();
-        }
+//        if ($token != $this->telegramBotApiKey
+//            || $event != "Push Hook"
+//        ) {
+//            throw new \BadMethodCallException();
+//        }
 
-        $body = json_decode($request->getPSR()->getBody()->getContents());
-        $commits = A::getValue($body, 'commits', null);
-
-        if (empty($commits))
-        {
-            return [];
-        }
-
-        foreach ($commits as $commit)
-        {
+//        $body = json_decode($request->getPSR()->getBody()->getContents());
+//        $commits = A::getValue($body, 'commits', null);
+//
+//        if (empty($commits))
+//        {
+//            return [];
+//        }
+//
+//        foreach ($commits as $commit)
+//        {
             $_response = $this->_client->post($this->getTelegramBotApiUrl() . 'sendMessage', [
                 'json' => [
                     'chat_id' => $this->recipientId,
@@ -84,7 +97,7 @@ class TelegramAction extends ActionHandler
 
                 ]
             ]);
-        }
+//        }
 
         return A::merge(
             $this->getRequest()->attributes,

@@ -61,6 +61,7 @@ $httpServer->on(
                         'view' => new \Enso\System\Target(\Application\ViewAction::class),
                         'index' => new \Enso\System\Target(\Application\IndexAction::class),
                         'telegram' => new \Enso\System\Target(\Application\TelegramAction::class),
+                        'open-api' => new \Enso\System\Target(\Application\OpenApiAction::class),
                     ],
                 ])
             )

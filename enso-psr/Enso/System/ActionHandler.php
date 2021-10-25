@@ -7,10 +7,11 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Enso;
+use Psr\Http\Message\ResponseInterface;
+use Enso\Relay\
+    {Request, Response, MiddlewareInterface};
 use Psr\Http\Message\RequestInterface;
-use Enso\Relay\Request;
-use Enso\Relay\Response;
-use Enso\Relay\MiddlewareInterface;
 
 /**
  * Description of ActionInterface
@@ -19,19 +20,35 @@ use Enso\Relay\MiddlewareInterface;
  */
 class ActionHandler implements MiddlewareInterface
 {
-    protected $_request;
+    protected object $_context;
+    protected Request $_request;
+
+    /**
+     * @param object|null $context
+     */
+    public function __construct(?object &$context = null)
+    {
+        if ($context instanceof Enso)
+        {
+            $this->_context = $context;
+        }
+    }
 
     /**
      *
-     * @param \Enso\Relay\Request $request
-     * @param callable $next
-     * @return \Enso\Relay\Response
+     * @param Request $request
+     * @param callable|null $next
+     * @return Response
      */
     public function handle(Request $request, callable $next = null): Response
     {
-        $this-> _request = $request;
+        $this->_request = $request;
 
-        return new Response(($this)());
+        $result = ($this) (); // invoke this object to "run" action
+
+        return $result instanceof ResponseInterface
+            ? $result
+            : new Response($result);
     }
 
     public function getRequest(): RequestInterface
