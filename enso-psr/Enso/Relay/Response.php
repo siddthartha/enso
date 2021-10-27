@@ -8,8 +8,10 @@
 namespace Enso\Relay;
 
 use Enso\Subject;
+use GuzzleHttp\Psr7\BufferStream;
 use Psr\Http\Message\ResponseInterface;
 use HttpSoft\Message\ResponseTrait;
+use Swoole\Http\Response as SwooleResponse;
 
 /**
  * Description of Response
@@ -35,6 +37,19 @@ class Response implements ResponseInterface
         $reasonPhrase = '';
 
         $this->init($statusCode, $reasonPhrase, $headers, $body, $protocol);
+    }
+
+    public static function toSwooleResponse(ResponseInterface $response, SwooleResponse $_response)
+    {
+        $body = (new BufferStream());
+        $body->write((string) $response);
+
+        $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
+        $_response->header('Content-type', 'application/json');
+        $_response->end(content: ($response->isError()
+            ? $response->getBody()->getContents()
+            : $body->getContents()
+        ));
     }
 
     public function isError(): bool

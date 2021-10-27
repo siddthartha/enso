@@ -4,6 +4,7 @@ namespace Enso;
 
 use Enso\Helpers\Runtime;
 use Enso\System\CliEmitter;
+use Enso\System\ExceptionHandler;
 use Enso\Relay\
     {MiddlewareInterface, Relay, Response, Request};
 use Enso\System\WebEmitter;
@@ -11,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use GuzzleHttp\Psr7\BufferStream;
 use Yiisoft\
-    {Config\Config, Di\Container, Http\Method, Http\Status};
+{Config\Config, Di\Container, Di\StateResetter, Http\Method, Http\Status};
 
 use function dirname;
 
@@ -90,7 +91,8 @@ class Enso
     /**
      *
      * @param Request|null $request
-     * @return Response
+     * @return ResponseInterface
+     * @throws \Exception
      */
     public function run(Request $request = null): ResponseInterface
     {
@@ -101,53 +103,16 @@ class Enso
                 ->handle($request)
                 ->withHeader('Access-Control-Allow-Origin', '*');
         }
-        catch (\Throwable $exc)
+        catch (\Throwable $exception)
         {
-            $body = (new BufferStream());
-            $body->write(
-                json_encode([
-                    'class' => $exc::class,
-                    'message' => $exc->getMessage(),
-                    'file' => $exc->getFile(),
-                    'line' => $exc->getLine(),
-                    'trace' => $exc->getTrace()
-                ])
-            );
-
-            /**
-             * @OA\Schema(
-             *     schema="ExceptionResponse",
-             *     required={"class", "message"},
-             *     @OA\Property(
-             *         property="class",
-             *         type="string",
-             *     ),
-             *     @OA\Property(
-             *         property="message",
-             *         type="string"
-             *     )
-             * )
-             */
-            $response = (new Response())
-                ->withStatus(Status::INTERNAL_SERVER_ERROR, $exc->getMessage())
-                ->withHeader('Access-Control-Allow-Origin', '*')
-                ->withHeader('Content-type', 'application/json')
-                ->withBody($body);
-
-            if (!Runtime::isInSwoole())
-            {
-                $this->getEmitter()->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
-
-                exit(-1);
-            }
-
-            return $response;
+            return (new ExceptionHandler($request, $this->getEmitter()))
+                ->handle($exception);
         }
     }
 
-    public function getEmitter()
+    public function getEmitter(): CliEmitter | WebEmitter
     {
-        if(Runtime::isCLI())
+        if (Runtime::isCLI())
         {
             return new CliEmitter();
         }

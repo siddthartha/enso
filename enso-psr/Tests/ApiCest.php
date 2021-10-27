@@ -1,7 +1,7 @@
 <?php
 class ApiCest
 {    
-    public function tryApi(ApiTester $I)
+    public function tryApiDefaultRoute(ApiTester $I)
     {
         $I->sendGet('/');
         $I->seeResponseCodeIs(200);

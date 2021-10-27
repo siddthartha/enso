@@ -8,6 +8,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use GuzzleHttp\Psr7\BufferStream;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Http\Status;
@@ -34,7 +35,7 @@ final class WebEmitter
         Status::NOT_MODIFIED,
     ];
 
-    private const DEFAULT_BUFFER_SIZE = 8_388_608; // 8MB
+    private const DEFAULT_BUFFER_SIZE = 65535; // 64Kb
 
     private int $bufferSize;
 
@@ -57,6 +58,17 @@ final class WebEmitter
      */
     public function emit(ResponseInterface $response, bool $withoutBody = false): void
     {
+        if ((int) $response->getBody()->getSize() == 0)
+        {
+            // then emit Enso\Response data instead of stream body
+            $body = (new BufferStream());
+
+            if ($body->write((string) $response))
+            {
+                $response = $response->withBody($body);
+            }
+        }
+
         $status = $response->getStatusCode();
         $withoutBody = $withoutBody || !$this->shouldOutputBody($response);
         $withoutContentLength = $withoutBody || $response->hasHeader('Transfer-Encoding');
@@ -98,7 +110,7 @@ final class WebEmitter
 
         if ($withoutBody)
         {
-            return ;
+            return;
         }
 
         if (!$withoutContentLength && !$response->hasHeader('Content-Length'))
@@ -106,8 +118,7 @@ final class WebEmitter
             if (
                 ($contentLength = $response->getBody()->getSize())
                 !== null
-            )
-            {
+            ) {
                 $this->sendHeader("Content-Length: {$contentLength}", true);
             }
         }
@@ -122,6 +133,7 @@ final class WebEmitter
         {
             $body->rewind();
         }
+
         while (!$body->eof())
         {
             echo $body->read($this->bufferSize);
@@ -135,21 +147,25 @@ final class WebEmitter
         {
             return false;
         }
+
         // Check if body is empty.
         $body = $response->getBody();
         if (!$body->isReadable())
         {
             return false;
         }
+
         $size = $body->getSize();
         if ($size !== null)
         {
             return $size > 0;
         }
+
         if ($body->isSeekable())
         {
             $body->rewind();
             $byte = $body->read(1);
+
             if ($byte === '' || $body->eof())
             {
                 return false;

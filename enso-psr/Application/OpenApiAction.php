@@ -1,5 +1,4 @@
-<?php
-declare(strict_types = 1);
+<?php declare(strict_types = 1);
 /**
  * Class Application\SomeAction
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
@@ -11,6 +10,10 @@ use Enso\Helpers\A;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\System\ActionHandler;
+use GuzzleHttp\Psr7\BufferStream;
+use HttpSoft\Message\Stream;
+use HttpSoft\Message\StreamFactory;
+use OpenApi\Generator;
 
 /**
  * Description of OpenApiAction
@@ -27,16 +30,19 @@ class OpenApiAction extends ActionHandler
      * )
      */
     #[Route("/default/open-api", methods: ["GET"])]
-    public function __invoke(): array
+    public function __invoke(): Response
     {
-        $openapi = \OpenApi\Generator::scan([
+        $openapi = Generator::scan([
             __DIR__ . '/../public',
             __DIR__ . '/../Enso',
             __DIR__ . '/../Application',
         ]);
 
-        return json_decode($openapi->toJson(), true);
-        // @TODO: replace with unnecessary
-        // de/coding by Response creation
+        // emit manually
+        $body = new BufferStream();
+        $body->write($openapi->toJson());
+
+        return (new Response())
+            ->withBody($body);
     }
 }

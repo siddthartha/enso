@@ -8,6 +8,8 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Relay\Response;
+use GuzzleHttp\Psr7\BufferStream;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Http\Status;
@@ -48,13 +50,30 @@ final class CliEmitter
      */
     public function emit(ResponseInterface $response, bool $terminateAfter = false): void
     {
-        $status = $response->getStatusCode();
+        if ((int) $response->getBody()->getSize() == 0 && $response instanceof Response)
+        {
+            // then emit Response data
+            $body = (new BufferStream());
 
-        $this->emitBody($response);
+            if ($body->write((string) $response))
+            {
+                $response = $response->withBody($body);
+            }
+        }
+
+        if (!Runtime::isDaemon())
+        {
+            $this->emitBody($response);
+        }
 
         if ($terminateAfter)
         {
-            exit ($status < 400 ? 0 : -1);
+            $status = $response->getStatusCode();
+
+            exit ($status < 400
+                ? Runtime::EXIT_SUCCESS
+                : Runtime::EXIT_FATAL
+            );
         }
     }
 

@@ -7,9 +7,11 @@ declare(strict_types = 1);
 
 namespace Application;
 
+use Enso\Helpers\Runtime;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\System\ActionHandler;
+use Swoole\Coroutine;
 
 /**
  * Description of IndexAction
@@ -42,7 +44,12 @@ class IndexAction extends ActionHandler
         return [
             'context' => [
                 'sapi' => PHP_SAPI,
-                'swoole' => function_exists('swoole_version') ? true : false,
+                'swoole' => Runtime::haveSwoole(),
+                'swooleInfo' => Runtime::haveSwoole()
+                    ? [
+                        'cid' => Coroutine::getCid(),
+                        'uid' => Coroutine::getuid(),
+                    ] : false,
             ],
         ];
     }

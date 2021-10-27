@@ -14,6 +14,9 @@ namespace Enso\Helpers;
  */
 final class Runtime
 {
+    public const EXIT_SUCCESS = 0;
+    public const EXIT_FATAL = -1;
+
     /**
      * PHP built-in server routing support
      *
@@ -58,7 +61,7 @@ final class Runtime
     }
 
     /**
-     * Are'nt we inside CLI call now?
+     * Aren't we inside a CLI call now?
      *
      * @return bool
      */
@@ -68,13 +71,29 @@ final class Runtime
     }
 
     /**
+     * Aren't we inside an FPM call now?
+     *
+     * @return bool
+     */
+    public static function isFPM(): bool
+    {
+        return PHP_SAPI === 'fpm-fcgi';
+    }
+
+    /**
      * Are'nt we inside Swoole now?
      * @TODO: improve
      *
      * @return bool
      */
-    public static function isInSwoole(): bool
+    public static function haveSwoole(): bool
     {
         return function_exists('swoole_version') && is_string(swoole_version());
+    }
+
+    public static function isDaemon(): bool
+    {
+        return Runtime::haveSwoole()
+            && \Swoole\Coroutine::getCid() !== -1;
     }
 }
