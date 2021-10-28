@@ -82,7 +82,7 @@ $runApplication = static function ($_request = null) use ($started_ts, $preloade
     }
 
     (Runtime::isCLI()
-        ? new CliEmitter()
+        ? new CliEmitter() // will not be emitted under swoole coroutine context!
         : new WebEmitter()
     )->emit(
         response: $response
@@ -94,7 +94,7 @@ $runApplication = static function ($_request = null) use ($started_ts, $preloade
 
     gc_collect_cycles();
 
-    return $response;
+    return $response; // then should be passed to swoole emitter
 };
 
 return $runApplication;

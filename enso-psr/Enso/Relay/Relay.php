@@ -27,7 +27,7 @@ class Relay extends RequestHandler
     {
         reset($this->_queue);
 
-        $runner = new Runner($this->_queue);
+        $runner = new Runner($this->_queue, $this->_resolver);
 
         return $runner->handle($request);
     }

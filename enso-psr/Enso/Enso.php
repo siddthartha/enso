@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use GuzzleHttp\Psr7\BufferStream;
 use Yiisoft\
-{Config\Config, Di\Container, Di\StateResetter, Http\Method, Http\Status};
+{Config\Config, Config\ConfigPaths, Di\Container, Di\StateResetter, Http\Method, Http\Status};
 
 use function dirname;
 
@@ -41,15 +41,13 @@ class Enso
     public function __construct()
     {
         $this->_config = new Config(
-            dirname(__DIR__),
-            configsPath: '/config/packages',
+            paths: new ConfigPaths(
+                rootPath: dirname(__DIR__),
+                configDirectory: './config',
+                vendorDirectory: './vendor',
+            ),
             environment: null,
-            recursiveMergeGroups: [
-                'params',
-                'events',
-                'events-web',
-                'events-console',
-            ]
+            paramsGroup: 'params',
         );
 
         $this->_container = new Container(

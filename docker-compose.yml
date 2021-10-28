@@ -1,27 +1,37 @@
-version: "3"
+version: "3.3"
 
 services:
-#  db:
-#    image: mariadb:latest
-#    restart: always
-#    volumes:
-#      - ./.db_data:/var/lib/mysql/
-#      - ./.dumps:/docker-entrypoint-initdb.d
-#    ports:
-#      - "3306:3306"
-#    environment:
-#      - MYSQL_USER=enso
-#      - MYSQL_PASSWORD=1458d010ac35
-#      - MYSQL_DATABASE=enso
-#      - MYSQL_ROOT_PASSWORD=1458d010ac35
-#
+  db:
+    image: mariadb:latest
+    restart: always
+    volumes:
+      - ./.db-data:/var/lib/mysql/
+      - ./.dumps:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=enso
+      - MYSQL_PASSWORD=145c35
+      - MYSQL_DATABASE=enso
+      - MYSQL_ROOT_PASSWORD=1458d010ac35
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./.redis-data:/data
+
   php:
     build:
       context: ./php
       dockerfile: Dockerfile
+    user: "1000:33"
     container_name: php
     working_dir: /var/www/html
-#    restart: unless-stopped
+    restart: unless-stopped
     env_file:
       - ./.env
     volumes:
@@ -42,9 +52,10 @@ services:
     build:
       context: ./php
       dockerfile: Dockerfile.cli
+    user: "1000:33"
     container_name: php-sw
     working_dir: /var/www/html
-#    restart: unless-stopped
+    restart: unless-stopped
     env_file:
       - ./.env
     volumes:
@@ -68,7 +79,7 @@ services:
   open-api:
     image: swaggerapi/swagger-ui:latest
     container_name: open-api
-#    restart: unless-stopped
+    restart: unless-stopped
     environment:
       - SWAGGER_JSON=/app/openapi.json
     volumes:

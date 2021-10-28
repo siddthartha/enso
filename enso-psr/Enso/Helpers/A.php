@@ -14,8 +14,9 @@ use Yiisoft\Arrays\ArrayHelper;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class A extends ArrayHelper
+class A
 {
+
 
     /**
      *
@@ -33,7 +34,11 @@ class A extends ArrayHelper
 
     public static function get(array &$array, array|Closure|float|int|string $path, $default = null): mixed
     {
-        return parent::getValue($array, $path, $default);
+        return ArrayHelper::getValue($array, $path, $default);
     }
 
+    public static function __callStatic(string $name, array $arguments)
+    {
+        return forward_static_call([ArrayHelper::class, $name], ...$arguments);
+    }
 }

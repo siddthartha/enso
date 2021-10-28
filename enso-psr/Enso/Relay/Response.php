@@ -41,15 +41,20 @@ class Response implements ResponseInterface
 
     public static function toSwooleResponse(ResponseInterface $response, SwooleResponse $_response)
     {
-        $body = (new BufferStream());
-        $body->write((string) $response);
+        if ((int) $response->getBody()->getSize() == 0 && $response instanceof Response)
+        {
+            // then emit Response data
+            $body = (new BufferStream());
+
+            if ($body->write((string) $response))
+            {
+                $response = $response->withBody($body);
+            }
+        }
 
         $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
         $_response->header('Content-type', 'application/json');
-        $_response->end(content: ($response->isError()
-            ? $response->getBody()->getContents()
-            : $body->getContents()
-        ));
+        $_response->end(content: $response->getBody()->getContents());
     }
 
     public function isError(): bool

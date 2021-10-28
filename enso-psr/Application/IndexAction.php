@@ -11,7 +11,9 @@ use Enso\Helpers\Runtime;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\System\ActionHandler;
+use Predis\Client;
 use Swoole\Coroutine;
+use \Redis;
 
 /**
  * Description of IndexAction
@@ -41,15 +43,25 @@ class IndexAction extends ActionHandler
     #[Route("/default/index", methods: ["GET"])]
     public function __invoke(): array
     {
+        $redis = new Client([
+            'scheme' => 'tcp',
+            'host'   => 'redis',
+            'port'   => 6379,
+        ]);
+
+        $redisStatus = $redis->ping('hello');
+
         return [
             'context' => [
                 'sapi' => PHP_SAPI,
                 'swoole' => Runtime::haveSwoole(),
-                'swooleInfo' => Runtime::haveSwoole()
+                'swooleContext' => Runtime::haveSwoole()
                     ? [
                         'cid' => Coroutine::getCid(),
                         'uid' => Coroutine::getuid(),
-                    ] : false,
+                    ]
+                    : false,
+                'redis' => $redisStatus,
             ],
         ];
     }

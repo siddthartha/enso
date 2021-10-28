@@ -15,6 +15,8 @@ RUN apt-get update && apt-get upgrade -y \
 #    && docker-php-ext-enable ev \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
+    && pecl install redis-stable \
+    && docker-php-ext-enable redis \
     && docker-php-source delete \
     && apt-get autoremove --purge -y && apt-get autoclean -y && apt-get clean -y \
     && sh /install-composer.sh \
