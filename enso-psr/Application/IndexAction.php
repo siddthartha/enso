@@ -13,7 +13,6 @@ use Enso\Relay\Response;
 use Enso\System\ActionHandler;
 use Predis\Client;
 use Swoole\Coroutine;
-use \Redis;
 
 /**
  * Description of IndexAction
@@ -58,9 +57,8 @@ class IndexAction extends ActionHandler
                 'swooleContext' => Runtime::haveSwoole()
                     ? [
                         'cid' => Coroutine::getCid(),
-                        'uid' => Coroutine::getuid(),
-                    ]
-                    : false,
+                    ] : false,
+                'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
             ],
         ];

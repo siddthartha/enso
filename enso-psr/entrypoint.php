@@ -28,20 +28,29 @@ require_once __DIR__ . '/preload.php';
 
 $preloaded_ts = microtime(as_float: true);
 
-/** @var Closure $runApplication */
-$runApplication = static function ($_request = null) use ($started_ts, $preloaded_ts) {
+$runApplication = static function ($_request = null) use ($started_ts, $preloaded_ts)
+{
     /**
      * Enso application lifecycle entrypoint
      */
     $app = (static fn() => new Application()) /* run closure fabric */ (); // we should be re-enterable
 
-    $request = $_request instanceof SwooleRequest
-        ? WebRequest::fromSwooleRequest($_request)
-        : (
-        Runtime::isCLI()
+    if ($_request instanceof SwooleRequest)
+    {
+        $request = WebRequest::fromSwooleRequest($_request);
+
+    }
+    elseif ($_request instanceof \Psr\Http\Message\RequestInterface)
+    {
+        $request = (new WebRequest([], $_request));
+    }
+    elseif ($_request == null)
+    {
+        $request = (Runtime::isCLI()
             ? new CliRequest()
             : WebRequest::fromGlobals()
         );
+    }
 
     $response = $app
         ->addLayer(
@@ -69,7 +78,8 @@ $runApplication = static function ($_request = null) use ($started_ts, $preloade
                     'view' => new Target(ViewAction::class),
                     'index' => new Target(IndexAction::class),
                     'telegram' => new Target(TelegramAction::class),
-                    'open-api' => new Target(OpenApiAction::class),
+                    'open-api' => new Target(OpenApiAction::class, ['POST']),
+                    'open-api-alias' => 'default/open-api',
                 ],
             ])
         )

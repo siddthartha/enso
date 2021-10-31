@@ -8,7 +8,8 @@ declare(strict_types = 1);
 namespace Enso\System;
 
 use Enso\Relay\
-    {MiddlewareInterface, Request, Response};
+{MiddlewareInterface, Request, Response
+};
 use Enso\Helpers\A;
 
 /**
@@ -33,27 +34,55 @@ class Router implements MiddlewareInterface
      */
     public function handle(Request $request, mixed $next = null): Response
     {
-        $entry = false;
-        $routesList = $this->_routes;
+        $targetRoute = $request->getRoute();
+        $routesTree = $this->getRoutes();
 
-        foreach ($request->getRoute() as $pathEntry)
+        $action = $this->resolve($targetRoute, $routesTree);
+
+        return $action->handle($request);
+    }
+
+    protected function resolve(array $path, array $routesTree): ActionHandler
+    {
+        reset($path);
+
+        while ($pathEntry = current($path))
         {
-            $entry = A::get($routesList, $pathEntry, null);
-            $routesList = A::get($routesList, $pathEntry, null);
+            $entry = A::get($routesTree, $pathEntry, null);
+            $routesTree = A::get($routesTree, $pathEntry, null);
 
-            if (!$routesList)
+            if (!$routesTree)
             {
                 throw new \BadMethodCallException("No route found.");
             }
-        }
 
-        if ($entry instanceof Target)
-        {
-            $action = $entry->getInstance();
+            if ($entry instanceof Target)
+            {
+                $action = $entry->getInstance();
 
-            return $action->handle($request);
+                return $action;
+            }
+
+            if (is_string($entry))
+            {
+                $routesTree = $this->getRoutes();
+                $path = explode('/', trim($entry, '\n\r\t\0\x0B /'));
+                reset($path);
+
+                return $this->resolve($path, $routesTree);
+            };
+
+            next($path);
         }
 
         throw new \BadMethodCallException("No route found.");
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoutes(): array
+    {
+        return $this->_routes;
     }
 }

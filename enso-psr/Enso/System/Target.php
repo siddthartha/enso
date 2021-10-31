@@ -16,16 +16,21 @@ use function class_exists;
  */
 class Target
 {
-    protected $_className;
+    protected string $_className;
+
+    protected string | array $_methods;
 
     /**
      *
      * @param string $className
-     * @throws \BadFunctionCallException
+     * @param string|array $methods
      */
-    public function __construct(string $className)
+    public function __construct(string $className, string|array $methods = [])
     {
         $this->_className = $className;
+        $this->_methods = is_array($methods)
+            ? $methods
+            : [$methods];
 
         if (!class_exists($className, true))
         {
@@ -43,4 +48,13 @@ class Target
 
         return new $className();
     }
+
+    /**
+     * @return array
+     */
+    public function getMethods(): array
+    {
+        return $this->_methods;
+    }
+
 }

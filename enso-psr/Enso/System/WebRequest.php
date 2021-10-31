@@ -28,9 +28,10 @@ class WebRequest extends Request
 {
     private ?ServerRequestInterface $_requestOrigin = null;
 
-    public function __construct(array $data = [])
+    public function __construct(array $data = [], ?ServerRequestInterface $psr = null)
     {
         parent::__construct($data);
+        $this->_requestOrigin = $psr;
     }
 
     /**

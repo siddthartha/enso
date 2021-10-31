@@ -93,7 +93,12 @@ final class Runtime
 
     public static function isDaemon(): bool
     {
-        return Runtime::haveSwoole()
-            && \Swoole\Coroutine::getCid() !== -1;
+        return (Runtime::haveSwoole() && \Swoole\Coroutine::getCid() !== -1)
+            || Runtime::isGoridge();
+    }
+
+    public static function isGoridge(): bool
+    {
+        return isset($_ENV['RR_MODE']);
     }
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php declare(strict_types = 1);
 
 use Swoole\Http\
@@ -7,9 +8,14 @@ use Enso\Relay\
 
 $run = require_once './entrypoint.php';
 
-$httpServer = new Server(host: '0.0.0.0', port: 9999);
+$httpServer = new Server(
+    host: '0.0.0.0',
+    port: 9999
+);
 
-$httpServer->set(['log_level' => 2]);
+$httpServer->set([
+    'log_level' => 2
+]);
 
 $httpServer->on(
     event_name: 'request',

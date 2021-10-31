@@ -20,10 +20,11 @@
         "yiisoft/aliases": "^2.0",
         "yiisoft/http": "^1.1",
         "httpsoft/http-message": "^1.0",
-      "ext-posix": "*",
+        "ext-posix": "*",
         "zircote/swagger-php": "^3.2",
         "symfony/process": "^5.3",
-        "predis/predis": "^1.1"
+        "predis/predis": "^1.1",
+        "spiral/roadrunner": "v2.5"
     },
     "autoload": {
         "psr-4": {

@@ -8,11 +8,19 @@ use Enso\System\ExceptionHandler;
 use Enso\Relay\
     {MiddlewareInterface, Relay, Response, Request};
 use Enso\System\WebEmitter;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use GuzzleHttp\Psr7\BufferStream;
 use Yiisoft\
-{Config\Config, Config\ConfigPaths, Di\Container, Di\StateResetter, Http\Method, Http\Status};
+{Cache\Cache,
+    Cache\CacheInterface,
+    Config\Config,
+    Config\ConfigPaths,
+    Di\Container,
+    Di\StateResetter,
+    Http\Method,
+    Http\Status
+};
 
 use function dirname;
 
@@ -27,11 +35,13 @@ class Enso
 
     private Config $_config;
 
-    private Container $_container;
+    private ContainerInterface $_container;
 
     private LoggerInterface $_logger;
 
     private Relay $_relay;
+
+    private CacheInterface $_cache;
 
     /**
      *
@@ -55,6 +65,8 @@ class Enso
         );
 
         $this->_logger = $this->_container->get(LoggerInterface::class);
+
+        $this->_cache = $this->_container->get(CacheInterface::class);
 
         $this->_relay = new Relay([
             function (Request $request, callable $next): Response
@@ -121,9 +133,9 @@ class Enso
     }
 
     /**
-     * @return Container
+     * @return ContainerInterface
      */
-    public function getContainer(): Container
+    public function getContainer(): ContainerInterface
     {
         return $this->_container;
     }
@@ -150,5 +162,13 @@ class Enso
     public function getConfig(): Config
     {
         return $this->_config;
+    }
+
+    /**
+     * @return CacheInterface
+     */
+    public function getCache(): CacheInterface
+    {
+        return $this->_cache;
     }
 }
