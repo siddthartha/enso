@@ -4,7 +4,7 @@ The main goal is to get some template for making fast and tiny REST *or* Asynchr
 * complete set of environments configured with docker-compose
 * optionally runs inside single immutable docker containers
 * with both of Swoole / RoadRunner for multi-threading longliving processes
-* with Redis for queues
+* with Redis for queues and sessions
 * with WebSockets for web / mobile clients
 * puts logs, sessions and uploaded files into network / cloud storages only
 * using strict [PSR-compatible](https://www.php-fig.org/psr/) components (as widely as possible)
@@ -19,6 +19,7 @@ On application layer project runs with:
 * WebSockets support
 * Xdebug 3
 * ELK for collecting logs
+* LetsEncrypt SSL auto refreshing
 
 Framework's code should use:
 * Yiisoft components:
@@ -38,7 +39,37 @@ Framework's code should use:
 
 ```docker-compose up -d --build```
 
+```
+enso_db_1   docker-entrypoint.sh mysqld      Up      0.0.0.0:3306->3306/tcp,:::3306->3306/tcp                          
+nginx       nginx -g daemon off;             Up      0.0.0.0:80->80/tcp,:::80->80/tcp, 0.0.0.0:81->81/tcp,:::81->81/tcp
+open-api    /docker-entrypoint.sh sh / ...   Up      80/tcp, 0.0.0.0:8080->8080/tcp,:::8080->8080/tcp                  
+php         docker-php-entrypoint bash ...   Up      0.0.0.0:8181->8181/tcp,:::8181->8181/tcp, 9000/tcp                
+php-sw      /entrypoint.sh bash -c com ...   Up      9999/tcp                                                          
+redis       docker-entrypoint.sh redis ...   Up      6379/tcp                                                          
+```
+
+### Endpoints enabled by default: ###
+If `ENSO_HOSTNAME` is set to `enso.localhost`. 
+
+* Default Nginx + FPM access 
+  - ```http://enso.localhost:80/(index|open-api)```
+* Swoole HTTP Server 
+  - ```http://enso.localhost:81/(index|open-api)```
+* RoadRunner HTTP Server
+  - ```http://enso.localhost:8181/(index|open-api)```
+
+Development features:
+
+* Swagger UI
+  - ```http://enso.localhost:8080/```
+* Codeception coverage and test report:
+  - ```http://enso.localhost:(80|81|8181)/_status/report.html```
+  - ```http://enso.localhost:(80|81|8181)/_status/coverage/``` 
+* PhpDoc documentation:
+  - ```http://enso.localhost:(80|81|8181)/docs```
+
 ### How do I run tests? ###
 
 ```docker-compose exec php vendor/bin/codecept```
 
+```docker-compose exec php-sw vendor/bin/codecept```

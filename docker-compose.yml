@@ -11,9 +11,9 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_USER=enso
-      - MYSQL_PASSWORD=145c35
+      - MYSQL_PASSWORD=b66772bc
       - MYSQL_DATABASE=enso
-      - MYSQL_ROOT_PASSWORD=1458d010ac35
+      - MYSQL_ROOT_PASSWORD=b66772bc
 
   redis:
     image: redis:latest
