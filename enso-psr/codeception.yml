@@ -16,6 +16,14 @@ suites:
               - REST:
                   url: http://nginx:81
                   depends: PhpBrowser
+    api-rr:
+      actor: ApiTester
+      path: .
+      modules:
+        enabled:
+          - REST:
+              url: http://nginx:82
+              depends: PhpBrowser
 
 paths:
     tests: Tests

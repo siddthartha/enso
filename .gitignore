@@ -1,8 +1,9 @@
 !.env
 .composer-cache/
-enso-psr/vendor/
 nginx/nginx-logs/*
 nbproject
 .idea
 *.sublime-*
-/.phpdoc/cache/
+.phpdoc
+.db-data
+.redis-data

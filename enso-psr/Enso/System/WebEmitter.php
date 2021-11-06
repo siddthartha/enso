@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
-use GuzzleHttp\Psr7\BufferStream;
+use Enso\Relay\Response;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Http\Status;
@@ -58,15 +58,9 @@ final class WebEmitter
      */
     public function emit(ResponseInterface $response, bool $withoutBody = false): void
     {
-        if ((int) $response->getBody()->getSize() == 0)
+        if ($response instanceof Response)
         {
-            // then emit Enso\Response data instead of stream body
-            $body = (new BufferStream());
-
-            if ($body->write((string) $response))
-            {
-                $response = $response->withBody($body);
-            }
+            $response = $response->collapse();
         }
 
         $status = $response->getStatusCode();

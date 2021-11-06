@@ -9,6 +9,8 @@ use Enso\Helpers\Internal;
  * Класс Subject
  *
  * @author Anton Sadovnikov <sadovnikoff@gmail.com>
+ *
+ * @property array $attributes
  */
 trait Subject
 {

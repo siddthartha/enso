@@ -5,7 +5,7 @@ server:
   command: "./enso-rr"
 
 http:
-  address: "0.0.0.0:8181"
+  address: ":9666"
 
 logs:
   level: error

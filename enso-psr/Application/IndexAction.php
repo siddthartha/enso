@@ -57,7 +57,8 @@ class IndexAction extends ActionHandler
                 'swooleContext' => Runtime::haveSwoole()
                     ? [
                         'cid' => Coroutine::getCid(),
-                    ] : false,
+                    ]
+                    : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
             ],

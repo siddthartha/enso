@@ -12,6 +12,7 @@ use Enso\System\
     {CliEmitter, CliRequest, WebRequest, WebEmitter, Router, Target};
 use Application\
     {OpenApiAction, ViewAction, IndexAction, TelegramAction};
+use Psr\Http\Message\RequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Yiisoft\Di\StateResetter;
 
@@ -28,23 +29,23 @@ require_once __DIR__ . '/preload.php';
 
 $preloaded_ts = microtime(as_float: true);
 
-$runApplication = static function ($_request = null) use ($started_ts, $preloaded_ts)
+$applicationRunner = static function ($_injectedRequest = null) use ($started_ts, $preloaded_ts)
 {
     /**
      * Enso application lifecycle entrypoint
      */
     $app = (static fn() => new Application()) /* run closure fabric */ (); // we should be re-enterable
 
-    if ($_request instanceof SwooleRequest)
+    if ($_injectedRequest instanceof SwooleRequest)
     {
-        $request = WebRequest::fromSwooleRequest($_request);
+        $request = WebRequest::fromSwooleRequest($_injectedRequest);
 
     }
-    elseif ($_request instanceof \Psr\Http\Message\RequestInterface)
+    elseif ($_injectedRequest instanceof RequestInterface)
     {
-        $request = (new WebRequest([], $_request));
+        $request = (new WebRequest(data: [], psr: $_injectedRequest));
     }
-    elseif ($_request == null)
+    else /* if ($_injectedRequest == null) */
     {
         $request = (Runtime::isCLI()
             ? new CliRequest()
@@ -52,15 +53,17 @@ $runApplication = static function ($_request = null) use ($started_ts, $preloade
         );
     }
 
+
+    /** @var Response $response */
     $response = $app
         ->addLayer(
-        /**
-         * Add headers
-         *
-         * @param Request $request
-         * @param callable $next
-         * @return Response
-         */
+            /**
+             * Add headers
+             *
+             * @param Request $request
+             * @param callable $next
+             * @return Response
+             */
             middleware: function (Request $request, callable $next): Response
             {
                 /** @var MiddlewareInterface $next */
@@ -107,5 +110,5 @@ $runApplication = static function ($_request = null) use ($started_ts, $preloade
     return $response; // then should be passed to swoole emitter
 };
 
-return $runApplication;
+return $applicationRunner;
 

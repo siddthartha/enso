@@ -19,6 +19,16 @@ nbproject
 
 # Codeception
 c3.php
+# Codeception reports
 Tests/_output
 
-docs
+# generated autodocs
+.phpdoc
+docs/*
+
+# Enso and Yii runtimes
+config/.merge-plan.php
+runtime/*
+
+# RoadRunner binary
+rr

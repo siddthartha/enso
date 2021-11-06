@@ -44,21 +44,14 @@ final class CliEmitter
     /**
      * Respond to the client with raw data to stdout (cli mode)
      *
-     * @param ResponseInterface $response Response object to send.
-     *
-     * @throws \Exception
+     * @param ResponseInterface $response
+     * @param bool $terminateAfter
      */
     public function emit(ResponseInterface $response, bool $terminateAfter = false): void
     {
-        if ((int) $response->getBody()->getSize() == 0 && $response instanceof Response)
+        if ($response instanceof Response)
         {
-            // then emit Response data
-            $body = (new BufferStream());
-
-            if ($body->write((string) $response))
-            {
-                $response = $response->withBody($body);
-            }
+            $response = $response->collapse();
         }
 
         if (!Runtime::isDaemon())

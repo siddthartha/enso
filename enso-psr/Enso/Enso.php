@@ -11,8 +11,8 @@ use Enso\System\WebEmitter;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use Yiisoft\
-{Cache\Cache,
+use Yiisoft\{
+    Cache\Cache,
     Cache\CacheInterface,
     Config\Config,
     Config\ConfigPaths,
@@ -78,6 +78,7 @@ class Enso
 
                 $response->before = $request->before;
                 $response->after = microtime(true);
+
                 return $response;
             },
         ]);
@@ -104,7 +105,7 @@ class Enso
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function run(Request $request = null): ResponseInterface
+    public function run(?Request $request = null): ResponseInterface
     {
         try
         {

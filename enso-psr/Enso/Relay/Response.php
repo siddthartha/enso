@@ -9,6 +9,7 @@ namespace Enso\Relay;
 
 use Enso\Subject;
 use GuzzleHttp\Psr7\BufferStream;
+use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\ResponseInterface;
 use HttpSoft\Message\ResponseTrait;
 use Swoole\Http\Response as SwooleResponse;
@@ -17,6 +18,11 @@ use Swoole\Http\Response as SwooleResponse;
  * Description of Response
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
+ *
+ * @property float $before  microtime
+ * @property float $after   microtime
+ * @property string $preloadDuration    in ms
+ * @property string $taskDuration       in ms
  */
 class Response implements ResponseInterface
 {
@@ -41,22 +47,40 @@ class Response implements ResponseInterface
 
     public static function toSwooleResponse(ResponseInterface $response, SwooleResponse $_response)
     {
-        if ((int) $response->getBody()->getSize() == 0 && $response instanceof Response)
+        if ($response instanceof Response)
         {
-            // then emit Response data
-            $body = (new BufferStream());
-
-            if ($body->write((string) $response))
-            {
-                $response = $response->withBody($body);
-            }
+            $response = $response->collapse();
         }
 
         $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
         $_response->header('Content-type', 'application/json');
+
+        // SW emitting
         $_response->end(content: $response->getBody()->getContents());
     }
 
+    /**
+     * Apply Enso response data to PSR serialized body stream
+     *
+     * @return ResponseInterface
+     */
+    public function collapse(): ResponseInterface
+    {
+        if ((int) $this->getBody()->getSize() == 0)
+        {
+            // then serialize Response data from `$this->__attributes`
+            $body = (new BufferStream());  // todo: find a place for this logic
+
+            if ($body->write((string) $this))
+            {
+                return $this->withBody($body);
+            }
+        }
+
+        return $this;
+    }
+
+    #[Pure]
     public function isError(): bool
     {
         return ($this->getStatusCode() >= 400);

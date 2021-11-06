@@ -81,7 +81,7 @@ final class Runtime
     }
 
     /**
-     * Are'nt we inside Swoole now?
+     * Aren't we inside Swoole now?
      * @TODO: improve
      *
      * @return bool
