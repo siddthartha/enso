@@ -10,7 +10,7 @@ namespace Enso\System;
 use Enso\Enso;
 use Psr\Http\Message\ResponseInterface;
 use Enso\Relay\
-    {Request, Response, MiddlewareInterface};
+    {Response, MiddlewareInterface};
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -21,7 +21,7 @@ use Psr\Http\Message\RequestInterface;
 class ActionHandler implements MiddlewareInterface
 {
     protected object $_context;
-    protected Request $_request;
+    protected RequestInterface $_request;
 
     /**
      * @param object|null $context
@@ -30,17 +30,17 @@ class ActionHandler implements MiddlewareInterface
     {
         if ($context instanceof Enso)
         {
-            $this->_context = $context;
+            $this->_context = &$context;
         }
     }
 
     /**
      *
-     * @param Request $request
+     * @param RequestInterface $request
      * @param callable|null $next
      * @return Response
      */
-    public function handle(Request $request, callable $next = null): ResponseInterface
+    public function handle(RequestInterface $request, callable $next = null): ResponseInterface
     {
         $this->_request = $request;
 
@@ -57,7 +57,7 @@ class ActionHandler implements MiddlewareInterface
     }
 
     /**
-     *
+     * Single Action use
      */
     public function __invoke()
     {

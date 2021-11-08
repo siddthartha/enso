@@ -8,15 +8,16 @@ declare(strict_types = 1);
 namespace Enso\System;
 
 use Enso\Relay\Request;
+use Enso\Relay\RequestInterface;
 use HttpSoft\Message\RequestTrait;
 use HttpSoft\Message\StreamFactory;
 use HttpSoft\Message\Uri;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface as PSRRequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Yiisoft\Http\Method;
 use GuzzleHttp\Psr7\
-    {BufferStream, CachingStream, LazyOpenStream, ServerRequest};
+    {CachingStream, LazyOpenStream, ServerRequest};
 
 use mb_ereg_replace;
 use count;
@@ -39,11 +40,14 @@ class WebRequest extends Request
 {
     use RequestTrait;
 
+    private mixed $payload;
+    private mixed $target;
+
     public function __construct(array $data = [], ?ServerRequestInterface $psr = null)
     {
         parent::__construct($data);
 
-        if ($psr instanceof RequestInterface)
+        if ($psr instanceof PSRRequestInterface)
         {
             $this->init($psr->getMethod(),
                 uri: $psr->getUri(),
@@ -154,5 +158,38 @@ class WebRequest extends Request
         return count($uriTarget) == 0 || (count($uriTarget) == 1 && $uriTarget[0] == '')
             ? parent::getRoute()
             : $uriTarget;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPayload(): mixed
+    {
+        return $this->payload;
+    }
+
+    public function withPayload($payload): RequestInterface
+    {
+        $new = clone $this;
+        $new->payload = $payload;
+
+        return $new;
+    }
+
+    public function withTarget($target): RequestInterface
+    {
+        $new = clone $this;
+        $new->target = $target;
+
+        return $new;
+
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTarget(): mixed
+    {
+        return $this->target;
     }
 }

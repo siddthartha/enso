@@ -10,7 +10,7 @@ namespace Enso\Relay;
 use Enso\Subject;
 use HttpSoft\Message\Stream;
 use HttpSoft\Message\Uri;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface as PSRRequestInterface;
 use HttpSoft\Message\RequestTrait;
 
 /**
@@ -19,7 +19,7 @@ use HttpSoft\Message\RequestTrait;
  * @property mixed $before
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-abstract class Request implements RequestInterface
+abstract class Request implements RequestInterface, PSRRequestInterface
 {
     use RequestTrait;
 
@@ -36,10 +36,19 @@ abstract class Request implements RequestInterface
             body: new Stream(),
             uri: new Uri(),
         );
+
     }
 
     public function getRoute(): array
     {
         return ['default', 'index'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getTarget(): mixed
+    {
+        return $this->getRoute();
     }
 }

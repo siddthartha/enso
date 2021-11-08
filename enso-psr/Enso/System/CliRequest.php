@@ -7,8 +7,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
-use HttpSoft\Message\Request;
-use Psr\Http\Message\RequestInterface;
+use Enso\Relay\RequestInterface;
 
 /**
  * Description of CliRequest
@@ -17,6 +16,9 @@ use Psr\Http\Message\RequestInterface;
  */
 class CliRequest extends \Enso\Relay\Request
 {
+    private mixed $payload;
+    private mixed $target;
+
     private array $_arguments;
 
     public function __construct(array $data = [])
@@ -37,11 +39,41 @@ class CliRequest extends \Enso\Relay\Request
             : parent::getRoute();
     }
 
+    public function getPayload(): mixed
+    {
+        return $this->payload;
+    }
+
+    public function withPayload($payload): RequestInterface
+    {
+        $new = clone $this;
+        $new->payload = $payload;
+
+        return $new;
+    }
+
+    public function withTarget($target): RequestInterface
+    {
+        $new = clone $this;
+        $new->target = $target;
+
+        return $new;
+
+    }
+
     /**
      * @return array
      */
     public function getArguments(): array
     {
         return $this->_arguments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTarget(): mixed
+    {
+        return $this->target;
     }
 }

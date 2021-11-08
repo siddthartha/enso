@@ -8,6 +8,7 @@ declare(strict_types = 1);
 namespace Enso\Relay;
 
 use Closure;
+use Psr\Http\Message\RequestInterface as PSRRequestInterface;
 use Psr\Http\Message\ResponseInterface as PSRResponseInterface;
 
 /**
@@ -58,11 +59,11 @@ class Runner
 
     /**
      *
-     * @param Request $request
+     * @param PSRRequestInterface $request
      * @return Response
      * @throws \Exception
      */
-    public function handle(Request $request): PSRResponseInterface
+    public function handle(PSRRequestInterface $request): PSRResponseInterface
     {
         $entry = current($this->queue);
         $middleware = call_user_func($this->_resolver, $entry);
