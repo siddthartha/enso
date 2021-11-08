@@ -75,9 +75,11 @@ class Enso
 
                 /** @var MiddlewareInterface $next */
                 $response = $next->handle($request);
-
-                $response->before = $request->before;
-                $response->after = microtime(true);
+                if ($response instanceof Response)
+                {
+                    $response->before = $request->before;
+                    $response->after = microtime(true);
+                }
 
                 return $response;
             },
@@ -103,7 +105,6 @@ class Enso
      *
      * @param Request|null $request
      * @return ResponseInterface
-     * @throws \Exception
      */
     public function run(?Request $request = null): ResponseInterface
     {

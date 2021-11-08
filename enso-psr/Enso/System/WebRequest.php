@@ -8,7 +8,9 @@ declare(strict_types = 1);
 namespace Enso\System;
 
 use Enso\Relay\Request;
+use HttpSoft\Message\RequestTrait;
 use HttpSoft\Message\Uri;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Http\Method;
 use GuzzleHttp\Psr7\
@@ -26,11 +28,21 @@ use explode;
  */
 class WebRequest extends Request
 {
+    use RequestTrait;
+
     private ?ServerRequestInterface $_requestOrigin = null;
 
     public function __construct(array $data = [], ?ServerRequestInterface $psr = null)
     {
         parent::__construct($data);
+
+        if ($psr instanceof RequestInterface)
+        {
+            $this->uri = $psr->getUri();
+            $this->method = $psr->getMethod();
+            $this->stream = $psr->getBody();
+        }
+
         $this->_requestOrigin = $psr;
     }
 
@@ -40,11 +52,12 @@ class WebRequest extends Request
      */
     public static function fromGlobals(): Request
     {
-        $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET;
+        $request = new static();
+        $request->method = $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET;
 
         $headers = getallheaders();
 
-        $uri = ServerRequest::getUriFromGlobals();
+        $request->uri = $uri = ServerRequest::getUriFromGlobals();
 
         $body = new CachingStream(
             new LazyOpenStream('php://input', 'r+')
@@ -54,7 +67,6 @@ class WebRequest extends Request
             ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL'])
             : '1.1';
 
-        $request = new static();
 
         $request->_requestOrigin =
             (new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER))
@@ -68,18 +80,18 @@ class WebRequest extends Request
 
     public static function fromSwooleRequest(\Swoole\Http\Request $swooleRequest): Request
     {
-        $method = $swooleRequest->getMethod();
+        $request = new static();
+
+        $request->method = $method = $swooleRequest->getMethod();
 
         $headers = $swooleRequest->header;
 
-        $uri = new Uri($swooleRequest->server['request_uri']);
+        $request->uri = $uri = new Uri($swooleRequest->server['request_uri']);
 
-        $body = (new BufferStream());
+        $request->stream = $body = (new BufferStream());
         $body->write((string) $swooleRequest->rawContent());
 
         $protocol = '1.1'; // @TODO: protocol detection
-
-        $request = new static();
 
         $request->_requestOrigin =
             (new ServerRequest($method, $uri, $headers ?? [], $body, $protocol, $_SERVER))
@@ -93,17 +105,6 @@ class WebRequest extends Request
         return $request;
     }
 
-
-    /**
-     *
-     * @return ServerRequestInterface
-     */
-    public function getPSR(): ServerRequestInterface
-    {
-        return $this->_requestOrigin
-            ?? ($this->_requestOrigin = new ServerRequest(Method::GET, ""));
-    }
-
     /**
      *
      * @return array
@@ -115,7 +116,7 @@ class WebRequest extends Request
         $uriTarget = explode(
             '/',
             trim(
-                mb_ereg_replace("^($phpSelfPath)", '', $this->getPSR()->getUri()->getPath()),
+                mb_ereg_replace("^($phpSelfPath)", '', $this->getUri()->getPath()),
                 '/'
             )
         );

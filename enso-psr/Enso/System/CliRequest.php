@@ -13,6 +13,7 @@ use Psr\Http\Message\RequestInterface;
 /**
  * Description of CliRequest
  *
+ * @property array $route
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
 class CliRequest extends \Enso\Relay\Request
@@ -38,13 +39,13 @@ class CliRequest extends \Enso\Relay\Request
             : parent::getRoute();
     }
 
-    /**
-     * @return RequestInterface
-     */
-    public function getPSR(): RequestInterface
-    {
-        return new Request(); // @TODO
-    }
+//    /**
+//     * @return RequestInterface
+//     */
+//    public function getPSR(): RequestInterface
+//    {
+//        return new Request(); // @TODO
+//    }
 
     /**
      * @return array

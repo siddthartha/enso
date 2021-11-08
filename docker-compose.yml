@@ -59,6 +59,7 @@ services:
       - "8282:9666" # allow direct access to RR service
     command: >
         bash -c "true
+        && ./rr-serve.sh
         && docker-php-entrypoint php-fpm
         "
 

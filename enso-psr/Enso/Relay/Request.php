@@ -16,6 +16,7 @@ use HttpSoft\Message\RequestTrait;
 /**
  * Description of Request
  *
+ * @property mixed $before
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
 abstract class Request implements RequestInterface
@@ -34,7 +35,7 @@ abstract class Request implements RequestInterface
         $this->uri = new Uri(''); // should we use '' on empty construction?
     }
 
-    abstract public function getPSR(): RequestInterface;
+//    abstract public function getPSR(): RequestInterface;
 
     public function getRoute(): array
     {
