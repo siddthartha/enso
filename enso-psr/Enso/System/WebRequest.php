@@ -9,9 +9,11 @@ namespace Enso\System;
 
 use Enso\Relay\Request;
 use HttpSoft\Message\RequestTrait;
+use HttpSoft\Message\StreamFactory;
 use HttpSoft\Message\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swoole\Http\Request as SwooleRequest;
 use Yiisoft\Http\Method;
 use GuzzleHttp\Psr7\
     {BufferStream, CachingStream, LazyOpenStream, ServerRequest};
@@ -20,17 +22,22 @@ use mb_ereg_replace;
 use count;
 use trim;
 use explode;
+use getallheaders;
 
 /**
  * Description of WebRequest
- *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
+ *
+ * @property array|mixed $serverParams
+ * @property array|mixed $parsedBody
+ * @property array|mixed $cookies
+ * @property array|mixed $queryParams
+ * @property array|mixed $files
+ *
  */
 class WebRequest extends Request
 {
     use RequestTrait;
-
-    private ?ServerRequestInterface $_requestOrigin = null;
 
     public function __construct(array $data = [], ?ServerRequestInterface $psr = null)
     {
@@ -38,12 +45,22 @@ class WebRequest extends Request
 
         if ($psr instanceof RequestInterface)
         {
-            $this->uri = $psr->getUri();
-            $this->method = $psr->getMethod();
-            $this->stream = $psr->getBody();
+            $this->init($psr->getMethod(),
+                uri: $psr->getUri(),
+                headers: $psr->getHeaders(),
+                body: $psr->getBody(),
+                protocol: $psr->getProtocolVersion()
+            );
         }
 
-        $this->_requestOrigin = $psr;
+        if ($psr instanceof ServerRequestInterface)
+        {
+            $this->files = ServerRequest::normalizeFiles($_FILES);
+            $this->parsedBody = $_POST;
+            $this->queryParams = $_GET;
+            $this->cookies = $_COOKIE;
+            $this->serverParams = $_SERVER;
+        }
     }
 
     /**
@@ -52,57 +69,70 @@ class WebRequest extends Request
      */
     public static function fromGlobals(): Request
     {
-        $request = new static();
-        $request->method = $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET;
-
-        $headers = getallheaders();
-
-        $request->uri = $uri = ServerRequest::getUriFromGlobals();
-
-        $body = new CachingStream(
-            new LazyOpenStream('php://input', 'r+')
-        );
-
         $protocol = isset($_SERVER['SERVER_PROTOCOL'])
             ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL'])
             : '1.1';
 
+        $request = new static();
+        $request->init(
+            method: $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET,
+            uri: $uri = ServerRequest::getUriFromGlobals(),
+            headers: $headers = getallheaders(),
+            body: $body = new CachingStream(new LazyOpenStream('php://input', 'r+')),
+            protocol: $protocol
+        );
 
-        $request->_requestOrigin =
-            (new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER))
-                ->withCookieParams($_COOKIE)
-                ->withQueryParams($_GET)
-                ->withParsedBody($_POST)
-                ->withUploadedFiles(ServerRequest::normalizeFiles($_FILES));
+        $request->files = ServerRequest::normalizeFiles($_FILES);
+        $request->parsedBody = $_POST;
+        $request->queryParams = $_GET;
+        $request->cookies = $_COOKIE;
+        $request->serverParams = $_SERVER;
 
         return $request;
     }
 
-    public static function fromSwooleRequest(\Swoole\Http\Request $swooleRequest): Request
+    /**
+     * @param SwooleRequest $swooleRequest
+     * @return Request
+     */
+    public static function fromSwooleRequest(SwooleRequest $swooleRequest): Request
     {
         $request = new static();
 
-        $request->method = $method = $swooleRequest->getMethod();
+        $request->init(
+            method: $method = $swooleRequest->getMethod(),
+            uri: $uri = new Uri($swooleRequest->server['request_uri']),
+            headers: $headers = $swooleRequest->header,
+            body: $body = (new StreamFactory)->createStream((string) $swooleRequest->rawContent()),
+            protocol: $protocol = '1.1'
+        );
 
-        $headers = $swooleRequest->header;
-
-        $request->uri = $uri = new Uri($swooleRequest->server['request_uri']);
-
-        $request->stream = $body = (new BufferStream());
-        $body->write((string) $swooleRequest->rawContent());
-
-        $protocol = '1.1'; // @TODO: protocol detection
-
-        $request->_requestOrigin =
-            (new ServerRequest($method, $uri, $headers ?? [], $body, $protocol, $_SERVER))
-                ->withCookieParams($swooleRequest->cookie ?? [])
-                ->withQueryParams($swooleRequest->get ?? [])
-                ->withParsedBody($swooleRequest->post ?? [])
-                ->withUploadedFiles(ServerRequest::normalizeFiles($swooleRequest->files ?? []));
-
-        $request->swooleRequestUri = $swooleRequest->server['request_uri'];
+        $request->files = ServerRequest::normalizeFiles($swooleRequest->files ?? []);
+        $request->parsedBody = $swooleRequest->post ?? [];
+        $request->queryParams = $swooleRequest->get ?? [];
+        $request->cookies = $swooleRequest->cookie ?? [];
+        $request->serverParams = $_SERVER;
 
         return $request;
+    }
+
+    /**
+     * @return ServerRequestInterface
+     */
+    public function asPsrServerRequest(): ServerRequestInterface
+    {
+        return (new ServerRequest(
+            method: $this->method,
+            uri: $this->uri,
+            headers: $this->headers,
+            body: $this->stream,
+            version: $this->protocol,
+            serverParams: $this->serverParams
+        ))
+        ->withCookieParams($this->cookies)
+        ->withQueryParams($this->queryParams)
+        ->withParsedBody($this->parsedBody)
+        ->withUploadedFiles($this->files);
     }
 
     /**
@@ -121,7 +151,7 @@ class WebRequest extends Request
             )
         );
 
-        return count($uriTarget) == 0 || (count($uriTarget) == 1 && $uriTarget[0] == "")
+        return count($uriTarget) == 0 || (count($uriTarget) == 1 && $uriTarget[0] == '')
             ? parent::getRoute()
             : $uriTarget;
     }
