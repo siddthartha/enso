@@ -69,7 +69,7 @@ class Enso
         $this->_cache = $this->_container->get(CacheInterface::class);
 
         $this->_relay = new Relay([
-            function (Request $request, callable $next): Response
+            function (Request $request, callable $next): ResponseInterface
             {
                 $request->before = microtime(true);
 

@@ -6,19 +6,19 @@ services:
   # Database service
   #
 
-  db:
-    image: mariadb:latest
-    restart: always
-    volumes:
-      - ./.db-data:/var/lib/mysql/
-      - ./.dumps:/docker-entrypoint-initdb.d
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_USER=enso
-      - MYSQL_PASSWORD=b66772bc
-      - MYSQL_DATABASE=enso
-      - MYSQL_ROOT_PASSWORD=b66772bc
+#  db:
+#    image: mariadb:latest
+#    restart: always
+#    volumes:
+#      - ./.db-data:/var/lib/mysql/
+#      - ./.dumps:/docker-entrypoint-initdb.d
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      - MYSQL_USER=enso
+#      - MYSQL_PASSWORD=b66772bc
+#      - MYSQL_DATABASE=enso
+#      - MYSQL_ROOT_PASSWORD=b66772bc
 
   #
   # Redis service
@@ -58,8 +58,9 @@ services:
     ports:
       - "8282:9666" # allow direct access to RR service
     command: >
-        bash -c "composer install -o
-        && docker-php-entrypoint php-fpm"
+        bash -c "true
+        && docker-php-entrypoint php-fpm
+        "
 
   #
   # Swoole HTTP Server service
@@ -84,8 +85,9 @@ services:
     expose:
       - "9999"
     command: >
-      bash -c "composer install -o
-      && docker-php-entrypoint ./enso-sw"
+        bash -c "true
+        && docker-php-entrypoint ./enso-sw
+        "
 
   #
   # front Nginx for proxying all servers: FPM (port 80) and Swoole (port 81) and RoadRunner (port 82)
@@ -113,16 +115,16 @@ services:
   # OpenApi with Swagger UI server on port 8080
   #
 
-  open-api:
-    image: swaggerapi/swagger-ui:latest
-    container_name: open-api
-    restart: unless-stopped
-    environment:
-      - SWAGGER_JSON=/app/openapi.json
-    volumes:
-      - ./enso-psr:/app:ro
-    ports:
-      - "8080:8080"   # Swagger UI
-    depends_on:
-      - php
+#  open-api:
+#    image: swaggerapi/swagger-ui:latest
+#    container_name: open-api
+#    restart: unless-stopped
+#    environment:
+#      - SWAGGER_JSON=/app/openapi.json
+#    volumes:
+#      - ./enso-psr:/app:ro
+#    ports:
+#      - "8080:8080"   # Swagger UI
+#    depends_on:
+#      - php
 

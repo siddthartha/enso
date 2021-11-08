@@ -40,7 +40,7 @@ class ActionHandler implements MiddlewareInterface
      * @param callable|null $next
      * @return Response
      */
-    public function handle(Request $request, callable $next = null): Response
+    public function handle(Request $request, callable $next = null): ResponseInterface
     {
         $this->_request = $request;
 

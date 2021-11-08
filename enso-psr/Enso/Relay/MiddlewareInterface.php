@@ -6,6 +6,8 @@
 
 namespace Enso\Relay;
 
+use Psr\Http\Message\ResponseInterface as PSRResponseInterface;
+
 /**
  * Description of Middleware
  *
@@ -13,5 +15,5 @@ namespace Enso\Relay;
  */
 interface MiddlewareInterface
 {
-    public function handle(Request $request, ?callable $next = null): Response;
+    public function handle(Request $request, ?callable $next = null): PSRResponseInterface;
 }

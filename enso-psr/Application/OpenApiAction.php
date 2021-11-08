@@ -8,7 +8,7 @@ namespace Application;
 
 use Enso\Helpers\A;
 use Enso\Relay\Request;
-use Enso\Relay\Response;
+use HttpSoft\Message\Response;
 use Enso\System\ActionHandler;
 use GuzzleHttp\Psr7\BufferStream;
 use HttpSoft\Message\Stream;

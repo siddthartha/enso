@@ -14,6 +14,6 @@ namespace Enso\Relay;
  */
 interface MessageInterface
 {
-    public function getHeaders(): array;
-    public function getBody(): mixed;
+    public function getPayload(): mixed;
+    public function withPayload($payload): self;
 }

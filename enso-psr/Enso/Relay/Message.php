@@ -7,23 +7,35 @@ declare(strict_types = 1);
 
 namespace Enso\Relay;
 
+use HttpSoft\Message\MessageTrait;
+use Psr\Http\Message\MessageInterface as PSRMessageInterface;
+
 /**
  * Description of Message
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class Message implements MessageInterface
+class Message implements MessageInterface, PSRMessageInterface
 {
-    protected $_headers;
-    protected $_body;
+    use MessageTrait;
 
-    public function getHeaders(): array
+    private mixed $payload;
+
+    public function getPayload(): mixed
     {
-        return $this->_headers;
+        if ($this->payload === null)
+        {
+            $this->payload = [];
+        }
+
+        return $this->payload;
     }
 
-    public function getBody(): mixed
+    public function withPayload($payload): MessageInterface
     {
-        return $this->_body;
+        $message = clone $this;
+        $message->payload = $payload;
+
+        return $message;
     }
 }

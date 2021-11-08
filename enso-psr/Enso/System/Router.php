@@ -8,9 +8,9 @@ declare(strict_types = 1);
 namespace Enso\System;
 
 use Enso\Relay\
-{MiddlewareInterface, Request, Response
-};
+    {MiddlewareInterface, Request, Response};
 use Enso\Helpers\A;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Description of Router
@@ -32,7 +32,7 @@ class Router implements MiddlewareInterface
      * @param callable $next
      * @return Response
      */
-    public function handle(Request $request, mixed $next = null): Response
+    public function handle(Request $request, mixed $next = null): ResponseInterface
     {
         $targetRoute = $request->getRoute();
         $routesTree = $this->getRoutes();

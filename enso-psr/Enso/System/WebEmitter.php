@@ -8,6 +8,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Relay\EmitterInterface;
 use Enso\Relay\Response;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -24,7 +25,7 @@ use function strtolower;
 /**
  * SapiEmitter sends a response using standard PHP Server API i.e. with {@see header()} and "echo".
  */
-final class WebEmitter
+final class WebEmitter implements EmitterInterface
 {
     private const NO_BODY_RESPONSE_CODES = [
         Status::CONTINUE,

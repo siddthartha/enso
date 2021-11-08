@@ -13,6 +13,8 @@ use Enso\System\
 use Application\
     {OpenApiAction, ViewAction, IndexAction, TelegramAction};
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Yiisoft\Di\StateResetter;
 
@@ -29,7 +31,7 @@ require_once __DIR__ . '/preload.php';
 
 $preloaded_ts = microtime(as_float: true);
 
-return static function ($_injectedRequest = null) use ($started_ts, $preloaded_ts): Response
+return static function ($_injectedRequest = null) use ($started_ts, $preloaded_ts): ResponseInterface
 {
     /**
      * Enso application lifecycle entrypoint
@@ -41,7 +43,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
         $request = WebRequest::fromSwooleRequest($_injectedRequest);
 
     }
-    elseif ($_injectedRequest instanceof RequestInterface)
+    elseif ($_injectedRequest instanceof ServerRequestInterface)
     {
         $request = (new WebRequest(data: [], psr: $_injectedRequest));
     }
@@ -65,7 +67,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
              * @param callable $next
              * @return Response
              */
-            middleware: function (Request $request, callable $next): Response
+            middleware: function (Request $request, callable $next): ResponseInterface
             {
                 /** @var MiddlewareInterface $next */
                 $response = $next->handle(
