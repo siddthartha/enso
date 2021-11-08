@@ -29,12 +29,12 @@ require_once __DIR__ . '/preload.php';
 
 $preloaded_ts = microtime(as_float: true);
 
-$applicationRunner = static function ($_injectedRequest = null) use ($started_ts, $preloaded_ts)
+return static function ($_injectedRequest = null) use ($started_ts, $preloaded_ts): Response
 {
     /**
      * Enso application lifecycle entrypoint
      */
-    $app = (static fn() => new Application()) /* run closure fabric */ (); // we should be re-enterable
+    $app = (static fn(): Application => new Application()) /* run closure fabric */ (); // we should be re-enterable
 
     if ($_injectedRequest instanceof SwooleRequest)
     {
@@ -47,9 +47,10 @@ $applicationRunner = static function ($_injectedRequest = null) use ($started_ts
     }
     else /* if ($_injectedRequest == null) */
     {
-        $request = (Runtime::isCLI()
-            ? new CliRequest()
-            : WebRequest::fromGlobals()
+        $request = (
+            Runtime::isCLI()
+                ? new CliRequest()
+                : WebRequest::fromGlobals()
         );
     }
 
@@ -88,17 +89,18 @@ $applicationRunner = static function ($_injectedRequest = null) use ($started_ts
         )
         ->run($request);
 
-    if (!$response->isError())
+    if ($response instanceof Response && !$response->isError())
     {
         $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . ' ms';
         $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . ' ms';
+        $response = $response->collapse(force: true);
     }
 
     (Runtime::isCLI()
         ? new CliEmitter() // will not be emitted under swoole coroutine context!
         : new WebEmitter()
     )->emit(
-        response: $response
+        response: $response /*, $request->getOrigin()->getMethod() === Method::HEAD*/
     );
 
     $app->getContainer()
@@ -109,6 +111,3 @@ $applicationRunner = static function ($_injectedRequest = null) use ($started_ts
 
     return $response; // then should be passed to swoole emitter
 };
-
-return $applicationRunner;
-

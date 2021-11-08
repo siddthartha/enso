@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php declare(strict_types = 1);
 
+use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\
     {Request, Response, Server};
 use Enso\Relay\
@@ -21,13 +22,13 @@ $httpServer->on(
     event_name: 'request',
     callback: function (Request $_request, Response $_response) use (&$run)
     {
-        $started_ts = $_request->server['request_time'];
-        $preloaded_ts = microtime(as_float: true);
+        $connected_ts = $_request->server['request_time'];
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /** @var EnsoResponse $response */
         $response = $run ($_request);
 
-        EnsoResponse::toSwooleResponse($response, $_response);
+        $_response = EnsoResponse::toSwooleResponse($response, $_response) // transform Enso -> Swoole response
+            ->end(); // emit by Swoole
 
         gc_collect_cycles();
     }

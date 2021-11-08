@@ -37,6 +37,33 @@ class ApiCest
         ]);
     }
 
+    public function tryDefaultOpenApi(ApiTester $I)
+    {
+        $I->sendGet('/default/open-api');
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+
+        $I->seeResponseContainsJson([
+            'openapi' => '3.0.0',
+            'info' => [
+                'title' => 'Enso',
+            ],
+        ]);
+    }
+
+    public function tryDefaultTelegram(ApiTester $I)
+    {
+        $I->sendGet('/default/telegram');
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+
+        $I->seeResponseContainsJson([
+            'apiResponse' => [
+                'ok' => true,
+            ],
+        ]);
+    }
+    
     public function tryBadRoute(ApiTester $I)
     {
         $I->sendGet('/some/bad/link');
@@ -49,6 +76,15 @@ class ApiCest
             'line' => 'integer:>0',
             'message' => 'string',
         ]);
+    }
+    
+    public function tryStaticFile(ApiTester $I)
+    {
+        $faviconMd5 = md5(file_get_contents("public/favicon.ico"));
+        $I->sendGet('/favicon.ico');
+        $I->seeResponseCodeIs(200);
+
+        $I->seeBinaryResponseEquals($faviconMd5);
     }
 
 }

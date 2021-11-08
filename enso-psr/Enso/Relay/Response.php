@@ -45,18 +45,16 @@ class Response implements ResponseInterface
         $this->init($statusCode, $reasonPhrase, $headers, $body, $protocol);
     }
 
-    public static function toSwooleResponse(ResponseInterface $response, SwooleResponse $_response)
+    public static function toSwooleResponse(ResponseInterface $response, SwooleResponse &$_response): SwooleResponse
     {
-        if ($response instanceof Response)
-        {
-            $response = $response->collapse();
-        }
-
         $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
         $_response->header('Content-type', 'application/json');
 
-        // SW emitting
-        $_response->end(content: $response->getBody()->getContents());
+        $_response->write(
+            content: $response->getBody()->getContents()
+        );
+
+        return $_response;
     }
 
     /**
@@ -64,12 +62,12 @@ class Response implements ResponseInterface
      *
      * @return ResponseInterface
      */
-    public function collapse(): ResponseInterface
+    public function collapse(bool $force = false): ResponseInterface
     {
-        if ((int) $this->getBody()->getSize() == 0)
+        if ($force || (int) $this->getBody()->getSize() == 0)
         {
             // then serialize Response data from `$this->__attributes`
-            $body = (new BufferStream());  // todo: find a place for this logic
+            $body = (new BufferStream());
 
             if ($body->write((string) $this))
             {
@@ -87,6 +85,7 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Some description
      *
      * @return string
      */

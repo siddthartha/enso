@@ -61,7 +61,7 @@ class ExceptionHandler
         if (!Runtime::isDaemon())
         {
             $this->_emitter
-                ->emit($response/*, $request->getOrigin()->getMethod() === Method::HEAD*/);
+                ->emit($response);
 
             exit (Runtime::EXIT_FATAL);
         }

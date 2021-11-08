@@ -21,13 +21,8 @@ while ($request = $worker->waitRequest())
 {
     try
     {
-        /* @var Response $response */
+        /** @var Response $response */
         $response = $run($request);
-
-        if ($response instanceof Response)
-        {
-            $response = $response->collapse();
-        }
 
         // RR emitting
         $worker->respond($response);

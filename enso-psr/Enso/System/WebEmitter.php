@@ -58,11 +58,6 @@ final class WebEmitter
      */
     public function emit(ResponseInterface $response, bool $withoutBody = false): void
     {
-        if ($response instanceof Response)
-        {
-            $response = $response->collapse();
-        }
-
         $status = $response->getStatusCode();
         $withoutBody = $withoutBody || !$this->shouldOutputBody($response);
         $withoutContentLength = $withoutBody || $response->hasHeader('Transfer-Encoding');

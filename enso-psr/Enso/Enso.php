@@ -109,9 +109,15 @@ class Enso
     {
         try
         {
-            return $this
-                ->getRelay()
-                ->handle($request)
+            $response = $this->getRelay()
+                ->handle($request);
+
+            if ($response instanceof Response)
+            {
+                $response = $response->collapse();
+            }
+
+            return $response
                 ->withHeader('Access-Control-Allow-Origin', '*');
         }
         catch (\Throwable $exception)

@@ -49,11 +49,6 @@ final class CliEmitter
      */
     public function emit(ResponseInterface $response, bool $terminateAfter = false): void
     {
-        if ($response instanceof Response)
-        {
-            $response = $response->collapse();
-        }
-
         if (!Runtime::isDaemon())
         {
             $this->emitBody($response);
