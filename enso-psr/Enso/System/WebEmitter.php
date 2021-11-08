@@ -70,7 +70,7 @@ final class WebEmitter implements EmitterInterface
         // We can't send headers if they are already sent.
         if (headers_sent() && !Runtime::isCLI())
         {
-            throw new \Exception("Headers have been sent");
+            throw new \Exception('Headers have been sent');
         }
 
         $this->clearHeaders();

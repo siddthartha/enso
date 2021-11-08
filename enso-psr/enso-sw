@@ -1,11 +1,10 @@
 #!/usr/bin/env php
 <?php declare(strict_types = 1);
 
-use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\
     {Request, Response, Server};
 use Enso\Relay\
-    {MiddlewareInterface, Request as EnsoRequest, Response as EnsoResponse};
+    {Response as EnsoResponse};
 
 $run = require_once './entrypoint.php';
 

@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Relay\Request;
 use Enso\Relay\RequestInterface;
 
 /**
@@ -14,7 +15,7 @@ use Enso\Relay\RequestInterface;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class CliRequest extends \Enso\Relay\Request
+class CliRequest extends Request
 {
     private mixed $payload;
     private mixed $target;

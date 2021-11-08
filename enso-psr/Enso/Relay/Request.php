@@ -8,8 +8,6 @@
 namespace Enso\Relay;
 
 use Enso\Subject;
-use HttpSoft\Message\Stream;
-use HttpSoft\Message\Uri;
 use Psr\Http\Message\RequestInterface as PSRRequestInterface;
 use HttpSoft\Message\RequestTrait;
 
@@ -32,10 +30,7 @@ abstract class Request implements RequestInterface, PSRRequestInterface
     {
         $this->__attributes = $data;
 
-        $this->init(
-            body: new Stream(),
-            uri: new Uri(),
-        );
+        $this->init();
 
     }
 

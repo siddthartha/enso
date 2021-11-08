@@ -17,7 +17,6 @@ class ExceptionHandler
     /**
      * @param RequestInterface $request
      * @param mixed $emitter
-     * @param \Throwable $throwable
      */
     public function __construct(RequestInterface $request, mixed $emitter)
     {

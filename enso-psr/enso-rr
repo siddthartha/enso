@@ -2,7 +2,6 @@
 <?php declare(strict_types = 1);
 
 use Enso\Relay\Response;
-use GuzzleHttp\Psr7\BufferStream;
 use HttpSoft\Message\ServerRequestFactory;
 use HttpSoft\Message\StreamFactory;
 use HttpSoft\Message\UploadedFileFactory;

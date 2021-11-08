@@ -10,7 +10,7 @@ namespace Enso\Relay;
 use Enso\Subject;
 use GuzzleHttp\Psr7\BufferStream;
 use JetBrains\PhpStorm\Pure;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as PSRResponseInterface;
 use HttpSoft\Message\ResponseTrait;
 use Swoole\Http\Response as SwooleResponse;
 
@@ -24,10 +24,12 @@ use Swoole\Http\Response as SwooleResponse;
  * @property string $preloadDuration    in ms
  * @property string $taskDuration       in ms
  */
-class Response implements ResponseInterface
+class Response implements PSRResponseInterface, ResponseInterface
 {
     use ResponseTrait;
     use Subject;
+
+    private mixed $payload;
 
     /**
      * @param array $data
@@ -45,7 +47,7 @@ class Response implements ResponseInterface
         $this->init($statusCode, $reasonPhrase, $headers, $body, $protocol);
     }
 
-    public static function toSwooleResponse(ResponseInterface $response, SwooleResponse &$_response): SwooleResponse
+    public static function toSwooleResponse(PSRResponseInterface $response, SwooleResponse &$_response): SwooleResponse
     {
         $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
         $_response->header('Content-type', 'application/json');
@@ -60,9 +62,9 @@ class Response implements ResponseInterface
     /**
      * Apply Enso response data to PSR serialized body stream
      *
-     * @return ResponseInterface
+     * @return PSRResponseInterface
      */
-    public function collapse(bool $force = false): ResponseInterface
+    public function collapse(bool $force = false): PSRResponseInterface
     {
         if ($force || (int) $this->getBody()->getSize() == 0)
         {
@@ -92,5 +94,24 @@ class Response implements ResponseInterface
     public function __toString(): string
     {
         return json_encode($this->attributes);
+    }
+
+    public function getPayload(): mixed
+    {
+        return $this->payload;
+    }
+
+    public function withPayload($payload): ResponseInterface
+    {
+        $new = clone $this;
+        $new->payload = $payload;
+
+        return $new;
+    }
+
+    #[Pure]
+    public function getStatus(): int
+    {
+        return $this->getStatusCode();
     }
 }
