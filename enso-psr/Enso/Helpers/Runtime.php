@@ -7,6 +7,8 @@ declare(strict_types = 1);
 
 namespace Enso\Helpers;
 
+use Swoole\Coroutine;
+
 /**
  * Description of Runtime
  *
@@ -20,20 +22,20 @@ final class Runtime
     /**
      * PHP built-in server routing support
      *
-     * @return void
+     * @return bool
      */
     public static function isSapiAsIsHandled(): bool
     {
         if (PHP_SAPI === 'cli-server')
         {
-            // Serve static files as is.
+            // Serve static files AS IS
             $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             if (is_file(__DIR__ . $path))
             {
                 return true;
             }
 
-            // Explicitly set for URLs with dot.
+            // Explicitly set for URLs with dot
             $_SERVER['SCRIPT_NAME'] = '/index.php';
         }
 
@@ -93,7 +95,7 @@ final class Runtime
 
     public static function isDaemon(): bool
     {
-        return (Runtime::haveSwoole() && \Swoole\Coroutine::getCid() !== -1)
+        return (Runtime::haveSwoole() && Coroutine::getCid() !== -1)
             || Runtime::isGoridge();
     }
 

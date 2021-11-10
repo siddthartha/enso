@@ -20,6 +20,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Router implements MiddlewareInterface
 {
+    public const NO_ROUTE_FOUND_MESSAGE = 'No route found';
+    public const ROUTE_TOKEN_DELIMITER = '/';
+
     protected array $_routes;
 
     public function __construct(array $routes = [])
@@ -54,20 +57,22 @@ class Router implements MiddlewareInterface
 
             if (!$routesTree)
             {
-                throw new \BadMethodCallException("No route found.");
+                throw new \BadMethodCallException(self::NO_ROUTE_FOUND_MESSAGE);
             }
 
             if ($entry instanceof Target)
             {
-                $action = $entry->getInstance();
-
-                return $action;
+                return $entry->getInstance();
             }
 
             if (is_string($entry))
             {
                 $routesTree = $this->getRoutes();
-                $path = explode('/', trim($entry, '\n\r\t\0\x0B /'));
+                $path = explode(
+                    self::ROUTE_TOKEN_DELIMITER,
+                    trim($entry, '\n\r\t\0\x0B ' . self::ROUTE_TOKEN_DELIMITER)
+                );
+
                 reset($path);
 
                 return $this->resolve($path, $routesTree);
@@ -76,7 +81,7 @@ class Router implements MiddlewareInterface
             next($path);
         }
 
-        throw new \BadMethodCallException("No route found.");
+        throw new \BadMethodCallException(self::NO_ROUTE_FOUND_MESSAGE);
     }
 
     /**

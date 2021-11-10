@@ -13,7 +13,7 @@ use HttpSoft\Message\RequestTrait;
 use HttpSoft\Message\StreamFactory;
 use HttpSoft\Message\Uri;
 use Psr\Http\Message\RequestInterface as PSRRequestInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface as PSRServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Yiisoft\Http\Method;
 use GuzzleHttp\Psr7\
@@ -43,7 +43,7 @@ class WebRequest extends Request
     private mixed $payload;
     private mixed $target;
 
-    public function __construct(array $data = [], ?ServerRequestInterface $psr = null)
+    public function __construct(array $data = [], ?PSRRequestInterface $psr = null)
     {
         parent::__construct($data);
 
@@ -57,7 +57,7 @@ class WebRequest extends Request
             );
         }
 
-        if ($psr instanceof ServerRequestInterface)
+        if ($psr instanceof PSRServerRequestInterface)
         {
             $this->files = ServerRequest::normalizeFiles($_FILES);
             $this->parsedBody = $_POST;
@@ -107,7 +107,7 @@ class WebRequest extends Request
             method: $method = $swooleRequest->getMethod(),
             uri: $uri = new Uri($swooleRequest->server['request_uri']),
             headers: $headers = $swooleRequest->header,
-            body: $body = (new StreamFactory)->createStream((string) $swooleRequest->rawContent()),
+            body: $body = (new StreamFactory())->createStream((string) $swooleRequest->rawContent()),
             protocol: $protocol = '1.1'
         );
 
@@ -121,9 +121,9 @@ class WebRequest extends Request
     }
 
     /**
-     * @return ServerRequestInterface
+     * @return PSRServerRequestInterface
      */
-    public function asPsrServerRequest(): ServerRequestInterface
+    public function asPsrServerRequest(): PSRServerRequestInterface
     {
         return (new ServerRequest(
             method: $this->method,

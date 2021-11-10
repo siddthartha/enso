@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 /**
  * Class Enso\System\WebEmitter
- * copied from Yiisoft\Yii\Web\SapiEmitter
  * {@see https://github.com/yiisoft/yii-web/blob/master/src/SapiEmitter.php}
  */
 

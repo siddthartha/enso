@@ -3,4 +3,4 @@
 
 $run = require_once './entrypoint.php';
 
-$run();
+return $run();

@@ -9,6 +9,7 @@ class ApiCest
         $I->seeResponseMatchesJsonType([
             'before' => 'float:>0',
             'after' => 'float:>0',
+            'preloadDuration' => 'string',
             'taskDuration' => 'string',
         ]);
     }
@@ -23,6 +24,10 @@ class ApiCest
                 'sapi' => 'string',
                 'swoole' => 'boolean',
             ],
+            'before' => 'float:>0',
+            'after' => 'float:>0',
+            'preloadDuration' => 'string',
+            'taskDuration' => 'string',
         ]);
     }
 

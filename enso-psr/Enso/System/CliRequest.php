@@ -25,8 +25,14 @@ class CliRequest extends Request
     public function __construct(array $data = [])
     {
         parent::__construct($data);
+    }
 
-        $this->_arguments = $_SERVER['argv'];
+    public static function fromGlobals(): self
+    {
+        $new = new self();
+
+        $new->_arguments = $_SERVER['argv'];
+        return $new;
     }
 
     /**

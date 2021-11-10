@@ -50,7 +50,7 @@ class Response implements PSRResponseInterface, ResponseInterface
     public static function toSwooleResponse(PSRResponseInterface $response, SwooleResponse &$_response): SwooleResponse
     {
         $_response->setStatusCode($response->getStatusCode(), $response->getReasonPhrase());
-        $_response->header('Content-type', 'application/json');
+        $_response->header = $response->getHeaders();
 
         $_response->write(
             content: $response->getBody()->getContents()

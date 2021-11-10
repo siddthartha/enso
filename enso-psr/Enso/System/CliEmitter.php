@@ -2,14 +2,11 @@
 declare(strict_types = 1);
 /**
  * Class Enso\System\CliEmitter
- * copied from Yiisoft\Yii\Web\SapiEmitter
- * {@see https://github.com/yiisoft/yii-web/blob/master/src/SapiEmitter.php}
  */
 
 namespace Enso\System;
 
-use Enso\Relay\Response;
-use GuzzleHttp\Psr7\BufferStream;
+use Enso\Relay\EmitterInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Http\Status;
@@ -18,14 +15,11 @@ use Yiisoft\Http\Method;
 use Enso\Helpers\Runtime;
 
 use function flush;
-use function in_array;
-use function sprintf;
-use function strtolower;
 
 /**
  * CliEmitter sends a response body to stdout
  */
-final class CliEmitter
+final class CliEmitter implements EmitterInterface
 {
     private const DEFAULT_BUFFER_SIZE = 65535; // 64Kb
 

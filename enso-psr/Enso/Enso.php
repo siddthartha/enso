@@ -2,25 +2,20 @@
 
 namespace Enso;
 
-use Enso\Helpers\Runtime;
 use Enso\System\CliEmitter;
 use Enso\System\ExceptionHandler;
 use Enso\Relay\
-    {MiddlewareInterface, Relay, Response, Request};
-use Enso\System\WebEmitter;
+    {EmitterInterface, MiddlewareInterface, Relay, Response, Request};
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use Yiisoft\{
-    Cache\Cache,
-    Cache\CacheInterface,
+use Yiisoft\Definitions\Exception\
+    {CircularReferenceException, InvalidConfigException, NotFoundException, NotInstantiableException};
+use Yiisoft\
+    {Cache\CacheInterface,
     Config\Config,
     Config\ConfigPaths,
-    Di\Container,
-    Di\StateResetter,
-    Http\Method,
-    Http\Status
-};
+    Di\Container};
 
 use function dirname;
 
@@ -43,14 +38,32 @@ class Enso
 
     private CacheInterface $_cache;
 
+    private EmitterInterface $_emitter;
+
     /**
      *
-     * @throws \Yiisoft\Definitions\Exception\InvalidConfigException
+     * @param ContainerInterface|null $container
+     * @param Config|null $config
+     * @param Relay|null $relay
+     * @param CacheInterface|null $cache
+     * @param LoggerInterface|null $logger
+     * @param EmitterInterface|null $emitter
      * @throws \ErrorException
+     * @throws CircularReferenceException
+     * @throws InvalidConfigException
+     * @throws NotFoundException
+     * @throws NotInstantiableException
      */
-    public function __construct()
-    {
-        $this->_config = new Config(
+    public function __construct(
+        ?ContainerInterface $container = null,
+        ?Config $config = null,
+        ?Relay $relay = null,
+        ?CacheInterface $cache = null,
+        ?LoggerInterface $logger = null,
+        ?EmitterInterface $emitter = null,
+    ) {
+
+        $this->_config = $config ?? new Config(
             paths: new ConfigPaths(
                 rootPath: dirname(__DIR__),
                 configDirectory: './config',
@@ -60,31 +73,34 @@ class Enso
             paramsGroup: 'params',
         );
 
-        $this->_container = new Container(
+        $this->_container = $container ?? new Container(
             $this->_config->get('common')
         );
 
-        $this->_logger = $this->_container->get(LoggerInterface::class);
+        $this->_logger = $logger ?? $this->_container->get(LoggerInterface::class);
 
-        $this->_cache = $this->_container->get(CacheInterface::class);
+        $this->_cache = $cache ?? $this->_container->get(CacheInterface::class);
 
-        $this->_relay = new Relay([
+        $this->_relay = $relay ?? new Relay([
             function (Request $request, callable $next): ResponseInterface
             {
                 $request->before = microtime(true);
 
                 /** @var MiddlewareInterface $next */
                 $response = $next->handle($request);
-                if ($response instanceof Response)
+
+                if ($response instanceof Response && !$response->isError())
                 {
                     $response->before = $request->before;
                     $response->after = microtime(true);
+                    $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . ' ms';
                 }
 
                 return $response;
             },
         ]);
 
+        $this->_emitter = $emitter ?? new CliEmitter();
     }
 
     /**
@@ -128,16 +144,9 @@ class Enso
         }
     }
 
-    public function getEmitter(): CliEmitter | WebEmitter
+    public function getEmitter(): EmitterInterface
     {
-        if (Runtime::isCLI())
-        {
-            return new CliEmitter();
-        }
-        else
-        {
-            return new WebEmitter();
-        }
+        return $this->_emitter;
     }
 
     /**

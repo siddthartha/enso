@@ -24,7 +24,9 @@
         "zircote/swagger-php": "^3.2",
         "symfony/process": "^5.3",
         "predis/predis": "^1.1",
-        "spiral/roadrunner": "v2.5"
+        "spiral/roadrunner": "v2.5",
+        "erusev/parsedown": "^1.7",
+        "erusev/parsedown-extra": "^0.8.1"
     },
     "autoload": {
         "psr-4": {
