@@ -52,21 +52,21 @@ class EnsoTest extends TestCase
         ]));
     }
 
-    public function testCliDefaultView()
-    {
-        $process = new Process(['./enso', 'default/view']);
-
-        $process->mustRun();
-        $output = Json::decode($process->getOutput());
-
-        static::assertTrue((new JsonType($output))->matches([
-            'work' => 'string',
-            'before' => 'float:>0',
-            'after' => 'float:>0',
-            'taskDuration' => 'string',
-            'preloadDuration' => 'string',
-        ]));
-    }
+//    public function testCliDefaultView()
+//    {
+//        $process = new Process(['./enso', 'default/view']);
+//
+//        $process->mustRun();
+//        $output = Json::decode($process->getOutput());
+//
+//        static::assertTrue((new JsonType($output))->matches([
+//            'work' => 'string',
+//            'before' => 'float:>0',
+//            'after' => 'float:>0',
+//            'taskDuration' => 'string',
+//            'preloadDuration' => 'string',
+//        ]));
+//    }
 
     public function testCliBadRoute()
     {

@@ -32,6 +32,13 @@ class ActionHandler implements MiddlewareInterface
         {
             $this->_context = &$context;
         }
+
+        $this->init();
+    }
+
+    public function init()
+    {
+        ;
     }
 
     /**

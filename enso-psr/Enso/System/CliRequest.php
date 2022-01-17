@@ -9,6 +9,9 @@ namespace Enso\System;
 
 use Enso\Relay\Request;
 use Enso\Relay\RequestInterface;
+use GuzzleHttp\Psr7\CachingStream;
+use GuzzleHttp\Psr7\LazyOpenStream;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Description of CliRequest
@@ -21,6 +24,7 @@ class CliRequest extends Request
     private mixed $target;
 
     private array $_arguments;
+    private StreamInterface $_body;
 
     public function __construct(array $data = [])
     {
@@ -32,6 +36,8 @@ class CliRequest extends Request
         $new = new self();
 
         $new->_arguments = $_SERVER['argv'];
+        $new->_body = new CachingStream(new LazyOpenStream('php://stdin', 'r+'));
+
         return $new;
     }
 
@@ -82,5 +88,10 @@ class CliRequest extends Request
     public function getTarget(): mixed
     {
         return $this->target;
+    }
+
+    public function getBody(): StreamInterface
+    {
+        return $this->_body;
     }
 }

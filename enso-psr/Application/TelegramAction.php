@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Application;
 
+use Application\Service\Telegram;
 use Enso\Helpers\A;
 use Enso\System\ActionHandler;
 use GuzzleHttp\Client;
@@ -19,37 +20,18 @@ use GuzzleHttp\Exception\GuzzleException;
  */
 class TelegramAction extends ActionHandler
 {
-    //
-    public int $telegramBotId = 2010394946;
-    public string $telegramBotApiKey = 'AAHecKtpCxZvIIZ-Sgyidoa8YhSPbrXtzUg';
-    public string $telegramApiBaseUrl = 'https://api.telegram.org';
-
     public int $recipientId = 174741219;
 
-    /**
-     * @var Client HTTP Client for making API request
-     */
-    protected Client $_client;
+    private ?Telegram $_telegram;
 
-    public function __construct()
+
+    public function __construct(?object &$context = null, ?Telegram &$telegram = null)
     {
-        parent::__construct();
-        
-        $this->init();
-    }
+        parent::__construct($context);
 
-    public function init()
-    {
-        $this->_client = new Client([
-            'base_uri' => $this->telegramApiBaseUrl,
-        ]);
-    }
+        $this->_telegram = $telegram ?? new Telegram();
 
-    public function getTelegramBotApiUrl()
-    {
-        return "{$this->telegramApiBaseUrl}/bot{$this->telegramBotId}:{$this->telegramBotApiKey}/";
     }
-
 
     /**
      * @OA\Schema(schema="GitlabEvent", required={"id"})
@@ -89,14 +71,7 @@ class TelegramAction extends ActionHandler
 //
 //        foreach ($commits as $commit)
 //        {
-            $_response = $this->_client->post($this->getTelegramBotApiUrl() . 'sendMessage', [
-                'json' => [
-                    'chat_id' => $this->recipientId,
-                    'parse_mode' => 'Markdown',
-                    'text' => "`{event template}`"
-
-                ]
-            ]);
+            $_response = $this->_telegram->sendMessage("`{event template}`", $this->recipientId);
 //        }
 
         return A::merge(

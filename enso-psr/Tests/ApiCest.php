@@ -31,16 +31,16 @@ class ApiCest
         ]);
     }
 
-    public function tryDefaultView(ApiTester $I)
-    {
-        $I->sendGet('/default/view');
-        $I->seeResponseCodeIs(200);
-        $I->seeResponseIsJson();
-
-        $I->seeResponseContainsJson([
-            'work' => 'done'
-        ]);
-    }
+//    public function tryDefaultView(ApiTester $I)
+//    {
+//        $I->sendGet('/default/view');
+//        $I->seeResponseCodeIs(200);
+//        $I->seeResponseIsJson();
+//
+//        $I->seeResponseContainsJson([
+//            'work' => 'done'
+//        ]);
+//    }
 
     public function tryDefaultOpenApi(ApiTester $I)
     {

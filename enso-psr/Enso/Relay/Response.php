@@ -62,6 +62,7 @@ class Response implements PSRResponseInterface, ResponseInterface
     /**
      * Apply Enso response data to PSR serialized body stream
      *
+     * @param bool $force
      * @return PSRResponseInterface
      */
     public function collapse(bool $force = false): PSRResponseInterface

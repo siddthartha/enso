@@ -13,6 +13,7 @@ use Yiisoft\Arrays\ArrayHelper;
  * Description of A
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
+ * @method static merge($attributes, array $array)
  */
 class A
 {

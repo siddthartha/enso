@@ -42,6 +42,7 @@ services:
       dockerfile: Dockerfile
     user: "1000:33"
     container_name: php
+    stdin_open: true
     working_dir: /var/www/html
     restart: unless-stopped
     env_file:

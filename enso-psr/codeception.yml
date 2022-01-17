@@ -42,6 +42,6 @@ coverage:
   include:
     - Enso/*
     - Application/*
-    - public/*
+#    - public/*
   exclude:
     - vendor/*

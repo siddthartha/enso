@@ -11,7 +11,7 @@ use Enso\Relay\
 use Enso\System\
     {CliEmitter, CliRequest, WebRequest, WebEmitter, Router, Target};
 use Application\
-    {DocsAction, OpenApiAction, ViewAction, IndexAction, TelegramAction};
+    {DocsAction, OpenApiAction, TelegramSendInputAction, IndexAction, TelegramAction};
 use Psr\Http\Message\
     {RequestInterface, ResponseInterface, ServerRequestInterface};
 use Swoole\Http\Request as SwooleRequest;
@@ -88,9 +88,9 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
         ->addLayer(
             middleware: new Router([
                 'default' => [
-                    'view' => new Target(ViewAction::class),
                     'index' => new Target(IndexAction::class),
                     'telegram' => new Target(TelegramAction::class),
+                    'telegram-send-input' => new Target(TelegramSendInputAction::class),
                     'open-api' => new Target(OpenApiAction::class, ['POST']),
                     'open-api-alias' => 'default/open-api',
                     'docs' => new Target(DocsAction::class, ['POST']),
