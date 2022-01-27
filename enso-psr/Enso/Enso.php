@@ -6,16 +6,19 @@ use Enso\System\CliEmitter;
 use Enso\System\ExceptionHandler;
 use Enso\Relay\
     {EmitterInterface, MiddlewareInterface, Relay, Response, Request};
+use ErrorException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Definitions\Exception\
-    {CircularReferenceException, InvalidConfigException, NotFoundException, NotInstantiableException};
-use Yiisoft\
-    {Cache\CacheInterface,
-    Config\Config,
-    Config\ConfigPaths,
-    Di\Container};
+    {CircularReferenceException, InvalidConfigException, NotInstantiableException};
+use Yiisoft\Cache\CacheInterface;
+use Yiisoft\Config\
+    {Config, ConfigInterface, ConfigPaths};
+use Yiisoft\Di\
+    {Container, ContainerConfig, ContainerConfigInterface, NotFoundException};
 
 use function dirname;
 
@@ -28,7 +31,7 @@ class Enso
 {
     use Subject;  // attach "magic" properties getter/setter
 
-    private Config $_config;
+    private ConfigInterface $_config;
 
     private ContainerInterface $_container;
 
@@ -48,34 +51,39 @@ class Enso
      * @param CacheInterface|null $cache
      * @param LoggerInterface|null $logger
      * @param EmitterInterface|null $emitter
-     * @throws \ErrorException
+     *
      * @throws CircularReferenceException
      * @throws InvalidConfigException
-     * @throws NotFoundException
      * @throws NotInstantiableException
+     * @throws ErrorException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      */
     public function __construct(
         ?ContainerInterface $container = null,
-        ?Config $config = null,
+        ?ConfigInterface $config = null,
         ?Relay $relay = null,
         ?CacheInterface $cache = null,
         ?LoggerInterface $logger = null,
         ?EmitterInterface $emitter = null,
     ) {
-
-        $this->_config = $config ?? new Config(
+        $this->_config = new Config(
             paths: new ConfigPaths(
-                rootPath: dirname(__DIR__),
-                configDirectory: './config',
-                vendorDirectory: './vendor',
+                rootPath: dirname(__FILE__, 2),
+                configDirectory: 'config',
+                vendorDirectory: 'vendor',
             ),
             environment: null,
-            paramsGroup: 'params',
+            modifiers: [],
+            paramsGroup: 'params'
         );
 
-        $this->_container = $container ?? new Container(
-            $this->_config->get('common')
+        $this->_container = new Container(
+            ContainerConfig::create()
+                ->withDefinitions($this->_config->get('common'))
         );
+
 
         $this->_logger = $logger ?? $this->_container->get(LoggerInterface::class);
 

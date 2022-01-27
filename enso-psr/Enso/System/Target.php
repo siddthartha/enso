@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Enso;
 use function class_exists;
 
 /**
@@ -20,12 +21,14 @@ class Target
 
     protected string | array $_methods;
 
+    protected ?Enso $_context;
+
     /**
      *
      * @param string $className
      * @param string|array $methods
      */
-    public function __construct(string $className, string|array $methods = [])
+    public function __construct(string $className, string|array $methods = [], ?Enso $context = null)
     {
         $this->_className = $className;
         $this->_methods = is_array($methods)
@@ -36,6 +39,8 @@ class Target
         {
             throw new \BadFunctionCallException("No such class to instantiate action runner.");
         }
+
+        $this->_context = $context;
     }
 
     /**
@@ -46,7 +51,7 @@ class Target
     {
         $className = $this->_className;
 
-        return new $className();
+        return new $className($this->_context);
     }
 
     /**

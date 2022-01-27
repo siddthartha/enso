@@ -52,7 +52,7 @@ class ExceptionHandler
          * )
          */
         $response = (new Response())
-            ->withStatus(Status::INTERNAL_SERVER_ERROR, $throwable->getMessage())
+            ->withStatus(Status::INTERNAL_SERVER_ERROR, 'Internal server error')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Content-type', 'application/json')
             ->withBody($body);

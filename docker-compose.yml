@@ -6,19 +6,19 @@ services:
   # Database service
   #
 
-#  db:
-#    image: mariadb:latest
-#    restart: always
-#    volumes:
-#      - ./.db-data:/var/lib/mysql/
-#      - ./.dumps:/docker-entrypoint-initdb.d
-#    ports:
-#      - "3306:3306"
-#    environment:
-#      - MYSQL_USER=enso
-#      - MYSQL_PASSWORD=b66772bc
-#      - MYSQL_DATABASE=enso
-#      - MYSQL_ROOT_PASSWORD=b66772bc
+  db:
+    image: mariadb:latest
+    restart: always
+    volumes:
+      - ./.db-data:/var/lib/mysql/
+      - ./.dumps:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=enso
+      - MYSQL_PASSWORD=b66772bc
+      - MYSQL_DATABASE=enso
+      - MYSQL_ROOT_PASSWORD=b66772bc
 
   #
   # Redis service

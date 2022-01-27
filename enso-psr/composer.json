@@ -8,19 +8,20 @@
     "require": {
         "php": "^8.0",
         "ext-mbstring": "*",
+        "ext-posix": "*",
         "relay/relay": "~2.0",
         "vlucas/phpdotenv": "^5.3",
-        "yiisoft/di": "3.0.x-dev",
-        "yiisoft/config": "1.0.x-dev",
+        "yiisoft/di": "*",
+        "yiisoft/config": "^1.0",
+        "yiisoft/aliases": "^2.0",
         "yiisoft/active-record": "3.0.x-dev",
         "yiisoft/db-mysql": "3.0.x-dev",
         "guzzlehttp/guzzle": "^7.3",
+        "yiisoft/log": "^1.0",
         "yiisoft/log-target-file": "^1.0",
         "yiisoft/log-target-syslog": "^1.0",
-        "yiisoft/aliases": "^2.0",
         "yiisoft/http": "^1.1",
         "httpsoft/http-message": "^1.0",
-        "ext-posix": "*",
         "zircote/swagger-php": "^3.2",
         "symfony/process": "^5.3",
         "predis/predis": "^1.1",
@@ -43,6 +44,10 @@
         "process-timeout": 1800,
         "fxp-asset": {
             "enabled": false
+        },
+        "allow-plugins": {
+            "codeception/c3": true,
+            "yiisoft/config": true
         }
     },
     "extra": {
@@ -51,7 +56,55 @@
         },
         "config-plugin": {
             "common": "common/*.php",
-            "params": "params.php"
+            "params": [
+              "params.php",
+              "?params-local.php"
+            ],
+            "web": [
+              "$common",
+              "web/*.php"
+            ],
+            "console": [
+              "$common",
+              "console/*.php"
+            ],
+            "events": "events.php",
+            "events-web": [
+              "$events",
+              "events-web.php"
+            ],
+            "events-console": [
+              "$events",
+              "events-console.php"
+            ],
+            "providers": "providers.php",
+            "providers-web": [
+              "$providers",
+              "providers-web.php"
+            ],
+            "providers-console": [
+              "$providers",
+              "providers-console.php"
+            ],
+            "delegates": "delegates.php",
+            "delegates-web": [
+              "$delegates",
+              "delegates-web.php"
+            ],
+            "delegates-console": [
+              "$delegates",
+              "delegates-console.php"
+            ],
+            "routes": "routes.php",
+            "bootstrap": "bootstrap.php",
+            "bootstrap-web": [
+              "$bootstrap",
+              "bootstrap-web.php"
+            ],
+            "bootstrap-console": [
+              "$bootstrap",
+              "bootstrap-console.php"
+            ]
         }
     },
     "require-dev": {

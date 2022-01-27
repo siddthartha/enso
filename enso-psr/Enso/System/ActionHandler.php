@@ -51,7 +51,7 @@ class ActionHandler implements MiddlewareInterface
     {
         $this->_request = $request;
 
-        $result = ($this) (); // invoke this object to "run" action
+        $result = ($this) (); // __invoke current ansector's object to -- "run" action
 
         return $result instanceof ResponseInterface
             ? $result

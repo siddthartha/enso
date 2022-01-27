@@ -7,12 +7,17 @@ declare(strict_types = 1);
 
 namespace Application;
 
+use Application\Model\User;
 use Enso\Helpers\Runtime;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\System\ActionHandler;
 use Predis\Client;
 use Swoole\Coroutine;
+use Yiisoft\ActiveRecord\ActiveQuery;
+use Yiisoft\ActiveRecord\ActiveRecordFactory;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Mysql\Connection;
 
 /**
  * Description of IndexAction
@@ -50,6 +55,39 @@ class IndexAction extends ActionHandler
 
         $redisStatus = $redis->ping('hello');
 
+        /* @var $db Connection */
+        $db = $this->_context
+            ->getContainer()
+            ->get(ConnectionInterface::class);
+
+        /** @TODO: move to migrations */
+//        $db
+//            ->createCommand()
+//            ->createTable(
+//                'user',
+//                [
+//                    'username' => 'varchar(50)',
+//                    'email' => 'varchar(50)',
+//                ]
+//            )
+//            ->execute();
+
+        /* @var $user User */
+        $user = (
+            $this->_context
+                ->getContainer()
+                ->get(ActiveRecordFactory::class)
+        )->createAR(User::class);
+
+        $user->setAttribute('username', 'user' . rand(0, 1000000));
+        $user->setAttribute('email', 'user' . rand(0, 1000000) . '@mail.ru');
+        $user->save();
+
+
+        $users = (new ActiveQuery(User::class, $db))
+            ->asArray()
+            ->all();
+
         return [
             'context' => [
                 'sapi' => PHP_SAPI,
@@ -62,6 +100,7 @@ class IndexAction extends ActionHandler
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
             ],
+            'users' => $users
         ];
     }
 

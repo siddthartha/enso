@@ -88,7 +88,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
         ->addLayer(
             middleware: new Router([
                 'default' => [
-                    'index' => new Target(IndexAction::class),
+                    'index' => new Target(IndexAction::class, [], $app),
                     'telegram' => new Target(TelegramAction::class),
                     'telegram-send-input' => new Target(TelegramSendInputAction::class),
                     'open-api' => new Target(OpenApiAction::class, ['POST']),
