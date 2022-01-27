@@ -19,17 +19,18 @@
 On application layer project runs with:
 - [x] PHP8+
 - [x] Mixed runtime CLI / WEB / Daemon (Swoole &check; | RoadRunner &check;)
-- [ ] Mysql / Postgresql for state storage
+- [x] Mysql &check; / Postgresql for state storage
 - [x] Redis &check;
 - [ ] WebSockets support
 - [x] Xdebug 3 &check;
 
 Framework's code use:
 * Yiisoft components:
-  - [x] PSR-11 DI Container
+  - [x] Config
+  - [x] PSR-11 DI Container &check;
   - [x] PSR-3 Logger
   - [x] PSR-6 Cache
-  - [ ] DB Layer / AR
+  - [x] DB Layer / ActiveRecord &check;
 * Other components for HTTP:
   - [x] PSR-7/17 Messages / Factories (Httpsoft)
   - [x] PSR-15 Middlewares (custom)
