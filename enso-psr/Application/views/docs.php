@@ -20,7 +20,7 @@
             margin: 0;
             font-size: 85%;
             background-color: #333;
-            border-radius: 6px;
+            border-radius: 5px;
         }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -7,6 +7,7 @@ return [
     'yiisoft/aliases' => [
         'aliases' => [
             '@root' => dirname(__DIR__),
+            '@config' => '@root/config',
             '@assets' => '@public/assets',
             '@assetsUrl' => '@baseUrl/assets',
             '@baseUrl' => '/',

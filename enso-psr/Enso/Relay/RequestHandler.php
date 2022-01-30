@@ -6,6 +6,7 @@
 
 namespace Enso\Relay;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\
     {ResponseInterface, RequestInterface};
 
@@ -29,11 +30,13 @@ abstract class RequestHandler
     /** @var callable */
     protected $_resolver;
 
+    protected $_context;
+
     /**
      * @param iterable<mixed> $queue A queue of middleware entries.
      * @param callable|null $resolver Converts a given queue entry to a callable or MiddlewareInterface instance.
      */
-    public function __construct($queue, ?callable $resolver = null)
+    public function __construct($queue, ?callable $resolver = null, ?ContainerInterface &$context = null)
     {
         if (!is_iterable($queue))
         {
@@ -47,7 +50,7 @@ abstract class RequestHandler
 
         if (empty($queue))
         {
-            throw new InvalidArgumentException('$queue cannot be empty');
+            throw new InvalidArgumentException('\$queue cannot be empty');
         }
 
         $this->_queue = $queue;
@@ -61,6 +64,13 @@ abstract class RequestHandler
         }
 
         $this->_resolver = $resolver;
+
+        $this->_context = $context;
+    }
+
+    protected function getContext(): ContainerInterface
+    {
+        return $this->_context;
     }
 
     /**

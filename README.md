@@ -8,11 +8,12 @@
 - [x] optionally runs inside single immutable docker containers
 - [x] with both of Swoole / RoadRunner for multi-threading long-living processes
 - [x] using strict [PSR-compatible](https://www.php-fig.org/psr/) components (as widely as possible)
-- [ ] with Redis for queues and sessions
+- [ ] with Redis / RabbitMQ for queues and sessions
 - [ ] with WebSockets for web / mobile clients
 - [ ] puts application level logs, sessions and uploaded files into network / cloud storages only
 - [ ] collects system level logs through Filebeat to ELK 
 - [ ] LetsEncrypt SSL auto refreshing
+- [ ] CLI project generator
 
 ### Basics
 

@@ -24,7 +24,6 @@ class TelegramAction extends ActionHandler
 
     private ?Telegram $_telegram;
 
-
     public function __construct(?object &$context = null, ?Telegram &$telegram = null)
     {
         parent::__construct($context);

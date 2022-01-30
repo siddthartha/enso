@@ -61,8 +61,9 @@ class IndexAction extends ActionHandler
             ->get(ConnectionInterface::class);
 
         /** @TODO: move to migrations */
-//        $db
-//            ->createCommand()
+        $db
+            ->createCommand()
+            ->truncateTable('user')
 //            ->createTable(
 //                'user',
 //                [
@@ -70,7 +71,7 @@ class IndexAction extends ActionHandler
 //                    'email' => 'varchar(50)',
 //                ]
 //            )
-//            ->execute();
+            ->execute();
 
         /* @var $user User */
         $user = (

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+docker exec -i php ./enso default/telegram-send-input | jq

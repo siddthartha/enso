@@ -14,11 +14,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Definitions\Exception\
     {CircularReferenceException, InvalidConfigException, NotInstantiableException};
+use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\CacheInterface;
 use Yiisoft\Config\
     {Config, ConfigInterface, ConfigPaths};
 use Yiisoft\Di\
-    {Container, ContainerConfig, ContainerConfigInterface, NotFoundException};
+    {Container, ContainerConfig, NotFoundException};
 
 use function dirname;
 
@@ -43,32 +44,69 @@ class Enso
 
     private EmitterInterface $_emitter;
 
+    private mixed $_routing;
+
     /**
      *
+     * @param ConfigInterface|null $config
      * @param ContainerInterface|null $container
-     * @param Config|null $config
      * @param Relay|null $relay
      * @param CacheInterface|null $cache
      * @param LoggerInterface|null $logger
      * @param EmitterInterface|null $emitter
      *
-     * @throws CircularReferenceException
      * @throws InvalidConfigException
      * @throws NotInstantiableException
      * @throws ErrorException
      * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws NotFoundException
      */
     public function __construct(
-        ?ContainerInterface $container = null,
         ?ConfigInterface $config = null,
+        ?ContainerInterface $container = null,
         ?Relay $relay = null,
         ?CacheInterface $cache = null,
         ?LoggerInterface $logger = null,
         ?EmitterInterface $emitter = null,
     ) {
-        $this->_config = new Config(
+        $this->_config = $config ?? $this->createConfig();
+
+        $this->_container = $container ?? $this->createContainer();
+
+        $this->_relay = $relay ?? new Relay(
+            queue: [
+                function (Request $request, callable $next): ResponseInterface
+                {
+
+                    $request->before = microtime(true);
+
+                    /** @var MiddlewareInterface $next */
+                    $response = $next->handle($request);
+
+                    if ($response instanceof Response && !$response->isError())
+                    {
+                        $response->before = $request->before;
+                        $response->after = microtime(true);
+                        $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . ' ms';
+                    }
+
+                    return $response;
+                },
+            ],
+            resolver: null,
+            context: $this->_container
+        );
+
+        $this->_emitter = $emitter ?? new CliEmitter();
+
+        $this->getLogger()->info('Enso instantiated');
+    }
+
+    /**
+     * @throws ErrorException
+     */
+    private function createConfig(): ConfigInterface
+    {
+        return new Config(
             paths: new ConfigPaths(
                 rootPath: dirname(__FILE__, 2),
                 configDirectory: 'config',
@@ -78,37 +116,49 @@ class Enso
             modifiers: [],
             paramsGroup: 'params'
         );
+    }
 
-        $this->_container = new Container(
+    /**
+     * @return Config
+     */
+    public function getConfig(): Config
+    {
+        return $this->_config;
+    }
+
+    /**
+     * @throws InvalidConfigException
+     * @throws ErrorException
+     */
+    private function createContainer(): ContainerInterface
+    {
+        return new Container(
             ContainerConfig::create()
-                ->withDefinitions($this->_config->get('common'))
+                ->withDefinitions($this->getConfig()->get('common'))
         );
+    }
 
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->_container;
+    }
 
-        $this->_logger = $logger ?? $this->_container->get(LoggerInterface::class);
+    public function get(string $id)
+    {
+        return $this
+            ->getContainer()
+            ->get($id);
+    }
 
-        $this->_cache = $cache ?? $this->_container->get(CacheInterface::class);
-
-        $this->_relay = $relay ?? new Relay([
-            function (Request $request, callable $next): ResponseInterface
-            {
-                $request->before = microtime(true);
-
-                /** @var MiddlewareInterface $next */
-                $response = $next->handle($request);
-
-                if ($response instanceof Response && !$response->isError())
-                {
-                    $response->before = $request->before;
-                    $response->after = microtime(true);
-                    $response->taskDuration = round(round($response->after - $response->before, 6) * 1000, 2) . ' ms';
-                }
-
-                return $response;
-            },
-        ]);
-
-        $this->_emitter = $emitter ?? new CliEmitter();
+    /**
+     * @return Relay
+     */
+    public function getRelay(): Relay
+    {
+        return $this->_relay;
     }
 
     /**
@@ -123,6 +173,39 @@ class Enso
             ->add($middleware);
 
         return $this;
+    }
+
+    public function getEmitter(): EmitterInterface
+    {
+        return $this->_emitter;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->get(LoggerInterface::class);
+    }
+
+    /**
+     * @return CacheInterface
+     */
+    public function getCache(): CacheInterface
+    {
+        return $this->get(CacheInterface::class);
+    }
+
+    public function getRoutingTree(string $configName = 'routing'): array
+    {
+        $context = &$this;
+
+        return $this->_routing ?? $this->_routing = require (
+                $this
+                    ->get(Aliases::class)
+                    ->get('@config')
+                . "/{$configName}.php"
+            );
     }
 
     /**
@@ -152,48 +235,4 @@ class Enso
         }
     }
 
-    public function getEmitter(): EmitterInterface
-    {
-        return $this->_emitter;
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    public function getContainer(): ContainerInterface
-    {
-        return $this->_container;
-    }
-
-    /**
-     * @return Relay
-     */
-    public function getRelay(): Relay
-    {
-        return $this->_relay;
-    }
-
-    /**
-     * @return array|mixed|object|LoggerInterface
-     */
-    public function getLogger(): mixed
-    {
-        return $this->_logger;
-    }
-
-    /**
-     * @return Config
-     */
-    public function getConfig(): Config
-    {
-        return $this->_config;
-    }
-
-    /**
-     * @return CacheInterface
-     */
-    public function getCache(): CacheInterface
-    {
-        return $this->_cache;
-    }
 }

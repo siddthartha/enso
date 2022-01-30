@@ -27,6 +27,7 @@ class Target
      *
      * @param string $className
      * @param string|array $methods
+     * @param Enso|null $context
      */
     public function __construct(string $className, string|array $methods = [], ?Enso $context = null)
     {
