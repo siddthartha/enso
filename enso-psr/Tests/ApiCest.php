@@ -22,7 +22,6 @@ class ApiCest
         $I->seeResponseMatchesJsonType([
             'context' => [
                 'sapi' => 'string',
-                'swoole' => 'boolean',
             ],
             'before' => 'float:>0',
             'after' => 'float:>0',

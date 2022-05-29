@@ -34,13 +34,13 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
     /**
      * Enso application lifecycle entrypoint
      */
-    $app = (static fn(): Application => (new Application(
+    $app = (static fn(): Application => (new Application( // create application instance ...
         emitter: Runtime::isCLI()
             ? new CliEmitter()
             : new WebEmitter()
     )))
-    /* run closure fabric immediately*/
-    (); // we should be re-enterable
+    /* ... AND RUN result of closure fabric immediately -- i mean call created object as callable */
+    (); // we should be re-enterable here
 
     if ($_injectedRequest instanceof SwooleRequest)
     {

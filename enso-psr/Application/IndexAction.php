@@ -80,8 +80,8 @@ class IndexAction extends ActionHandler
                 ->get(ActiveRecordFactory::class)
         )->createAR(User::class);
 
-        $user->setAttribute('username', 'user' . rand(0, 1000000));
-        $user->setAttribute('email', 'user' . rand(0, 1000000) . '@mail.ru');
+        $user->username = 'user' . rand(0, 1000000);
+        $user->email = 'user' . rand(0, 1000000) . '@mail.ru';
         $user->save();
 
 
@@ -92,14 +92,10 @@ class IndexAction extends ActionHandler
         return [
             'context' => [
                 'sapi' => PHP_SAPI,
-                'swoole' => Runtime::haveSwoole(),
-                'swooleContext' => Runtime::haveSwoole()
-                    ? [
-                        'cid' => Coroutine::getCid(),
-                    ]
-                    : false,
+                'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
+                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
             ],
             'users' => $users
         ];
