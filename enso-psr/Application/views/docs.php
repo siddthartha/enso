@@ -4,9 +4,9 @@
 <html lang="en">
 <head><title>Docs</title>
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="http://markdowncss.github.io/retro/css/retro.css" type="text/css" />
+<!--    <link rel="stylesheet" href="http://markdowncss.github.io/retro/css/retro.css" type="text/css" /> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" />
-<!--    <link rel="stylesheet" href="https://sindresorhus.com/github-markdown-css/github-markdown.css" type="text/css" />-->
+    <link rel="stylesheet" href="https://sindresorhus.com/github-markdown-css/github-markdown.css" type="text/css" />
     <style>
         body {
             font-family: monospace;

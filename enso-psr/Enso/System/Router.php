@@ -22,6 +22,7 @@ class Router implements MiddlewareInterface
 {
     public const NO_ROUTE_FOUND_MESSAGE = 'No route found';
     public const ROUTE_TOKEN_DELIMITER = '/';
+    public const ROUTE_TRIM_PREFIX = '\n\r\t\0\x0B ';
 
     protected array $_routes;
 
@@ -38,6 +39,8 @@ class Router implements MiddlewareInterface
      */
     public function handle(RequestInterface $request, mixed $next = null): ResponseInterface
     {
+        /** @TODO: make transparent for non-enso request */
+        /** @var $targetRoute */
         $targetRoute = $request->getRoute();
         $routesTree = $this->getRoutes();
 
@@ -46,6 +49,11 @@ class Router implements MiddlewareInterface
         return $action->handle($request);
     }
 
+    /**
+     * @param array $path
+     * @param array $routesTree
+     * @return ActionHandler
+     */
     protected function resolve(array $path, array $routesTree): ActionHandler
     {
         reset($path);
@@ -70,11 +78,14 @@ class Router implements MiddlewareInterface
                 $routesTree = $this->getRoutes();
                 $path = explode(
                     self::ROUTE_TOKEN_DELIMITER,
-                    trim($entry, '\n\r\t\0\x0B ' . self::ROUTE_TOKEN_DELIMITER)
+                    trim($entry, self::ROUTE_TRIM_PREFIX . self::ROUTE_TOKEN_DELIMITER)
                 );
 
                 reset($path);
 
+                /**
+                 * RECURSIVE CALL for elements with redirection string
+                 */
                 return $this->resolve($path, $routesTree);
             };
 
