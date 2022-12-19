@@ -39,7 +39,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
             ? new CliEmitter()
             : new WebEmitter()
     )))
-    /* ... AND RUN result of closure fabric immediately -- i mean call created object as callable */
+    /* ... AND RUN result of closure fabric immediately -- i mean call created object as a callable */
     (); // we should be re-enterable here
 
     if ($_injectedRequest instanceof SwooleRequest)

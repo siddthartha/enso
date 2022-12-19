@@ -60,6 +60,18 @@ class Response implements PSRResponseInterface, ResponseInterface
     }
 
     /**
+     * If body stream's resource has a zero size OR it is unknown
+     *
+     * @return bool
+     */
+    public function isBodyEmpty(): bool
+    {
+        return ($this->getBody()->getSize() == 0
+            || $this->getBody()->getSize() == null
+        );
+    }
+
+    /**
      * Apply Enso response data to PSR serialized body stream
      *
      * @param bool $force
@@ -67,15 +79,19 @@ class Response implements PSRResponseInterface, ResponseInterface
      */
     public function collapse(bool $force = false): PSRResponseInterface
     {
-        if ($force || (int) $this->getBody()->getSize() == 0)
+        if ($force || $this->isBodyEmpty())
         {
             // then serialize Response data from `$this->__attributes`
             $body = (new BufferStream());
 
-            if ($body->write((string) $this))
+            $isFull = $body->write((string) $this) == 0;
+
+            if ($isFull)
             {
-                return $this->withBody($body);
+                ; // TODO: work with buffer
             }
+
+            return $this->withBody($body);
         }
 
         return $this;

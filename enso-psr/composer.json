@@ -9,6 +9,7 @@
         "php": "^8.0",
         "ext-mbstring": "*",
         "ext-posix": "*",
+        "ext-mysqli": "*",
         "relay/relay": "~2.0",
         "vlucas/phpdotenv": "^5.3",
         "yiisoft/di": "*",

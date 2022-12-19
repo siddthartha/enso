@@ -63,26 +63,37 @@ class IndexAction extends ActionHandler
         /** @TODO: move to migrations */
         $db
             ->createCommand()
-            ->truncateTable('user')
-//            ->createTable(
-//                'user',
-//                [
-//                    'username' => 'varchar(50)',
-//                    'email' => 'varchar(50)',
-//                ]
-//            )
+            ->dropTable('user')
             ->execute();
 
-        /* @var $user User */
-        $user = (
+        $db
+            ->createCommand()
+            ->createTable(
+                'user',
+                [
+                    'id' => 'int(11) NOT NULL AUTO_INCREMENT',
+                    'username' => 'varchar(50)',
+                    'email' => 'varchar(50)',
+                    'PRIMARY KEY(id)',
+                ],
+
+            )
+            ->execute();
+
+
+        foreach (range(0, 3) as $item)
+        {
+            /* @var $user User */
+            $user = (
             $this->_context
                 ->getContainer()
                 ->get(ActiveRecordFactory::class)
-        )->createAR(User::class);
+            )->createAR(User::class);
 
-        $user->username = 'user' . rand(0, 1000000);
-        $user->email = 'user' . rand(0, 1000000) . '@mail.ru';
-        $user->save();
+            $user->username = 'user' . rand(0, 1000000);
+            $user->email = 'user' . rand(0, 1000000) . '@mail.ru';
+            $user->save();
+        }
 
 
         $users = (new ActiveQuery(User::class, $db))
@@ -97,7 +108,7 @@ class IndexAction extends ActionHandler
                 'redis' => $redisStatus,
                 'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
             ],
-            'users' => $users
+            'users' => $users,
         ];
     }
 

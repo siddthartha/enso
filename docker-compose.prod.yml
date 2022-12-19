@@ -3,5 +3,5 @@ version: "3.3"
 services:
   nginx:
     volumes:
-      - ./nginx/vhost.conf:/etc/nginx/conf.d/vhost.prod.conf:ro
-      #- ./certbot/www:/var/www/certbot:ro
+      - ./nginx/vhost.conf:/etc/nginx/conf.d/vhost.conf:ro
+      #- ./certbot/www:/var/www/certbot:ro # TODO

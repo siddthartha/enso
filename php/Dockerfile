@@ -9,8 +9,8 @@ VOLUME /root/.composer
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install apt-utils -y \
-    && apt-get install git zip vim libzip-dev libgmp-dev libffi-dev libssl-dev wget -y \
-    && docker-php-ext-install -j$(nproc) sockets zip gmp pcntl bcmath ffi pdo pdo_mysql \
+    && apt-get install git zip vim libzip-dev libgmp-dev libffi-dev libssl-dev wget iputils-ping -y \
+    && docker-php-ext-install -j$(nproc) posix sockets zip gmp pcntl bcmath ffi pdo pdo_mysql mysqli \
 #    && PHP_OPENSSL=yes pecl install ev \
 #    && docker-php-ext-enable ev \
     && pecl install xdebug \
