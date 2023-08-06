@@ -56,7 +56,7 @@ final class WebEmitter implements EmitterInterface
      *
      * @throws \Exception
      */
-    public function emit(ResponseInterface $response, bool $withoutBody = false): void
+    public function emit(ResponseInterface $response, ?bool $withoutBody = false): void
     {
         $status = $response->getStatusCode();
         $withoutBody = $withoutBody || !$this->shouldOutputBody($response);

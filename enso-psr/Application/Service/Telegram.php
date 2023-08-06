@@ -7,8 +7,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class Telegram
 {
-    public int $telegramBotId = 2010394946;
-    public string $telegramBotApiKey = 'AAHecKtpCxZvIIZ-Sgyidoa8YhSPbrXtzUg';
+    public int $telegramBotId = 5828822520;
+
+    public string $telegramBotApiKey = 'AAHwdteGGpumUJAG4Gssi1vLMTCIVO7X9D0';
     public string $telegramApiBaseUrl = 'https://api.telegram.org';
 
     /**

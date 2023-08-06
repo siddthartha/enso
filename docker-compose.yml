@@ -91,6 +91,8 @@ services:
       - ./wait-for-it.sh:/wait-for-it.sh:ro
     expose:
       - "9999"
+    ports:
+      - "8181:9999"
     command: >
         bash -c "true
         && docker-php-entrypoint ./enso-sw

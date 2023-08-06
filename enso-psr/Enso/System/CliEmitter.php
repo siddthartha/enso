@@ -25,7 +25,7 @@ final class CliEmitter implements EmitterInterface
 
     private int $bufferSize;
 
-    public function __construct(int $bufferSize = null)
+    public function __construct(?int $bufferSize = null)
     {
         if ($bufferSize !== null && $bufferSize <= 0)
         {
@@ -41,7 +41,7 @@ final class CliEmitter implements EmitterInterface
      * @param ResponseInterface $response
      * @param bool $terminateAfter
      */
-    public function emit(ResponseInterface $response, bool $terminateAfter = false): void
+    public function emit(ResponseInterface $response, ?bool $terminateAfter = false): void
     {
         if (!Runtime::isDaemon())
         {

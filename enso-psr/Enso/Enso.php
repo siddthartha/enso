@@ -134,7 +134,9 @@ class Enso
     {
         return new Container(
             ContainerConfig::create()
-                ->withDefinitions($this->getConfig()->get('common'))
+                ->withDefinitions(
+                    $this->getConfig()->get('common')
+                )
         );
     }
 

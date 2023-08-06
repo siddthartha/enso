@@ -51,7 +51,7 @@ final class Runtime
     {
         if ($_ENV['YII_ENV'] !== 'test')
         {
-            // return;
+            return;
         }
 
         $c3 = dirname(__DIR__) . '/../c3.php';

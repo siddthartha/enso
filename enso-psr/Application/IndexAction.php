@@ -108,7 +108,7 @@ class IndexAction extends ActionHandler
                 'redis' => $redisStatus,
                 'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
             ],
-            'users' => $users,
+            'users' => $users ?? [],
         ];
     }
 

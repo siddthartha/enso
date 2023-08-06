@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface as PSRResponseInterface;
 class Runner
 {
     /** @var mixed[] */
-    protected array $queue;
+    protected array $_queue;
 
     /** @var Closure */
     protected Closure $_resolver;
@@ -44,17 +44,9 @@ class Runner
             throw new \Exception('$queue cannot be empty');
         }
 
-        $this->queue = $queue;
+        $this->_queue = $queue;
 
-        if ($resolver === null)
-        {
-            $resolver = function ($entry)
-            {
-                return $entry;
-            };
-        }
-
-        $this->_resolver = $resolver;
+        $this->_resolver = $resolver ?? fn ($entry) => $entry;
     }
 
     /**
@@ -65,9 +57,16 @@ class Runner
      */
     public function handle(PSRRequestInterface $request): PSRResponseInterface
     {
-        $entry = current($this->queue);
+        $entry = current($this->_queue);
+
+        if ($entry === false)
+        {
+            return [];
+        }
+
         $middleware = call_user_func($this->_resolver, $entry);
-        next($this->queue);
+
+        $nextEntry = next($this->_queue);
 
         if ($middleware instanceof MiddlewareInterface)
         {
@@ -86,9 +85,17 @@ class Runner
 
         throw new \Exception(
             sprintf(
-                'Invalid middleware queue entry: %s. Middleware must either be callable or implement %s.', $middleware, MiddlewareInterface::class
+                'Invalid middleware queue entry: %s. Middleware must either be a callable or implement %s.', $middleware, MiddlewareInterface::class
             )
         );
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getQueue(): mixed
+    {
+        return $this->_queue;
     }
 
     /**

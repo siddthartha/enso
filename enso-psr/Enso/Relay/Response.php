@@ -19,10 +19,6 @@ use Swoole\Http\Response as SwooleResponse;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  *
- * @property float $before  microtime
- * @property float $after   microtime
- * @property string $preloadDuration    in ms
- * @property string $taskDuration       in ms
  */
 class Response implements PSRResponseInterface, ResponseInterface
 {

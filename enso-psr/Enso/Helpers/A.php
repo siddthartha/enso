@@ -33,11 +33,18 @@ class A
         return [$addedValuesArray, $removedValuesArray];
     }
 
-    public static function get(array &$array, array|Closure|float|int|string $path, $default = null): mixed
+    public static function get(array &$array, array|\Closure|float|int|string $path, $default = null): mixed
     {
         return ArrayHelper::getValue($array, $path, $default);
     }
 
+    /**
+     * Proxy calls for Yiisoft ArrayHelper methods
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return false|mixed
+     */
     public static function __callStatic(string $name, array $arguments)
     {
         return forward_static_call([ArrayHelper::class, $name], ...$arguments);

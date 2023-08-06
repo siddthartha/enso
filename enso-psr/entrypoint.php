@@ -1,6 +1,5 @@
 <?php
 declare(strict_types = 1);
-declare(ticks = 1);
 
 $started_ts = microtime(as_float: true);
 
@@ -77,12 +76,13 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
                     $request
                 );
 
-                if ($response->hasHeader('Content-type'))
+                if (!$response->hasHeader('Content-type'))
                 {
-                    return $response;
+                    return $response
+                        ->withHeader('Content-type', 'application/json');
                 }
-                return $response
-                    ->withHeader('Content-type', 'application/json');
+
+                return $response;
             }
         )
         ->addLayer(
