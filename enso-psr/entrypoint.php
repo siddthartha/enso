@@ -100,7 +100,8 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
     $app
         ->getEmitter()
         ->emit(
-            response: $response /*, $request->getOrigin()->getMethod() === Method::HEAD*/
+            response: $response,
+            withoutBody: $request->getMethod() === 'HEAD',
         );
 
     $app->getContainer()

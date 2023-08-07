@@ -7,5 +7,5 @@ use Psr\Http\Message\ResponseInterface;
 
 interface EmitterInterface
 {
-    public function emit(ResponseInterface $response, ?bool $withBody): void;
+    public function emit(ResponseInterface $response, bool $withoutBody = false, bool $terminateAfter = false): void;
 }

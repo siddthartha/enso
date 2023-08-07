@@ -41,7 +41,7 @@ final class CliEmitter implements EmitterInterface
      * @param ResponseInterface $response
      * @param bool $terminateAfter
      */
-    public function emit(ResponseInterface $response, ?bool $terminateAfter = false): void
+    public function emit(ResponseInterface $response, bool $withoutBody = false, bool $terminateAfter = false): void
     {
         if (!Runtime::isDaemon())
         {

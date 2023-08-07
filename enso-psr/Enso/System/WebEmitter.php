@@ -56,11 +56,11 @@ final class WebEmitter implements EmitterInterface
      *
      * @throws \Exception
      */
-    public function emit(ResponseInterface $response, ?bool $withoutBody = false): void
+    public function emit(ResponseInterface $response, bool $withoutBody = false, bool $terminateAfter = false): void
     {
         $status = $response->getStatusCode();
         $withoutBody = $withoutBody || !$this->shouldOutputBody($response);
-        $withoutContentLength = $withoutBody || $response->hasHeader('Transfer-Encoding');
+        $withoutContentLength = /* $withoutBody || */ $response->hasHeader('Transfer-Encoding');
         if ($withoutContentLength)
         {
             $response = $response->withoutHeader('Content-Length');
@@ -97,11 +97,6 @@ final class WebEmitter implements EmitterInterface
             }
         }
 
-        if ($withoutBody)
-        {
-            return;
-        }
-
         if (!$withoutContentLength && !$response->hasHeader('Content-Length'))
         {
             if (
@@ -110,6 +105,11 @@ final class WebEmitter implements EmitterInterface
             ) {
                 $this->sendHeader("Content-Length: {$contentLength}", true);
             }
+        }
+
+        if ($withoutBody)
+        {
+            return;
         }
 
         $this->emitBody($response);
