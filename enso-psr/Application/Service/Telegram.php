@@ -19,7 +19,7 @@ class Telegram
 
     public function __construct()
     {
-        $this->telegramBotId = getenv('ENSO_TG_BOT_ID');
+        $this->telegramBotId = (string) getenv('ENSO_TG_BOT_ID');
         $this->telegramBotApiKey = getenv('ENSO_TG_API_KEY');
 
         $this->_client = new Client([
