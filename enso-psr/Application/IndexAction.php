@@ -8,7 +8,9 @@ declare(strict_types = 1);
 namespace Application;
 
 use Application\Model\User;
+use ArrayIterator;
 use Enso\Helpers\Runtime;
+use Enso\Helpers\Tree;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
 use Enso\System\ActionHandler;
@@ -101,15 +103,24 @@ class IndexAction extends ActionHandler
             ->all();
 
         return [
-            'context' => [
-                'sapi' => PHP_SAPI,
-                'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
-                'roadRunner' => Runtime::isGoridge(),
-                'redis' => $redisStatus,
-                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
-            ],
-            'users' => $users ?? [],
+            ...(
+                new Tree(
+                    $this->_context->getRoutingTree()
+                )
+            )->next()
         ];
+
+
+//        return [
+//            'context' => [
+//                'sapi' => PHP_SAPI,
+//                'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
+//                'roadRunner' => Runtime::isGoridge(),
+//                'redis' => $redisStatus,
+//                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
+//            ],
+//            'users' => $users ?? [],
+//        ];
     }
 
 }

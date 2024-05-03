@@ -7,9 +7,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class Telegram
 {
-    public int $telegramBotId = 5828822520;
+    public int $telegramBotId;
 
-    public string $telegramBotApiKey = 'AAHwdteGGpumUJAG4Gssi1vLMTCIVO7X9D0';
+    public string $telegramBotApiKey;
     public string $telegramApiBaseUrl = 'https://api.telegram.org';
 
     /**
@@ -19,6 +19,9 @@ class Telegram
 
     public function __construct()
     {
+        $this->telegramBotId = getenv('ENSO_TG_BOT_ID');
+        $this->telegramBotApiKey = getenv('ENSO_TG_API_KEY');
+
         $this->_client = new Client([
             'base_uri' => $this->telegramApiBaseUrl,
         ]);

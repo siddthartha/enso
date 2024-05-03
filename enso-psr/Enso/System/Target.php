@@ -29,7 +29,7 @@ class Target
      * @param string|array $methods
      * @param Enso|null $context
      */
-    public function __construct(string $className, string|array $methods = [], ?Enso $context = null)
+    public function __construct(string $className, string|array $methods = [], ?Enso &$context = null)
     {
         $this->_className = $className;
         $this->_methods = is_array($methods)
@@ -41,7 +41,7 @@ class Target
             throw new \BadFunctionCallException("No such class to instantiate action runner.");
         }
 
-        $this->_context = $context;
+        $this->_context = &$context;
     }
 
     /**

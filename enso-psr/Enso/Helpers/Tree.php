@@ -7,21 +7,28 @@ class Tree
     const DEPTH_FIRST = 'depth';
     const BREADTH_FIRST = 'breadth';
 
-    public static function traverse(array &$tree, string $type = self::DEPTH_FIRST): iterable
+    public function __construct(
+        private array $tree,
+        protected string $type = self::DEPTH_FIRST,
+    ) {
+
+    }
+
+    public function next(): iterable
     {
-        return match($type)
+        return match($this->type)
         {
-            self::DEPTH_FIRST => self::traverseDepth($tree),
-            self::BREADTH_FIRST => self::traverseBreadth($tree),
+            self::DEPTH_FIRST => $this->traverseDepth($this->tree),
+            self::BREADTH_FIRST => $this->traverseBreadth($this->tree),
             default => [],
         };
     }
 
-    private static function traverseDepth(array &$nodes): iterable
+    private function traverseDepth(array &$tree): iterable
     {
-        foreach ($nodes as $key => &$value)
+        foreach ($tree as $key => $value)
         {
-            yield $key => $value;
+            yield [$key => $value];
 
             if (is_array($value))
             {
@@ -30,11 +37,11 @@ class Tree
         }
     }
 
-    private static function traverseBreadth(array &$nodes): iterable
+    private function traverseBreadth(array &$tree): iterable
     {
         $nextLevel = [];
 
-        foreach ($nodes as $key => &$value)
+        foreach ($tree as $key => &$value)
         {
             yield $key => $value;
 

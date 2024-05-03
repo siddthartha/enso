@@ -81,8 +81,6 @@ class Router implements MiddlewareInterface
                     trim($entry, self::ROUTE_TRIM_PREFIX . self::ROUTE_TOKEN_DELIMITER)
                 );
 
-                reset($path);
-
                 /**
                  * RECURSIVE CALL for elements with redirection string
                  */

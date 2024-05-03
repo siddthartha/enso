@@ -20,18 +20,15 @@ use Psr\Http\Message\RequestInterface;
  */
 class ActionHandler implements MiddlewareInterface
 {
-    protected object $_context;
+    protected ?Enso $_context;
     protected RequestInterface $_request;
 
     /**
-     * @param object|null $context
+     * @param Enso|null $context
      */
-    public function __construct(?object &$context = null)
+    public function __construct(?Enso &$context = null)
     {
-        if ($context instanceof Enso)
-        {
-            $this->_context = &$context;
-        }
+        $this->_context = &$context;
 
         $this->init();
     }

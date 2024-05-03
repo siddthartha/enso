@@ -8,6 +8,7 @@ declare(strict_types = 1);
 namespace Application;
 
 use Application\Service\Telegram;
+use Enso\Enso;
 use Enso\Helpers\A;
 use Enso\Relay\Request;
 use Enso\Relay\Response;
@@ -21,7 +22,14 @@ use Psr\Http\Message\ResponseInterface;
  */
 class TelegramSendInputAction extends ActionHandler
 {
-    public int $recipientId = 174741219;
+    public int $recipientId;
+
+    public function __construct(?Enso &$context = null)
+    {
+        parent::__construct($context);
+
+        $this->recipientId = (int) getenv('ENSO_TG_RECIPIENT_ID');
+    }
 
     /**
      * @OA\Get(
