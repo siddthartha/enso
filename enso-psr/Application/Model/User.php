@@ -3,6 +3,7 @@
 namespace Application\Model;
 
 use Yiisoft\ActiveRecord\ActiveRecord;
+use Yiisoft\Db\Connection\ConnectionInterface;
 
 /**
  * Entity User.
@@ -15,6 +16,15 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  **/
 final class User extends ActiveRecord
 {
+    public function __construct(private ConnectionInterface $db)
+    {
+    }
+
+    public function db(): ConnectionInterface
+    {
+        return $this->db;
+    }
+
     public function tableName(): string
     {
         return '{{%user}}';

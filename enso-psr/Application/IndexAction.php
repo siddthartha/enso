@@ -8,16 +8,11 @@ declare(strict_types = 1);
 namespace Application;
 
 use Application\Model\User;
-use ArrayIterator;
 use Enso\Helpers\Runtime;
-use Enso\Helpers\Tree;
-use Enso\Relay\Request;
-use Enso\Relay\Response;
 use Enso\System\ActionHandler;
 use Predis\Client;
 use Swoole\Coroutine;
 use Yiisoft\ActiveRecord\ActiveQuery;
-use Yiisoft\ActiveRecord\ActiveRecordFactory;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Mysql\Connection;
 
@@ -85,12 +80,7 @@ class IndexAction extends ActionHandler
 
         foreach (range(0, 3) as $item)
         {
-            /* @var $user User */
-            $user = (
-            $this->_context
-                ->getContainer()
-                ->get(ActiveRecordFactory::class)
-            )->createAR(User::class);
+            $user = $this->_context->getContainer()->get(User::class);
 
             $user->username = 'user' . rand(0, 1000000);
             $user->email = 'user' . rand(0, 1000000) . '@mail.ru';
@@ -98,7 +88,7 @@ class IndexAction extends ActionHandler
         }
 
 
-        $users = (new ActiveQuery(User::class, $db))
+        $users = (new ActiveQuery($user))
             ->asArray()
             ->all();
 
@@ -117,7 +107,7 @@ class IndexAction extends ActionHandler
                 'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
-                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
+                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerInfo(), 'active' => $db->isActive()],
             ],
             'users' => $users ?? [],
         ];
