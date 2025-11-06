@@ -49,7 +49,7 @@ class Response implements PSRResponseInterface, ResponseInterface
         $_response->header = $response->getHeaders();
 
         $_response->write(
-            content: $response->getBody()->getContents()
+            data: $response->getBody()->getContents()
         );
 
         return $_response;
