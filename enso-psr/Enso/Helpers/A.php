@@ -8,16 +8,29 @@ declare(strict_types = 1);
 namespace Enso\Helpers;
 
 use Yiisoft\Arrays\ArrayHelper;
+use InvalidArgumentException;
 
 /**
  * Description of A
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
- * @method static merge($attributes, array $array)
  */
 class A
 {
+    /**
+     * Picks a random value from a given array
+     *
+     * @param array $array
+     * @return mixed
+     */
+    public function random(array $array): mixed
+    {
+        if (empty($array)) {
+            throw new InvalidArgumentException('Cannot pick a random element from an empty array');
+        }
 
+        return (fn(&$_array) => $_array[array_rand($_array)])($array);
+    }
 
     /**
      *
@@ -36,6 +49,11 @@ class A
     public static function get(array &$array, array|\Closure|float|int|string $path, $default = null): mixed
     {
         return ArrayHelper::getValue($array, $path, $default);
+    }
+
+    public static function merge(...$arrays): array
+    {
+        return ArrayHelper::merge(...$arrays);
     }
 
     /**

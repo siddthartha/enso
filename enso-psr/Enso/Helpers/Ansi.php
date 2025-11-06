@@ -145,6 +145,16 @@ class Ansi
         return static::code_to_ansi($color_code);
     }
 
+    static function isTty(): bool
+    {
+        if (static::$piped !== null)
+        {
+            return static::$piped;
+        }
+
+        return (static::$piped = !posix_isatty(STDOUT));
+    }
+
     /**
      * Restore the previous color, or "reset" if none was previously active.
      *
@@ -152,9 +162,7 @@ class Ansi
      */
     static function restore(): string
     {
-        // Don't output ANSI codes if not a TTY.
-        // Using a static var for caching the posix_isatty call.
-        if (static::$piped = !posix_isatty(STDOUT))
+        if (self::isTty())
         {
             return "";
         }
@@ -176,9 +184,7 @@ class Ansi
      */
     static function reset(): string
     {
-        // Don't output ANSI codes if not a TTY.
-        // Using a static var for caching the posix_isatty call.
-        if (static::$piped = !posix_isatty(STDOUT))
+        if (self::isTty())
         {
             return "";
         }

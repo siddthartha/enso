@@ -102,25 +102,25 @@ class IndexAction extends ActionHandler
             ->asArray()
             ->all();
 
-        return [
-            ...(
-                new Tree(
-                    $this->_context->getRoutingTree()
-                )
-            )->next()
-        ];
-
-
 //        return [
-//            'context' => [
-//                'sapi' => PHP_SAPI,
-//                'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
-//                'roadRunner' => Runtime::isGoridge(),
-//                'redis' => $redisStatus,
-//                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
-//            ],
-//            'users' => $users ?? [],
+//            ...(
+//                new Tree(
+//                    $this->_context->getRoutingTree()
+//                )
+//            )->next()
 //        ];
+
+
+        return [
+            'context' => [
+                'sapi' => PHP_SAPI,
+                'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
+                'roadRunner' => Runtime::isGoridge(),
+                'redis' => $redisStatus,
+                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerVersion(), 'active' => $db->isActive()],
+            ],
+            'users' => $users ?? [],
+        ];
     }
 
 }

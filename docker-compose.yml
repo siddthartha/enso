@@ -61,7 +61,7 @@ services:
       - "8282:9666" # allow direct access to RR service
     command: >
         bash -c "true
-        && composer install -o
+        && composer install -o --ignore-platform-req=ext-openswoole
         && ./rr-serve.sh
         && docker-php-entrypoint php-fpm
         "
@@ -128,7 +128,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/vhost.local.conf:/etc/nginx/conf.d/vhost.conf:ro
       - ./nginx/nginx-logs:/var/log/nginx:delegated
-      #- ./certbot/www:/var/www/certbot:ro
+      - ./certbot/:/var/www/certbot:ro
     depends_on:
       - php
       - php-sw

@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-use Yiisoft\Db\Connection\Dsn;
+use Yiisoft\Db\Mysql\Dsn;
 
 return [
     'supportEmail' => 'sadovnikoff@gmail.com',
@@ -22,7 +22,7 @@ return [
         ],
     ],
     'yiisoft/db-mysql' => [
-        'dsn' => (new Dsn(driver: 'mysql', host: 'db', databaseName: 'enso', port: '3306'))->asString(),
+        'dsn' => (new Dsn(driver: 'mysql', host: 'db', databaseName: 'enso', port: '3306')),
         'username' => 'enso',
         'password' => 'b66772bc'
     ],

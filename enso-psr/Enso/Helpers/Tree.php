@@ -2,6 +2,13 @@
 
 namespace Enso\Helpers;
 
+/**
+ * Class Tree.
+ *
+ * A helper class for traversing a tree structure.
+ *
+ * @package Enso\Helpers
+ */
 class Tree
 {
     const DEPTH_FIRST = 'depth';

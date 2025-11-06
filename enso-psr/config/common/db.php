@@ -2,6 +2,7 @@
 
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Mysql\Connection;
+use Yiisoft\Db\Mysql\Driver;
 
 /**
  * config ConnectionInterface::class
@@ -12,9 +13,11 @@ return [
     ConnectionInterface::class => [
         'class' => Connection::class,
         '__construct()' => [
-            'dsn' => $params['yiisoft/db-mysql']['dsn'],
+            'driver' => new Driver(
+                $params['yiisoft/db-mysql']['dsn'],
+                $params['yiisoft/db-mysql']['username'],
+                $params['yiisoft/db-mysql']['password'],
+            ),
         ],
-        'setUsername()' => [$params['yiisoft/db-mysql']['username']],
-        'setPassword()' => [$params['yiisoft/db-mysql']['password']],
     ],
 ];

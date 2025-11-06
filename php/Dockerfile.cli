@@ -1,4 +1,4 @@
-FROM phpswoole/swoole:4.8.0-php8.0-dev
+FROM openswoole/swoole:4.11-php8.1
 
 # COPY opcache.ini /usr/local/etc/php/conf.d/
 COPY ./php.ini /usr/local/etc/php/
@@ -11,8 +11,6 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get install apt-utils -y \
     && apt-get install git wget curl zip libzip-dev libgmp-dev libffi-dev libssl-dev iputils-ping -y \
     && docker-php-ext-install -j$(nproc) posix sockets zip gmp pcntl bcmath ffi pdo pdo_mysql mysqli \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
     && pecl install redis-stable \
     && docker-php-ext-enable redis \
     && docker-php-source delete \

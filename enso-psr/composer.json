@@ -15,12 +15,13 @@
         "yiisoft/di": "*",
         "yiisoft/config": "^1.0",
         "yiisoft/aliases": "^2.0",
-        "yiisoft/active-record": "3.0.x-dev",
-        "yiisoft/db-mysql": "3.0.x-dev",
+        "yiisoft/active-record": "dev-master",
+        "yiisoft/db-mysql": "dev-master",
+        "symfony/cache": "*",
         "guzzlehttp/guzzle": "^7.3",
-        "yiisoft/log": "^1.0",
-        "yiisoft/log-target-file": "^1.0",
-        "yiisoft/log-target-syslog": "^1.0",
+        "yiisoft/log": "*",
+        "yiisoft/log-target-file": "*",
+        "yiisoft/log-target-syslog": "*",
         "yiisoft/http": "^1.1",
         "httpsoft/http-message": "^1.0",
         "zircote/swagger-php": "^3.2",
@@ -115,6 +116,6 @@
         "codeception/module-rest": "^1.3",
         "codeception/module-phpbrowser": "^1.0",
         "codeception/module-asserts": "^1.3",
-        "swoole/ide-helper": "@dev"
+        "openswoole/ide-helper": "^22.1.5"
     }
 }
