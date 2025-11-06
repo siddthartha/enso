@@ -88,7 +88,7 @@ class ApiCest
         $I->sendGet('/favicon.ico');
         $I->seeResponseCodeIs(200);
 
-        $I->seeBinaryResponseEquals($faviconMd5);
+        $I->seeBinaryResponseEquals($faviconMd5, 'md5');
     }
 
 }

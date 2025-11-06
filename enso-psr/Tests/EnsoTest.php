@@ -9,7 +9,6 @@ use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\
     {Exception\ProcessFailedException, Process};
-use Yiisoft\Json\Json;
 
 /**
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
@@ -38,7 +37,7 @@ class EnsoTest extends TestCase
         $process = new Process(['./enso', 'default/index']);
 
         $process->mustRun();
-        $output = Json::decode($process->getOutput());
+        $output = json_decode($process->getOutput(), associative: true);
 
         static::assertTrue((new JsonType($output))->matches([
             'context' => [
@@ -73,7 +72,7 @@ class EnsoTest extends TestCase
         $process = new Process(['./enso', 'some/bad/route']);
 
         $process->run();
-        $output = Json::decode($process->getOutput());
+        $output = json_decode($process->getOutput(), associative: true);
 
         static::assertNotEquals((int) $process->getExitCode(), (int) 0);
 

@@ -112,11 +112,11 @@
         }
     },
     "require-dev": {
-        "codeception/codeception": "^4.1",
-        "codeception/c3": "^2.6",
-        "codeception/module-rest": "^1.3",
-        "codeception/module-phpbrowser": "^1.0",
-        "codeception/module-asserts": "^1.3",
+        "codeception/codeception": "^5.2.2",
+        "codeception/c3": "^2.9.0",
+        "codeception/module-rest": "*",
+        "codeception/module-phpbrowser": "*",
+        "codeception/module-asserts": "*",
         "openswoole/ide-helper": "^22.1.5"
     }
 }
