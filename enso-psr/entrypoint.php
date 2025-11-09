@@ -1,5 +1,4 @@
-<?php
-declare(strict_types = 1);
+<?php declare(strict_types = 1);
 
 $started_ts = microtime(as_float: true);
 
@@ -69,7 +68,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
              * @param callable $next
              * @return Response
              */
-            middleware: function (Request $request, callable $next): ResponseInterface
+            middleware: static function (Request $request, callable $next): ResponseInterface
             {
                 /** @var MiddlewareInterface $next */
                 $response = $next->handle(

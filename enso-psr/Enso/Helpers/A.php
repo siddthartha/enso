@@ -29,7 +29,7 @@ class A
             throw new InvalidArgumentException('Cannot pick a random element from an empty array');
         }
 
-        return (fn(&$_array) => $_array[array_rand($_array)])($array);
+        return (static fn(&$_array) => $_array[array_rand($_array)])($array);
     }
 
     /**

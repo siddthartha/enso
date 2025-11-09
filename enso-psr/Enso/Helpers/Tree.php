@@ -5,7 +5,7 @@ namespace Enso\Helpers;
 /**
  * Class Tree.
  *
- * A helper class for traversing a tree structure.
+ * A helper class for Lazy-traversing an array with a tree structure using a generator.
  *
  * @package Enso\Helpers
  */

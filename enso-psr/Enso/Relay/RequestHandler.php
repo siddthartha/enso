@@ -57,10 +57,7 @@ abstract class RequestHandler
 
         if ($resolver === null)
         {
-            $resolver = function ($entry)
-            {
-                return $entry;
-            };
+            $resolver = static fn ($entry) => $entry;
         }
 
         $this->_resolver = $resolver;

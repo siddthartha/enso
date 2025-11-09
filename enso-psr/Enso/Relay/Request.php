@@ -45,11 +45,11 @@ abstract class Request implements RequestInterface, PSRRequestInterface
     protected function preparePath(string $uriPath): array
     {
         $path = trim(preg_replace('#/+#', '/', filter_var(rawurldecode($uriPath), FILTER_SANITIZE_URL)), '/');
-        $segments = array_filter(explode('/', $path), fn($s) => $s !== '' && $s !== '.');
+        $segments = array_filter(explode('/', $path), static fn($s) => $s !== '' && $s !== '.');
 
         return array_reduce(
             array: $segments,
-            callback: fn (array $acc, string $item) => ($item === '..') ? $acc : [...$acc, $item],
+            callback: static fn (array $acc, string $item) => ($item === '..') ? $acc : [...$acc, $item],
             initial: [],
         );
     }

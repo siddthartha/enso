@@ -74,7 +74,7 @@ class Enso
 
         $this->_relay = $relay ?? new Relay(
             queue: [
-                function (Request $request, callable $next): ResponseInterface
+                static function (Request $request, callable $next): ResponseInterface
                 {
 
                     $request->before = microtime(true);
@@ -219,7 +219,8 @@ class Enso
     {
         try
         {
-            $response = $this->getRelay()
+            $response = $this
+                ->getRelay()
                 ->handle($request);
 
             if ($response instanceof Response)

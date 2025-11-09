@@ -6,6 +6,7 @@ use Swoole\Http\
 use Enso\Relay\
     {Response as EnsoResponse};
 
+///** @var Enso\Enso $run */
 $run = require_once './entrypoint.php';
 
 $httpServer = new Server(
@@ -19,7 +20,7 @@ $httpServer->set([
 
 $httpServer->on(
     event: 'request',
-    callback: function (Request $_request, Response $_response) use (&$run)
+    callback: static function (Request $_request, Response $_response) use (&$run)
     {
         $connected_ts = $_request->server['request_time'];
 
