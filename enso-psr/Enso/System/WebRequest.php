@@ -107,7 +107,10 @@ class WebRequest extends Request
             method: $method = $swooleRequest->getMethod(),
             uri: $uri = new Uri($swooleRequest->server['request_uri']),
             headers: $headers = $swooleRequest->header,
-            body: $body = (new StreamFactory())->createStream((string) $swooleRequest->rawContent()),
+            body: $body = (new StreamFactory())
+                ->createStream(
+                    (string) $swooleRequest->rawContent()
+                ),
             protocol: $protocol = '1.1'
         );
 
@@ -145,19 +148,16 @@ class WebRequest extends Request
      */
     public function getRoute(): array
     {
-        $phpSelfPath = $_SERVER['PHP_SELF'];
-
-        $uriTarget = explode(
-            '/',
-            trim(
-                mb_ereg_replace("^($phpSelfPath)", '', $this->getUri()->getPath()),
-                '/'
-            )
-        );
-
-        return count($uriTarget) == 0 || (count($uriTarget) == 1 && $uriTarget[0] == '')
+        $route = $this
+            ->preparePath(
+                $this
+                    ->getUri()
+                    ->getPath()
+            );
+        
+        return empty($route)
             ? parent::getRoute()
-            : $uriTarget;
+            : $route;
     }
 
     /**

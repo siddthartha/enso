@@ -47,9 +47,14 @@ class CliRequest extends Request
      */
     public function getRoute(): array
     {
-        return isset($this->_arguments[1])
-            ? explode('/', $this->_arguments[1])
-            : parent::getRoute();
+        if (!isset($this->_arguments[1])) {
+            return parent::getRoute();
+        }
+        
+        $path = $this->_arguments[1];
+        $route = $this->preparePath($path);
+        
+        return empty($route) ? parent::getRoute() : $route;
     }
 
     public function getPayload(): mixed
