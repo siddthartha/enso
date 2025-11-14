@@ -22,8 +22,13 @@ return [
         ],
     ],
     'yiisoft/db-mysql' => [
-        'dsn' => (new Dsn(driver: 'mysql', host: 'db', databaseName: 'enso', port: '3306')),
-        'username' => 'enso',
-        'password' => 'b66772bc'
+        'dsn' => (new Dsn(
+            driver: 'mysql',
+            host: getenv('DB_HOST') ?: 'db',
+            databaseName: getenv('DB_DATABASE') ?: 'enso',
+            port: getenv('DB_LOCAL_PORT') ?: '3306'
+        )),
+        'username' => getenv('DB_USERNAME') ?: 'enso',
+        'password' => getenv('DB_PASSWORD') ?: 'b66772bc'
     ],
 ];

@@ -12,6 +12,7 @@ return [
     ],
     'default' => [
         'index' => new Target('Application\IndexAction', [], $context),
+        'user' => new Target('Application\UserAction', [], $context),
         'telegram' => new Target('Application\TelegramAction'),
         'telegram-send-input' => new Target('Application\TelegramSendInputAction'),
         'open-api' => new Target('Application\OpenApiAction', ['POST']),

@@ -2,7 +2,7 @@
 
 namespace Application\Service;
 
-class Darknet
+class QueueService
 {
 
 }

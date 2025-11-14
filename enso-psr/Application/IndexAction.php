@@ -52,46 +52,6 @@ class IndexAction extends ActionHandler
 
         $redisStatus = $redis->ping('hello');
 
-        /* @var $db Connection */
-        $db = $this->_context
-            ->getContainer()
-            ->get(ConnectionInterface::class);
-
-        /** @TODO: move to migrations */
-        $db
-            ->createCommand()
-            ->dropTable('user')
-            ->execute();
-
-        $db
-            ->createCommand()
-            ->createTable(
-                'user',
-                [
-                    'id' => 'int(11) NOT NULL AUTO_INCREMENT',
-                    'username' => 'varchar(50)',
-                    'email' => 'varchar(50)',
-                    'PRIMARY KEY(id)',
-                ],
-
-            )
-            ->execute();
-
-
-        foreach (range(0, 3) as $item)
-        {
-            $user = $this->_context->getContainer()->get(User::class);
-
-            $user->username = 'user' . rand(0, 1000000);
-            $user->email = 'user' . rand(0, 1000000) . '@mail.ru';
-            $user->save();
-        }
-
-
-        $users = (new ActiveQuery($user))
-            ->asArray()
-            ->all();
-
 //        return [
 //            ...(
 //                new Tree(
@@ -100,16 +60,13 @@ class IndexAction extends ActionHandler
 //            )->next()
 //        ];
 
-
         return [
             'context' => [
                 'sapi' => PHP_SAPI,
                 'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
-                'database' => ['driver' => $db->getDriverName(), 'version' => $db->getServerInfo(), 'active' => $db->isActive()],
             ],
-            'users' => $users ?? [],
         ];
     }
 

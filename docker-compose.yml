@@ -13,10 +13,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_USER=enso
-      - MYSQL_PASSWORD=b66772bc
-      - MYSQL_DATABASE=enso
-      - MYSQL_ROOT_PASSWORD=b66772bc
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
 
   #
   # Redis service

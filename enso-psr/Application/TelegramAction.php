@@ -20,7 +20,7 @@ use GuzzleHttp\Exception\GuzzleException;
  */
 class TelegramAction extends ActionHandler
 {
-    public int $recipientId = 174741219;
+    public int $recipientId;
 
     private ?Telegram $_telegram;
 
@@ -28,6 +28,7 @@ class TelegramAction extends ActionHandler
     {
         parent::__construct($context);
 
+        $this->recipientId = (int) getenv('ENSO_TG_RECIPIENT_ID');
         $this->_telegram = $telegram ?? new Telegram();
 
     }

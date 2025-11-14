@@ -47,15 +47,13 @@ trait Subject
      *
      * @param string $attribute
      * @param mixed $value
-     * @return mixed
+     * @return void
      */
     public function __set(string $attribute, $value): void
     {
         if (method_exists($this, Internal::MAGIC_SETTER_PREFIX . $attribute))
         {
             $this->{Internal::MAGIC_SETTER_PREFIX . $attribute}($value);
-
-            return;
         }
 
         $this->__attributes[$attribute] = $value;
