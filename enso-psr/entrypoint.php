@@ -2,7 +2,7 @@
 
 $started_ts = microtime(as_float: true);
 
-use Enso\Enso as Application;
+use Enso\Enso as EnsoApplication;
 use Enso\Helpers\Runtime;
 use Enso\Relay\
     {MiddlewareInterface, Request, Response};
@@ -32,7 +32,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
     /**
      * Enso application lifecycle entrypoint
      */
-    $app = (static fn(): Application => (new Application( // create application instance ...
+    $app = (static fn(): EnsoApplication => (new EnsoApplication( // create application instance ...
         emitter: Runtime::isCLI()
             ? new CliEmitter()
             : new WebEmitter()

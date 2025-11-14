@@ -7,3 +7,5 @@ nbproject
 .phpdoc
 .db-data
 .redis-data
+.gemini/
+gha-creds-*.json

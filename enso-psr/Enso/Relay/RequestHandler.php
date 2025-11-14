@@ -36,24 +36,16 @@ abstract class RequestHandler
      * @param iterable<mixed> $queue A queue of middleware entries.
      * @param callable|null $resolver Converts a given queue entry to a callable or MiddlewareInterface instance.
      */
-    public function __construct($queue, ?callable $resolver = null, ?ContainerInterface &$context = null)
+    public function __construct(iterable $queue, ?callable $resolver = null, ?ContainerInterface &$context = null)
     {
-        if (!is_iterable($queue))
-        {
-            throw new TypeError('\$queue must be array or Traversable.');
-        }
-
-        if (!is_array($queue))
-        {
-            $queue = iterator_to_array($queue);
-        }
-
         if (empty($queue))
         {
             throw new InvalidArgumentException('\$queue cannot be empty');
         }
 
-        $this->_queue = $queue;
+        $this->_queue = !is_array($queue)
+            ? iterator_to_array($queue)
+            : $queue;
 
         if ($resolver === null)
         {

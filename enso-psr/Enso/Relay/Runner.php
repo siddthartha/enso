@@ -27,14 +27,9 @@ class Runner
     /**
      *
      */
-    public function __construct($queue, ?callable $resolver = null)
+    public function __construct(iterable $queue, ?callable $resolver = null)
     {
-        if (!is_iterable($queue))
-        {
-            throw new \TypeError('\$queue must be array or Traversable.');
-        }
-
-        if (!is_array($queue))
+        if ($queue instanceof \Traversable)
         {
             $queue = iterator_to_array($queue, true);
         }

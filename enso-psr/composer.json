@@ -30,7 +30,8 @@
         "spiral/roadrunner": "v2.5",
         "erusev/parsedown": "^1.7",
         "erusev/parsedown-extra": "^0.8.1",
-        "yiisoft/cache": "^3.1"
+        "yiisoft/cache": "^3.1",
+        "loophp/collection": "^7.6"
     },
     "autoload": {
         "psr-4": {
