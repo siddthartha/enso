@@ -8,6 +8,7 @@ declare(strict_types = 1);
 namespace Application;
 
 use Application\Service\Telegram;
+use Enso\Enso;
 use Enso\Helpers\A;
 use Enso\System\ActionHandler;
 use GuzzleHttp\Client;
@@ -24,6 +25,10 @@ class TelegramAction extends ActionHandler
 
     private ?Telegram $_telegram;
 
+    /**
+     * @param object|Enso|null $context
+     * @param Telegram|null $telegram
+     */
     public function __construct(?object &$context = null, ?Telegram &$telegram = null)
     {
         parent::__construct($context);

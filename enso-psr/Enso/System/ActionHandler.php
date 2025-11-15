@@ -18,7 +18,7 @@ use Psr\Http\Message\RequestInterface;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class ActionHandler implements MiddlewareInterface
+abstract class ActionHandler implements MiddlewareInterface
 {
     protected ?Enso $_context;
     protected RequestInterface $_request;
@@ -33,7 +33,7 @@ class ActionHandler implements MiddlewareInterface
         $this->init();
     }
 
-    public function init()
+    public function init(): void
     {
         ;
     }

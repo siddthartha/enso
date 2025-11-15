@@ -8,6 +8,7 @@ declare(strict_types = 1);
 namespace Application;
 
 use Application\Model\User;
+use Application\Service\OpenRouter;
 use Enso\Helpers\Runtime;
 use Enso\System\ActionHandler;
 use Predis\Client;
@@ -52,6 +53,15 @@ class IndexAction extends ActionHandler
 
         $redisStatus = $redis->ping('hello');
 
+        $openRouter = new OpenRouter();
+
+        $response = $openRouter->streamChatCompletions(
+            model: 'openai/gpt-oss-20b:free',
+            messages: [
+                ["role" => "user", "content" => "hello"],
+            ]
+        );
+
 //        return [
 //            ...(
 //                new Tree(
@@ -66,6 +76,7 @@ class IndexAction extends ActionHandler
                 'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
+                'response' => $response,
             ],
         ];
     }

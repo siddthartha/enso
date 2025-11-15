@@ -11,7 +11,7 @@
         "ext-posix": "*",
         "ext-mysqli": "*",
         "relay/relay": "~2.0",
-        "vlucas/phpdotenv": "^5.3",
+        "vlucas/phpdotenv": "^5.6",
         "yiisoft/di": "*",
         "yiisoft/config": "^1.0",
         "yiisoft/aliases": "^2.0",
@@ -31,7 +31,9 @@
         "erusev/parsedown": "^1.7",
         "erusev/parsedown-extra": "^0.8.1",
         "yiisoft/cache": "^3.1",
-        "loophp/collection": "^7.6"
+        "loophp/collection": "^7.6",
+        "fp4php/functional": "^6.0",
+        "psr7-sessions/storageless": "^9.0"
     },
     "autoload": {
         "psr-4": {

@@ -143,3 +143,15 @@ or
 ### Step-by-step XDebug 3 ###
 * Set up `Docker` as an IDE Key and port `9005` to listen to
 * Run as "Local Web Server" on `http://hostname/` (only for `80` port via FPM).
+
+---
+
+### PSR Interfaces Used
+
+* PSR-3: Logger
+* PSR-6: Cache
+* PSR-7: HTTP Message
+* PSR-11: Container
+* PSR-13: SimpleCache
+* PSR-15: Middleware
+
