@@ -26,17 +26,6 @@ class ExceptionHandler
 
     public function handle(\Throwable $throwable): ResponseInterface
     {
-        $body = (new BufferStream());
-        $body->write(
-            json_encode([
-                'class' => $throwable::class,
-                'message' => $throwable->getMessage(),
-                'file' => $throwable->getFile(),
-                'line' => $throwable->getLine(),
-                'trace' => $throwable->getTrace()
-            ])
-        );
-
         /**
          * @OA\Schema(
          *     schema="ExceptionResponse",
@@ -51,11 +40,17 @@ class ExceptionHandler
          *     )
          * )
          */
-        $response = (new Response())
+        $response = (new Response([
+            'class' => $throwable::class,
+            'message' => $throwable->getMessage(),
+            'file' => $throwable->getFile(),
+            'line' => $throwable->getLine(),
+            'trace' => $throwable->getTrace()
+        ]))
             ->withStatus(Status::INTERNAL_SERVER_ERROR, 'Internal server error')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Content-type', 'application/json')
-            ->withBody($body);
+            ->collapse(true);
 
         if (!Runtime::isDaemon())
         {

@@ -90,10 +90,15 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
 
     $response = $app->run($request);
 
-    if ($response instanceof Response && !$response->isError())
+    if ($response instanceof Response)
     {
-        $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . ' ms';
-        $response = $response->collapse(force: true);
+        if (!$response->isError())
+        {
+            $response->preloadDuration = round(round($preloaded_ts - $started_ts, 6) * 1000, 2) . ' ms';
+        }
+
+        $response = $response->collapse($response->isError());
+
     }
 
     $app

@@ -8,6 +8,7 @@ use Fp\Streams\Stream as FPStream;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\LimitStream;
 use Psr\Http\Message\StreamInterface;
 use Yiisoft\Arrays\ArrayHelper;
 
@@ -63,7 +64,7 @@ class OpenRouter
                     uri: 'https://openrouter.ai/api/v1/chat/completions',
                     options: [
                         'json' => [
-                            'model' => "openai/gpt-oss-20b:free", //$model,
+                            'model' => $model,
                             'messages' => $messages,
                             'stream' => false,
                         ],
@@ -87,14 +88,13 @@ class OpenRouter
      * @param string $model The model to use (e.g., 'openai/gpt-4o')
      * @param array $messages Array of message objects with role and content
      * @param array $options Additional options for the API call
-     * @return \Generator The response stream generator
      * @throws GuzzleException
      */
     public function streamChatCompletions(
         string $model,
         array $messages,
         array $options = []
-    ): array {
+    ): FPStream {
         $defaultOptions = [
             'model' => $model,
             'messages' => $messages,
@@ -140,28 +140,28 @@ class OpenRouter
     }
 
     /**
-     * @return list<array>
+     * @param StreamInterface $stream
+     * @return FPStream
      */
-    function parseJsonLinesSSE(StreamInterface $stream): array
+    function parseJsonLinesSSE(StreamInterface $stream): FPStream
     {
 
-        return $this->fromPsrStream($stream)
+        return $this->fromPsrStream($stream, 1024)
             ->groupAdjacentBy(fn ($char) => PHP_EOL === $char)
             ->map(fn (array $pair) => $pair[1])
             ->map(fn (Seq $line) => $line->mkString(sep: ''))
-//            ->filter(fn (string $line) => '' !== $line) /* filter empty line */
             ->filter(fn (string $line) => str_starts_with($line, 'data: ')) /* not starts from 'data: ' */
             ->map(fn (string $line) => substr($line, 6)) /* remove 'data: ' */
             ->filter(fn (string $line) => '[DONE]' !== $line) /* filter terminal line */
-//            ->filterMap(fn (string $line) => $this->parseFoo($line)) // @TODO: parse on by one
-            ->toList();
+            ->filterMap(fn (string $line) => $this->parseSSEChankJson($line)) // @TODO: parse on by one
+            ;
     }
 
     /**
      * @param string $json
      * @return Option<array>
      */
-    function parseFoo(string $json): Option
+    function parseSSEChankJson(string $json): Option
     {
         return Option::try(fn() => json_decode($json, associative: true, flags: JSON_THROW_ON_ERROR));
     }
