@@ -21,7 +21,7 @@ use function flush;
  */
 final class CliEmitter implements EmitterInterface
 {
-    private const DEFAULT_BUFFER_SIZE = 32; // 65535; // 64Kb
+    private const DEFAULT_BUFFER_SIZE = 64; // 65535; // 64Kb
 
     private int $bufferSize;
 

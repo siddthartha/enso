@@ -17,7 +17,7 @@ class XTerm256
      * @param int $int
      * @return array [r,g,b]
      */
-    static public function intToRGBBytes(int $int): array
+    #[Pure] static public function intToRGBBytes(int $int): array
     {
         $red = ($int >> 16) & 0xFF;
         $green = ($int >> 8) & 0xFF;
@@ -26,53 +26,42 @@ class XTerm256
         return [$red, $green, $blue];
     }
 
-    static public function isPiped(): bool
+    static private function isPiped(): bool
     {
         return self::$isPiped !== null
             ? self::$isPiped
-            : !posix_isatty(STDOUT);
+            : (self::$isPiped = Runtime::isPiped());
     }
 
-    #[Pure] static public function compile(int $rgb, $isBackground = false): string
+    static private function output(string $output): string
     {
-        if (self::isPiped())
-        {
-            return "";
-        }
+        return self::isPiped() ? $output : "";
+    }
 
+    #[Pure] static private function compile(int $rgb, $isBackground = false): string
+    {
         [$red, $green, $blue] = self::intToRGBBytes($rgb);
         $code = $isBackground ? "48" : "38";
 
         return "\033[{$code};2;{$red};{$green};{$blue}m";
     }
 
-    #[Pure] static public function color(int $rgb): string
+    #[Pure] static private function background(int $rgb): string
     {
-        if (self::isPiped())
-        {
-            return "";
-        }
-
-        return self::compile($rgb, false);
-    }
-
-    #[Pure] static public function background(int $rgb): string
-    {
-        if (self::isPiped())
-        {
-            return "";
-        }
-
         return self::compile($rgb, true);
     }
 
-    #[Pure] static public function clear(): string
+    static public function clear(): string
     {
-        if (self::isPiped())
-        {
-            return "";
-        }
-
-        return "\033[0m";
+        return self::output("\033[0m");
     }
+
+    static public function color(int $foregroundRGB, ?int $backgroundRGB = null): string
+    {
+        return self::output(
+            self::compile($foregroundRGB, false)
+            . ($backgroundRGB !== null ? self::background($backgroundRGB) : "")
+        );
+    }
+
 }

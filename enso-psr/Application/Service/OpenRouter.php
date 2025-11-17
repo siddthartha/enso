@@ -2,15 +2,14 @@
 
 namespace Application\Service;
 
+use Enso\Helpers\A;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Fp\Streams\Stream as FPStream;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\LimitStream;
 use Psr\Http\Message\StreamInterface;
-use Yiisoft\Arrays\ArrayHelper;
 
 class OpenRouter
 {
@@ -68,6 +67,7 @@ class OpenRouter
                             'messages' => $messages,
                             'stream' => false,
                         ],
+                        'stream' => false,
                     ]
                 );
 
@@ -95,18 +95,19 @@ class OpenRouter
         array $messages,
         array $options = []
     ): FPStream {
-        $defaultOptions = [
-            'model' => $model,
-            'messages' => $messages,
-            'stream' => true, // Enable streaming according to the OpenRouter API docs @see
-        ];
-
-        $requestBody = ArrayHelper::merge($defaultOptions, $options);
-
         try {
             $response = $this->client
                 ->post('https://openrouter.ai/api/v1/chat/completions', [
-                    'json' => $requestBody,
+                    'json' => A::merge([
+                        'model' => $model,
+                        'messages' => $messages,
+                        'stream' => true, // Enable streaming according to the OpenRouter API docs @see
+                    ], $options),
+                    'headers' => [
+                        'Content-type' => 'text/event-stream',
+                        'Cache-Control' => 'no-cache',
+                    ],
+                    'stream' => true,
                 ]);
 
             return $this->parseJsonLinesSSE(

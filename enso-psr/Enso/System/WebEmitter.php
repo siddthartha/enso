@@ -35,7 +35,7 @@ final class WebEmitter implements EmitterInterface
         Status::NOT_MODIFIED,
     ];
 
-    private const DEFAULT_BUFFER_SIZE = 65535; // 64Kb
+    private const DEFAULT_BUFFER_SIZE = 32; // 64Kb
 
     private int $bufferSize;
 
