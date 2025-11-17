@@ -87,6 +87,16 @@ class CliRequest extends Request
         return $this->_arguments;
     }
 
+    public function  hasArguments(): bool
+    {
+        return !empty($this->_arguments) && count($this->_arguments) > 2;
+    }
+
+    public function getArgumentsLine(): string
+    {
+        return implode(" ", array_slice($this->_arguments, 2));
+    }
+
     /**
      * @return mixed
      */

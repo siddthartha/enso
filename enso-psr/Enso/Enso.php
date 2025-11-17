@@ -11,6 +11,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Definitions\Exception\
     {CircularReferenceException, InvalidConfigException, NotInstantiableException};
@@ -223,17 +224,15 @@ class Enso
                 ->getRelay()
                 ->handle($request);
 
-            if ($response instanceof Response)
-            {
-                $response = $response->collapse();
-            }
-
             return $response
                 ->withHeader('Access-Control-Allow-Origin', '*');
         }
         catch (\Throwable $exception)
         {
-            return (new ExceptionHandler($request, $this->getEmitter()))
+            return (new ExceptionHandler(
+                request: $request,
+                emitter: $this->getEmitter()
+            ))
                 ->handle($exception);
         }
     }

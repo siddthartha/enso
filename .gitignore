@@ -8,4 +8,5 @@ nbproject
 .db-data
 .redis-data
 .gemini/
+.qwen/
 gha-creds-*.json

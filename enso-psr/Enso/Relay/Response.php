@@ -12,6 +12,7 @@ use GuzzleHttp\Psr7\BufferStream;
 use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\ResponseInterface as PSRResponseInterface;
 use HttpSoft\Message\ResponseTrait;
+use Psr\Http\Message\StreamInterface;
 use Swoole\Http\Response as SwooleResponse;
 
 /**
@@ -25,22 +26,23 @@ class Response implements PSRResponseInterface, ResponseInterface
     use ResponseTrait;
     use Subject;
 
+    private bool $_isStream;
     private mixed $payload;
 
     /**
-     * @param array $data
+     * @param array|StreamInterface $data
      * @param int $statusCode
      */
-    public function __construct(array $data = [], int $statusCode = 200)
+    public function __construct(array|StreamInterface $data = [], int $statusCode = 200)
     {
-        $this->__attributes = $data;
+        $this->_isStream = $data instanceof StreamInterface;
+        $this->__attributes = $this->_isStream ? null : $data;
 
-        $headers = [];
-        $body = null;
-        $protocol = '1.1';
-        $reasonPhrase = '';
-
-        $this->init($statusCode, $reasonPhrase, $headers, $body, $protocol);
+        $this->init(
+            statusCode: $statusCode,
+            headers: [],
+            body: $this->_isStream ? $data : null,
+        );
     }
 
     public static function toSwooleResponse(PSRResponseInterface $response, SwooleResponse &$_response): SwooleResponse
@@ -62,8 +64,8 @@ class Response implements PSRResponseInterface, ResponseInterface
      */
     public function isBodyEmpty(): bool
     {
-        return ($this->getBody()->getSize() == 0
-            || $this->getBody()->getSize() == null
+        return ($this->getBody()->getSize() === 0
+            || $this->getBody()->getSize() === null
         );
     }
 
@@ -75,11 +77,11 @@ class Response implements PSRResponseInterface, ResponseInterface
      */
     public function collapse(bool $force = false): PSRResponseInterface
     {
-        if ($force || $this->isBodyEmpty())
+        if (!$this->isStream() || $force)
         {
-            // then serialize Response data from `$this->__attributes`
             $body = (new BufferStream());
 
+            // then serialize Response data from `$this->__attributes` using `__toString()`
             $isFull = $body->write((string) $this) == 0;
 
             if ($isFull)
@@ -126,5 +128,13 @@ class Response implements PSRResponseInterface, ResponseInterface
     public function getStatus(): int
     {
         return $this->getStatusCode();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStream(): bool
+    {
+        return $this->_isStream;
     }
 }

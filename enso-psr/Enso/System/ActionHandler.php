@@ -9,6 +9,7 @@ namespace Enso\System;
 
 use Enso\Enso;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Enso\Relay\
     {Response, MiddlewareInterface};
 use Psr\Http\Message\RequestInterface;
@@ -18,7 +19,7 @@ use Psr\Http\Message\RequestInterface;
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
-class ActionHandler implements MiddlewareInterface
+abstract class ActionHandler implements MiddlewareInterface
 {
     protected ?Enso $_context;
     protected RequestInterface $_request;
@@ -33,7 +34,7 @@ class ActionHandler implements MiddlewareInterface
         $this->init();
     }
 
-    public function init()
+    public function init(): void
     {
         ;
     }
@@ -48,11 +49,12 @@ class ActionHandler implements MiddlewareInterface
     {
         $this->_request = $request;
 
-        $result = ($this) (); // __invoke current ansector's object to -- "run" action
+        $response = ($this) (); // __invoke() current ansector's object to -- "run" action
 
-        return $result instanceof ResponseInterface
-            ? $result
-            : new Response($result);
+        return $response instanceof ResponseInterface
+            ? $response
+            : new Response($response)
+        ;
     }
 
     public function getRequest(): RequestInterface

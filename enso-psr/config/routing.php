@@ -6,6 +6,8 @@ use Enso\System\Target;
 /** @var Enso $context */
 
 return [
+    'ai' => new Target('Application\LLMStreamAction', [], $context),
+
     'some' => [
         'route1' => 'target1',
         'route2' => 'target2',

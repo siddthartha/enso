@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Enso\Helpers;
 
+use JetBrains\PhpStorm\Pure;
 use Swoole\Coroutine;
 
 /**
@@ -62,32 +63,16 @@ final class Runtime
         }
     }
 
-    /**
-     * Aren't we inside a CLI call now?
-     *
-     * @return bool
-     */
     public static function isCLI(): bool
     {
         return PHP_SAPI === 'cli';
     }
 
-    /**
-     * Aren't we inside an FPM call now?
-     *
-     * @return bool
-     */
     public static function isFPM(): bool
     {
         return PHP_SAPI === 'fpm-fcgi';
     }
 
-    /**
-     * Aren't we inside Swoole now?
-     * @TODO: improve
-     *
-     * @return bool
-     */
     public static function haveSwoole(): bool
     {
         return function_exists('swoole_version') && is_string(swoole_version());
@@ -102,5 +87,15 @@ final class Runtime
     public static function isGoridge(): bool
     {
         return isset($_ENV['RR_MODE']);
+    }
+
+    public static function isPiped(): bool
+    {
+        return !self::isTty();
+    }
+
+    public static function isTty(): bool
+    {
+        return posix_isatty(STDOUT);
     }
 }

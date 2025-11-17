@@ -8,9 +8,12 @@ declare(strict_types = 1);
 namespace Application;
 
 use Application\Model\User;
+use Application\Service\OpenRouter;
 use Enso\Helpers\Runtime;
 use Enso\System\ActionHandler;
+use GuzzleHttp\Psr7\Utils;
 use Predis\Client;
+use Psr\Http\Message\StreamInterface;
 use Swoole\Coroutine;
 use Yiisoft\ActiveRecord\ActiveQuery;
 use Yiisoft\Db\Connection\ConnectionInterface;
@@ -60,12 +63,17 @@ class IndexAction extends ActionHandler
 //            )->next()
 //        ];
 
+
         return [
             'context' => [
                 'sapi' => PHP_SAPI,
                 'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
+//                'response' => $response
+//                    ->map(fn (array $sseResponse) => $sseResponse['choices'][0]['delta']['content'])
+//                    ->filter(fn (string $line) => '' !== $line) /* filter empty line */
+//                    ->mkString(sep:''),
             ],
         ];
     }
