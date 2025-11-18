@@ -56,12 +56,16 @@ class XTerm256
         return self::output("\033[0m");
     }
 
-    static public function color(int $foregroundRGB, ?int $backgroundRGB = null): string
+    static public function color(?int $foregroundRGB = null, ?int $backgroundRGB = null): string
     {
         return self::output(
-            self::compile($foregroundRGB, false)
+            ($foregroundRGB ? self::compile($foregroundRGB, false) : "")
             . ($backgroundRGB !== null ? self::background($backgroundRGB) : "")
         );
     }
 
+    static public function label(string $text, ?int $color = null, ?int $bgColor = null): string
+    {
+        return self::color($color, $bgColor) . $text . self::clear();
+    }
 }

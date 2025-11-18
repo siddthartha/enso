@@ -3,15 +3,12 @@
 namespace Application;
 
 use Application\Service\OpenRouter;
-use Enso\Helpers\Ansi;
 use Enso\Helpers\Runtime;
 use Enso\Helpers\XTerm256;
 use Enso\System\ActionHandler;
-use Enso\System\WebEmitter;
 use Enso\System\WebRequest;
-use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\StreamInterface;
-use Symfony\Component\Console\Color;
+use GuzzleHttp\Psr7\PumpStream;
 
 class LLMStreamAction extends ActionHandler
 {
@@ -20,50 +17,60 @@ class LLMStreamAction extends ActionHandler
     {
         $openRouter = new OpenRouter();
 
-        $query = $this->getRequest() instanceof WebRequest
+        $message = $this->getRequest() instanceof WebRequest
             ? urldecode($this->getRequest()->getUri()?->getQuery())
             : ($this->getRequest()->hasArguments()
-                ? $this->getRequest()->getArgumentsLine()
+                ? $this->getRequest()->getArgumentsLine() . " " . $this->getRequest()->getBody()->getContents()
                 : $this->getRequest()->getBody()->getContents()
             );
 
-        $response = $openRouter->streamChatCompletions(
+        $responseGenerator = $openRouter->streamChatCompletions(
             model: getenv('OPENROUTER_API_MODEL', 'openai/gpt-oss-20b:free'),
             messages: [
                 [
                     "role" => "user",
-                    "content" => $query,
+                    "content" => $message,
                 ],
             ]
         );
 
+        // if we are in CLI mode, and the output is piped, then we want to print the response
+        // as it comes in, so that we can see the reasoning behind the model's response
         if (Runtime::isCLI() && Runtime::isPiped())
         {
             @ob_end_clean();
 
-            foreach ($response as $item)
+            foreach ($responseGenerator as $responseItem)
             {
                 // print reasoning
-                print XTerm256::color(0x555533)
-                    . ($item['choices'][0]['delta']['reasoning'] ?? '')
-                    . XTerm256::clear();
+                if (isset($responseItem['choices'][0]['delta']['reasoning']))
+                {
+                    print XTerm256::label($responseItem['choices'][0]['delta']['reasoning'] ?? '', 0x555533);
+                }
 
                 // print real model response
-                print XTerm256::color(0xffffff)
-                    . ($item['choices'][0]['delta']['content'] ?? '')
-                    . XTerm256::clear();
-                @ob_end_flush();
+                print $responseItem['choices'][0]['delta']['content'] ?? '';
+                @flush();
             }
 
             exit (Runtime::EXIT_SUCCESS);
-
         }
 
-        return Utils::streamFor(
-            $response
-                ->map(fn (array $sseResponse) => $sseResponse['choices'][0]['delta']['content'])
-                ->filter(fn (string $line) => '' !== $line)
-                ->getIterator(),
-        );
+        $responseIterator = $responseGenerator
+            ->map(fn (array $sseResponse) => $sseResponse['choices'][0]['delta']['content'] ?? '')
+            ->filter(fn (string $line) => '' !== $line)
+            ->getIterator();
+
+        return new PumpStream(function () use ($responseIterator)
+        {
+            if (!$responseIterator->valid())
+            {
+                return false;
+            }
+            $result = $responseIterator->current();
+            $responseIterator->next();
+
+            return $result;
+        }, []);
     }
 }

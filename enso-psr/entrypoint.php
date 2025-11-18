@@ -32,11 +32,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
     /**
      * Enso application lifecycle entrypoint
      */
-    $app = (static fn(): EnsoApplication => (new EnsoApplication( // create application instance ...
-        emitter: Runtime::isCLI()
-            ? new CliEmitter()
-            : new WebEmitter()
-    )))
+    $app = (static fn(): EnsoApplication => (new EnsoApplication()))
     /* ... AND RUN result of closure fabric immediately -- i mean call created object as a callable */
     (); // we should be re-enterable here
 

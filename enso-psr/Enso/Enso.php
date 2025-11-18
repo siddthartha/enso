@@ -37,11 +37,11 @@ class Enso
 
     private ContainerInterface $_container;
 
-    private LoggerInterface $_logger;
-
     private Relay $_relay;
 
     private CacheInterface $_cache;
+
+    private LoggerInterface $_logger;
 
     private EmitterInterface $_emitter;
 
@@ -94,10 +94,8 @@ class Enso
                 },
             ],
             resolver: null,
-            context: $this->_container
+            context: $this->_container,
         );
-
-        $this->_emitter = $emitter ?? new CliEmitter();
 
         $this->getLogger()->info('Enso instantiated');
     }
@@ -115,7 +113,7 @@ class Enso
             ),
             environment: null,
             modifiers: [],
-            paramsGroup: 'params'
+            paramsGroup: 'params',
         );
     }
 
@@ -136,7 +134,7 @@ class Enso
         return new Container(
             ContainerConfig::create()
                 ->withDefinitions(
-                    $this->getConfig()->get('common')
+                    $this->getConfig()->get('common'),
                 )
         );
     }
@@ -178,25 +176,19 @@ class Enso
         return $this;
     }
 
-    public function getEmitter(): EmitterInterface
-    {
-        return $this->_emitter;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger(): LoggerInterface
-    {
-        return $this->get(LoggerInterface::class);
-    }
-
-    /**
-     * @return CacheInterface
-     */
     public function getCache(): CacheInterface
     {
         return $this->get(CacheInterface::class);
+    }
+
+    public function getEmitter(): EmitterInterface
+    {
+        return $this->get(EmitterInterface::class);
+    }
+
+    public function getLogger(): LoggerInterface
+    {
+        return $this->get(LoggerInterface::class);
     }
 
     public function getRoutingTree(string $configName = 'routing'): array

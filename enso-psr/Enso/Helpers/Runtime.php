@@ -78,6 +78,11 @@ final class Runtime
         return function_exists('swoole_version') && is_string(swoole_version());
     }
 
+    /**
+     * Long-live process
+     *
+     * @return bool
+     */
     public static function isDaemon(): bool
     {
         return (Runtime::haveSwoole() && Coroutine::getCid() !== -1)

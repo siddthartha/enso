@@ -3,6 +3,7 @@
 namespace Enso\System;
 
 use Enso\Helpers\Runtime;
+use Enso\Relay\EmitterInterface;
 use Enso\Relay\Response;
 use GuzzleHttp\Psr7\BufferStream;
 use Psr\Http\Message\RequestInterface;
@@ -12,13 +13,13 @@ use Yiisoft\Http\Status;
 class ExceptionHandler
 {
     protected RequestInterface $_request;
-    protected mixed $_emitter;
+    protected EmitterInterface $_emitter;
 
     /**
      * @param RequestInterface $request
      * @param mixed $emitter
      */
-    public function __construct(RequestInterface $request, mixed $emitter)
+    public function __construct(RequestInterface $request, EmitterInterface $emitter)
     {
         $this->_request = $request;
         $this->_emitter = $emitter;
@@ -45,12 +46,12 @@ class ExceptionHandler
             'message' => $throwable->getMessage(),
             'file' => $throwable->getFile(),
             'line' => $throwable->getLine(),
-            'trace' => $throwable->getTrace()
+            'trace' => getenv('ENSO_DEBUG', false) ? $throwable->getTrace() : null,
         ]))
             ->withStatus(Status::INTERNAL_SERVER_ERROR, 'Internal server error')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Content-type', 'application/json')
-            ->collapse(true);
+            ->collapse(force: true);
 
         if (!Runtime::isDaemon())
         {
