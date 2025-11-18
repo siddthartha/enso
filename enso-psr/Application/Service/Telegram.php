@@ -28,6 +28,20 @@ class Telegram
 
     }
 
+    private function escapeInput(string $input): string
+    {
+        $specials = str_split('_*[]()~`>#+-=|{}.!');
+
+        return str_replace(
+            $specials,
+            array_map(
+                static fn(string $c): string => '\\' . $c,
+                $specials,
+            ),
+            $input
+        );
+    }
+
     public function sendMessage(string $message, int $recipientId) : ResponseInterface
     {
         return $this->_client
@@ -37,7 +51,7 @@ class Telegram
                     'json' => [
                         'chat_id' => $recipientId,
                         'parse_mode' => 'MarkdownV2',
-                        'text' => "```php\n" . $message . "\n```\n",
+                        'text' => "```\n" . $this->escapeInput($message) . "\n```\n",
                     ]
                 ]
             );

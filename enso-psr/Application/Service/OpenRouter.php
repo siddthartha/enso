@@ -127,16 +127,19 @@ class OpenRouter
     function fromPsrStream(StreamInterface $psrStream, int $chunkSize = 4096): FPStream
     {
         return FPStream::emits(
-            (function () use ($psrStream, $chunkSize) {
-                while (!$psrStream->eof()) {
+            (function () use ($psrStream, $chunkSize)
+            {
+                while (!$psrStream->eof())
+                {
                     $chunkBuffer = $psrStream->read($chunkSize);
+
                     foreach(str_split($chunkBuffer) as $char)
                     {
                         yield $char;
                     }
                 }
             })
-            ()
+            () // call
         );
     }
 
@@ -147,13 +150,17 @@ class OpenRouter
     function parseJsonLinesSSE(StreamInterface $stream): FPStream
     {
 
-        return $this->fromPsrStream($stream, 1024)
-            ->groupAdjacentBy(fn ($char) => PHP_EOL === $char)
-            ->map(fn (array $pair) => $pair[1])
-            ->map(fn (Seq $line) => $line->mkString(sep: ''))
-            ->filter(fn (string $line) => str_starts_with($line, 'data: ')) /* not starts from 'data: ' */
-            ->map(fn (string $line) => substr($line, 6)) /* remove 'data: ' */
-            ->filter(fn (string $line) => '[DONE]' !== $line) /* filter terminal line */
+        return $this
+            ->fromPsrStream(
+                psrStream: $stream,
+                chunkSize: 128
+            )
+            ->groupAdjacentBy(static fn ($char) => PHP_EOL === $char)
+            ->map(static fn (array $pair) => $pair[1])
+            ->map(static fn (Seq $line) => $line->mkString(sep: ''))
+            ->filter(static fn (string $line) => str_starts_with($line, 'data: ')) /* not starts from 'data: ' */
+            ->map(static fn (string $line) => substr($line, 6)) /* remove 'data: ' */
+            ->filter(static fn (string $line) => '[DONE]' !== $line) /* filter terminal line */
             ->filterMap(fn (string $line) => $this->parseSSEChankJson($line)) // @TODO: parse on by one
             ;
     }
