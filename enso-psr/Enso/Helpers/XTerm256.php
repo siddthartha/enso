@@ -4,10 +4,8 @@ namespace Enso\Helpers;
 
 use JetBrains\PhpStorm\Pure;
 
-if (!defined("STDOUT"))
-{
-    define("STDOUT", 1);
-}
+if (!defined("STDIN")) define("STDIN", 0);
+if (!defined("STDOUT")) define("STDOUT", 1);
 
 class XTerm256
 {
@@ -30,7 +28,7 @@ class XTerm256
     {
         return self::$isPiped !== null
             ? self::$isPiped
-            : (self::$isPiped = Runtime::isPiped());
+            : (self::$isPiped = Runtime::isOutputPiped());
     }
 
     static private function output(string $output): string

@@ -10,6 +10,9 @@ namespace Enso\Helpers;
 use JetBrains\PhpStorm\Pure;
 use Swoole\Coroutine;
 
+if (!defined("STDIN")) define("STDIN", 0);
+if (!defined("STDOUT")) define("STDOUT", 1);
+
 /**
  * Description of Runtime
  *
@@ -94,13 +97,24 @@ final class Runtime
         return isset($_ENV['RR_MODE']);
     }
 
-    public static function isPiped(): bool
+    public static function isOutputPiped(): bool
     {
-        return !self::isTty();
+        return !self::isOutputTty();
     }
 
-    public static function isTty(): bool
+    public static function isOutputTty(): bool
     {
-        return posix_isatty(STDOUT);
+        return posix_isatty(\STDOUT);
     }
+
+    public static function isInputPiped(): bool
+    {
+        return !self::isInputTty();
+    }
+
+    public static function isInputTty(): bool
+    {
+        return posix_isatty(\STDIN);
+    }
+
 }

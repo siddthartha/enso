@@ -75,6 +75,14 @@ For example:
 * `docker-compose exec php ./enso default/open-api` will print out current specs to `stdout` stream
 * `docker-compose exec php ./enso default/open-api > ./open-api.json` will save it to local file on host FS
 
+### Streaming 
+
+```shell
+$ docker exec php ./enso ai hello
+The user says "hello". They likely expect greeting back. Provide friendly response. Could ask how I can help.Hello!
+👋 How can I help you today?
+```
+
 ### Development features:
 
 * Swagger UI

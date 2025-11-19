@@ -36,7 +36,7 @@ class LLMStreamAction extends ActionHandler
 
         // if we are in CLI mode, and the output is piped, then we want to print the response
         // as it comes in, so that we can see the reasoning behind the model's response
-        if (Runtime::isCLI() && Runtime::isPiped())
+        if (Runtime::isCLI() && Runtime::isOutputTty())
         {
             @ob_end_clean();
 
@@ -57,8 +57,8 @@ class LLMStreamAction extends ActionHandler
         }
 
         $responseIterator = $responseGenerator
-            ->map(fn (array $sseResponse) => $sseResponse['choices'][0]['delta']['content'] ?? '')
-            ->filter(fn (string $line) => '' !== $line)
+            ->map(static fn (array $sseResponse) => $sseResponse['choices'][0]['delta']['content'] ?? '')
+            ->filter(static fn (string $line) => '' !== $line)
             ->getIterator();
 
         return new PumpStream(function () use ($responseIterator)

@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Helpers\Runtime;
 use Enso\Relay\Request;
 use Enso\Relay\RequestInterface;
 use HttpSoft\Message\RequestTrait;
@@ -17,7 +18,7 @@ use Psr\Http\Message\ServerRequestInterface as PSRServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Yiisoft\Http\Method;
 use GuzzleHttp\Psr7\
-    {CachingStream, LazyOpenStream, ServerRequest};
+    {CachingStream, LazyOpenStream, ServerRequest, Utils};
 
 use mb_ereg_replace;
 use count;
@@ -82,7 +83,9 @@ class WebRequest extends Request
             method: $method = $_SERVER['REQUEST_METHOD'] ?? Method::GET,
             uri: $uri = ServerRequest::getUriFromGlobals(),
             headers: $headers = getallheaders(),
-            body: $body = new CachingStream(new LazyOpenStream('php://input', 'r+')),
+            body: $body = Runtime::isInputPiped()
+                ? Utils::streamFor('')
+                : new CachingStream(new LazyOpenStream('php://input', 'r+')),
             protocol: $protocol
         );
 

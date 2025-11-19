@@ -7,10 +7,12 @@ declare(strict_types = 1);
 
 namespace Enso\System;
 
+use Enso\Helpers\Runtime;
 use Enso\Relay\Request;
 use Enso\Relay\RequestInterface;
 use GuzzleHttp\Psr7\CachingStream;
 use GuzzleHttp\Psr7\LazyOpenStream;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -36,7 +38,10 @@ class CliRequest extends Request
         $new = new self();
 
         $new->_arguments = $_SERVER['argv'];
-        $new->_body = new CachingStream(new LazyOpenStream('php://stdin', 'r+'));
+
+        $new->_body = Runtime::isInputPiped()
+            ? new CachingStream(new LazyOpenStream('php://stdin', 'r+'))
+            : Utils::streamFor('');
 
         return $new;
     }

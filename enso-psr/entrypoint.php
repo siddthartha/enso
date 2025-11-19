@@ -7,9 +7,9 @@ use Enso\Helpers\Runtime;
 use Enso\Relay\
     {MiddlewareInterface, Request, Response};
 use Enso\System\
-    {CliEmitter, CliRequest, WebRequest, WebEmitter, Router, Target};
+    {WebRequest,  Router};
 use Psr\Http\Message\
-    {RequestInterface, ResponseInterface, ServerRequestInterface};
+    {ResponseInterface, ServerRequestInterface};
 use Swoole\Http\Request as SwooleRequest;
 use Yiisoft\Di\StateResetter;
 
@@ -46,11 +46,7 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
     }
     else /* if ($_injectedRequest == null) */
     {
-        $request = (
-            Runtime::isCLI()
-                ? CliRequest::fromGlobals()
-                : WebRequest::fromGlobals()
-        );
+        $request = $app->get(Enso\Relay\RequestInterface::class);
     }
 
     $routingTree = $app->getRoutingTree();

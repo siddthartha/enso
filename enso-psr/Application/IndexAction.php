@@ -66,7 +66,9 @@ class IndexAction extends ActionHandler
 
         return [
             'context' => [
+                'php' => \PHP_VERSION,
                 'sapi' => PHP_SAPI,
+                'tty' => Runtime::isOutputTty(),
                 'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
