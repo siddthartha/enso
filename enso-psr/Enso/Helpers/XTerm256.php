@@ -24,16 +24,9 @@ class XTerm256
         return [$red, $green, $blue];
     }
 
-    static private function isPiped(): bool
+    public static function output(string $output): string
     {
-        return self::$isPiped !== null
-            ? self::$isPiped
-            : (self::$isPiped = Runtime::isOutputPiped());
-    }
-
-    static private function output(string $output): string
-    {
-        return self::isPiped() ? $output : "";
+        return Runtime::isOutputTty() ? $output : "";
     }
 
     #[Pure] static private function compile(int $rgb, $isBackground = false): string

@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\StreamInterface;
+use Yiisoft\VarDumper\VarDumper;
 
 class OpenRouter
 {

@@ -6,9 +6,10 @@ use Swoole\Http\
 use Enso\Relay\
     {Response as EnsoResponse};
 
-///** @var Enso\Enso $run */
+/** @var callable $run */
 $run = require_once './entrypoint.php';
 
+// create Swoole HTTP server
 $httpServer = new Server(
     host: '0.0.0.0',
     port: 9999
@@ -18,6 +19,7 @@ $httpServer->set([
     'log_level' => 2
 ]);
 
+// set request handler
 $httpServer->on(
     event: 'request',
     callback: static function (Request $_request, Response $_response) use (&$run)
@@ -34,4 +36,5 @@ $httpServer->on(
     }
 );
 
+// Swoole main coroutine
 $httpServer->start();

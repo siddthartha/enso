@@ -72,10 +72,6 @@ class IndexAction extends ActionHandler
                 'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),
                 'redis' => $redisStatus,
-//                'response' => $response
-//                    ->map(fn (array $sseResponse) => $sseResponse['choices'][0]['delta']['content'])
-//                    ->filter(fn (string $line) => '' !== $line) /* filter empty line */
-//                    ->mkString(sep:''),
             ],
         ];
     }

@@ -82,13 +82,15 @@ class Ansi
      * Same for styles. Most are not yet used, only "bold" for bright
      * foreground colors.
      */
-    static private array $styles = [
+    static public array $styles = [
         "bold" => 1,
         "normal" => 2,
+        "italic" => 3,
         "underline" => 4,
         "blink" => 5,
         "reverse" => 7,
-        "hidden" => 8
+        "hidden" => 8,
+        "stroked" => 9,
     ];
 
     /**

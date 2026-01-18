@@ -7,23 +7,27 @@ use HttpSoft\Message\StreamFactory;
 use HttpSoft\Message\UploadedFileFactory;
 use Spiral\RoadRunner;
 
+/** @var callable $run */
 $run = require_once './entrypoint.php';
 
+// RR init
 $serverRequestFactory = new ServerRequestFactory();
 $streamFactory = new StreamFactory();
 $uploadFactory = new UploadedFileFactory();
 
+// RR worker
 $_worker = RoadRunner\Worker::create();
 $worker = new RoadRunner\Http\PSR7Worker($_worker, $serverRequestFactory, $streamFactory, $uploadFactory);
 
+// RR loop
 while ($request = $worker->waitRequest())
 {
     try
     {
         /** @var Response $response */
-        $response = $run($request);
+        $response = $run($request); // inject RR request to entrypoint
 
-        // RR emitting
+        // emit response by RR
         $worker->respond($response);
     }
     catch (\Throwable $e)

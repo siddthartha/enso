@@ -6,6 +6,8 @@ services:
 
   db:
     image: mariadb:latest
+    container_name: db_enso
+    hostname: db
     restart: always
     volumes:
       - ./.db-data:/var/lib/mysql/
@@ -24,7 +26,8 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: redis_enso
+    hostname: enso
     restart: always
     volumes:
       - /etc/timezone:/etc/timezone:ro
@@ -39,7 +42,8 @@ services:
       context: ./php
       dockerfile: Dockerfile
     user: "1000:33"
-    container_name: php
+    hostname: php
+    container_name: php_enso
     stdin_open: true
     working_dir: /var/www/html
     restart: unless-stopped
@@ -113,13 +117,14 @@ services:
 #      - php-sw
 
   nginx:
-    image: nginx:latest
-    container_name: nginx
+    image: nginx:alpine
+    container_name: nginx_enso
+    hostname: nginx
     restart: unless-stopped
     ports:
       - "80:80"   # FPM
-      - "81:81"   # Swoole
-      - "82:82"   # RoadRunner
+#      - "81:81"   # Swoole
+#      - "82:82"   # RoadRunner
  #     - "443:433"
     volumes:
       - ./enso-psr:/var/www/html:ro
