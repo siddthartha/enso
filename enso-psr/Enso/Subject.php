@@ -19,7 +19,7 @@ trait Subject
      *
      * @var array
      */
-    protected $__attributes = [];
+    protected array $__attributes = [];
 
     /**
      * Magic getter

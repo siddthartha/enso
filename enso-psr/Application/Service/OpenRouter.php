@@ -105,7 +105,7 @@ class OpenRouter
                         'stream' => true, // Enable streaming according to the OpenRouter API docs @see
                     ], $options),
                     'headers' => [
-                        'Content-type' => 'text/event-stream',
+                        'Accept' => 'text/event-stream',
                         'Cache-Control' => 'no-cache',
                     ],
                     'stream' => true,

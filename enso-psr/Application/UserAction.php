@@ -55,7 +55,7 @@ class UserAction extends ActionHandler
         {
             $user = $this->_context->getContainer()->get(User::class);
             $user->username = 'user' . rand(0, 1000000);
-            $user->email = 'user' . rand(0, 1000000) . '@mail.ru';
+            $user->email = 'user' . rand(0, 1000000) . '@localhost';
             $user->save();
         }
 

@@ -27,21 +27,22 @@ class LLMStreamAction extends ActionHandler
     #[Route("/ai", methods: ["ClI"])]
     public function __invoke(): StreamInterface
     {
-        $openRouter = $this->openRouter;
         $executableName = implode(' ', array_slice($this->getRequest()->getArguments(), 0, 2));
-        $history = [
+        $messagesHistory = [
             [
                 "role" => "system",
                 "content" => "You are Enso CLI Agent Tool and you are executed now as `{$executableName}` with a CLI message from command line in a first user's message and an input stream body (if it's present, it comes via | pipe) in a second user's message. it could be both a message, or input with comment, or some input with instruction or a question. message can be just a message not a command.",
             ],
             [
                 "role" => "system",
-                "content" => "as an local agent, you can ask yourself to execute local commands."
+                "content" =>
+                    "You are Enso CLI Agent Tool and you are executed now as `{$executableName}` with a message from CLI command line and input stream body. A message will be in a first user's message and an input stream body (if it's present, it comes via linux pipe) in a second user's message. It can be a message only with empty body, or some input with comment, or some input with instruction or a question.\n"
+                    . "Message can be just a message, not a command.\n"
                     . "To do this just output strictly in 3 lines. JSON-formatted (with escaped string if needed) data wrapped in markdown, like:\n"
-                    . "```__consoleCall()\n" .
-                    "[\"any-console-command\", \"--first-arg\", \"two\", ...]\n"
+                    . "```__consoleCall()\n"
+                    . "[\"some-console command --parameter1 ...\"]\n"
                     . "```\n"
-                    . "Then if it is allowed it will be executed and a command and the result will be returned to you in next user's (!) message without any wrappings."
+                    . "Then, if it is allowed, it will be executed (sh -c) and a command and the result will be returned to you in next user's (!) message without any wrappings.\n"
                     . "Do it only if needed to answer user."
             ],
         ];
@@ -53,25 +54,24 @@ class LLMStreamAction extends ActionHandler
 
         $arguments = array_slice($this->getRequest()->getArguments(), 2);
 
-        $commandQuery = filter(
+        $cliQuery = filter(
             $arguments,
             fn ($value) => $value !== '-r' && $value !== '--reasoning'
         );
-        $commandQueryLine = implode(' ', $commandQuery);
+        $cliQueryLine = implode(' ', $cliQuery);
 
 
         $inputBody = $this->getRequest()->getBody();
 
-        $webQueryLine = urldecode($this->getRequest()->getUri()?->getQuery());
+        $webQueryLine = urldecode($this->getRequest()->getUri()?->getQuery() ?? '');
 
         $message = $this->getRequest() instanceof WebRequest
             ? $webQueryLine
-            : $commandQueryLine;
+            : $cliQueryLine;
 
         $responseGenerator = $this->callLLMRaw(
-            message: "",
-            history: $history = array_merge(
-                $history,
+            history: $messagesHistory = array_merge(
+                $messagesHistory,
                 [
                     [
                         "role" => "user",
@@ -96,13 +96,13 @@ class LLMStreamAction extends ActionHandler
 
             foreach ($responseGenerator as $responseItem)
             {
-                $reasoningDelta = $responseItem['choices'][0]['delta']['reasoning'] ?? null;
+                $reasoningDelta = $responseItem['choices'][0]['delta']['reasoning'] ?? null; //
                 $reasoningText .= $reasoningDelta;
 
                 // print reasoning
-                if ($reasoningMode && isset($reasoningDelta))
+                if (isset($reasoningDelta))
                 {
-                    print XTerm256::label(XTerm256::output("\033[3m") . $reasoningDelta ?? '', 0xc9643b);
+                    print (strlen($reasoningDelta) > 0 ? XTerm256::label(XTerm256::output("\033[3m") . $reasoningDelta, 0xc9643b) : '');
                 }
 
                 $responseDelta = $responseItem['choices'][0]['delta']['content'];
@@ -124,8 +124,8 @@ class LLMStreamAction extends ActionHandler
                 ->mkString(sep: '');
 
             $responseTextLines = explode("\n", $responseText);
-            $history = array_merge(
-                $history,
+            $messagesHistory = array_merge(
+                $messagesHistory,
                 [[
                     "role" => "user",
                     "content" => $responseText,
@@ -136,12 +136,11 @@ class LLMStreamAction extends ActionHandler
                 $responseTextLines[0] === '```__consoleCall()'
                 && $responseTextLines[2] === '```'
             ) {
-                usleep(250000);
+                usleep(100_000); // 100ms
                 $command = (array) json_decode($responseTextLines[1], true);
                 $commandLine = implode(' ', $command);
 
-                print XTerm256::label("executing $ $commandLine", 0x64c93b);
-                echo "\n";
+                print XTerm256::label("executing $ $commandLine", 0x64c93b) . "\n";
 
                 if (!$this->approve())
                 {
@@ -150,16 +149,18 @@ class LLMStreamAction extends ActionHandler
 
                 if (!empty($command) /*&& $command[0] == 'ls'*/)
                 {
-                    $commandOutput = shell_exec($commandLine);
+                    if ($commandOutput = $this->executeCommand($commandLine))
+                    {
+                        echo "\n```\n" . $commandOutput . "\n```\n";
 
-                    echo "\n```\n" . $commandOutput . "\n```\n";
+                        $functionResponse = $this->callLLM(
+                            message: $commandOutput,
+                            history: $messagesHistory,
+                        );
 
-                    $functionResponse = $this->callLLM(
-                        message: $commandOutput,
-                        history: $history,
-                    );
+                        echo $functionResponse;
+                    }
 
-                    echo $functionResponse;
                     echo "\n";
                     exit (Runtime::EXIT_SUCCESS);
                 }
@@ -189,7 +190,7 @@ class LLMStreamAction extends ActionHandler
         }, []);
     }
 
-    public function callLLMRaw(string $message, array $history = [], string $role = 'user'): Stream
+    public function callLLMRaw(string $message = "", array $history = [], string $role = 'user'): Stream
     {
         if (!empty($message))
         {
@@ -217,6 +218,27 @@ class LLMStreamAction extends ActionHandler
             ->mkString(sep: '');
     }
 
+    function executeCommand(string $commandLine): string
+    {
+        $process = proc_open($commandLine, [
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ], $pipes);
+
+        if (!is_resource($process))
+        {
+            return '';
+        }
+
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        return $stdout . $stderr;
+    }
+
     function approve(string $question = 'approve?'): bool
     {
         if (!stream_isatty(STDIN))
@@ -224,9 +246,9 @@ class LLMStreamAction extends ActionHandler
             return false;
         }
 
-        fwrite(STDOUT, $question . ' [Enter = OK, Esc = Cancel] ');
+        echo $question . ' [Enter = OK, Esc = Cancel] ';
 
-        shell_exec('stty -icanon -echo');
+        shell_exec('stty -icanon -echo'); // no buffering no echoing
 
         try
         {
@@ -242,7 +264,7 @@ class LLMStreamAction extends ActionHandler
                 $code = ord($char);
 
                 return match ($code) {
-                    10, 13 => fwrite(STDOUT, PHP_EOL) ? true : true,
+                    10, 13 => !fwrite(STDOUT, PHP_EOL) || true,
                     27 => false,
                     default => false, // any other key
                 };
@@ -250,7 +272,7 @@ class LLMStreamAction extends ActionHandler
         }
         finally
         {
-            shell_exec('stty sane');
+            shell_exec('stty sane'); // switch back tty to 'normal' state
         }
     }
 }
