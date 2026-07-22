@@ -149,12 +149,14 @@ class LLMStreamAction extends ActionHandler
 
                 if (!empty($command) /*&& $command[0] == 'ls'*/)
                 {
-                    if ($commandOutput = $this->executeCommand($commandLine))
+                    if ($commandResults = $this->executeShellCommand($commandLine))
                     {
-                        echo "\n```\n" . $commandOutput . "\n```\n";
+                        [$commandOutput, $commandError] = $commandResults;
+
+                        echo "\n```\n" . $commandOutput . $commandError . "\n```\n";
 
                         $functionResponse = $this->callLLM(
-                            message: $commandOutput,
+                            message: $commandOutput . $commandError,
                             history: $messagesHistory,
                         );
 
@@ -192,8 +194,8 @@ class LLMStreamAction extends ActionHandler
 
     public function callLLMRaw(string $message = "", array $history = [], string $role = 'user'): Stream
     {
-        if (!empty($message))
-        {
+
+        if (!empty($message)) {
             $history[] = [
                 "role" => $role,
                 "content" => $message,
@@ -218,7 +220,7 @@ class LLMStreamAction extends ActionHandler
             ->mkString(sep: '');
     }
 
-    function executeCommand(string $commandLine): string
+    function executeShellCommand(string $commandLine): ?array
     {
         $process = proc_open($commandLine, [
             1 => ['pipe', 'w'],
@@ -227,7 +229,7 @@ class LLMStreamAction extends ActionHandler
 
         if (!is_resource($process))
         {
-            return '';
+            return null;
         }
 
         $stdout = stream_get_contents($pipes[1]);
@@ -236,7 +238,7 @@ class LLMStreamAction extends ActionHandler
         fclose($pipes[2]);
         proc_close($process);
 
-        return $stdout . $stderr;
+        return [$stdout, $stderr];
     }
 
     function approve(string $question = 'approve?'): bool
