@@ -21,6 +21,7 @@ return [
         'open-api-alias' => 'default/open-api',
         'docs' => new Target('Application\DocsAction', ['POST']),
         'cv' => new Target('Application\CVAction'),
+        'routes' => new Target('Application\RoutesAction'),
         'test' => ['value' => 123],
     ],
 ];

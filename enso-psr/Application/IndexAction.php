@@ -55,19 +55,10 @@ class IndexAction extends ActionHandler
 
         $redisStatus = $redis->ping('hello');
 
-//        return [
-//            ...(
-//                new Tree(
-//                    $this->_context->getRoutingTree()
-//                )
-//            )->next()
-//        ];
-
-
         return [
             'context' => [
                 'php' => \PHP_VERSION,
-                'sapi' => PHP_SAPI,
+                'sapi' => \PHP_SAPI,
                 'tty' => Runtime::isOutputTty(),
                 'swoole' => Runtime::haveSwoole() ? [ 'cid' => Coroutine::getCid(), 'pid' => Coroutine::getPcid(Coroutine::getCid()) ] : false,
                 'roadRunner' => Runtime::isGoridge(),

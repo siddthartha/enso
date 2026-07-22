@@ -30,7 +30,7 @@ class CVAction extends ActionHandler
     #[Route("/default/cv", methods: ["GET"])]
     public function __invoke(): ResponseInterface
     {
-        $cv = file_get_contents(__DIR__ . '/../CV.md');
+        $cv = file_get_contents(__DIR__ . '/../../CV.md');
         $html = (new \ParsedownExtra())
             ->text($cv);
 
