@@ -8,7 +8,7 @@
 - [x] optionally runs inside single immutable docker containers
 - [x] with both of Swoole / RoadRunner for multi-threading long-living processes
 - [x] using strict [PSR-compatible](https://www.php-fig.org/psr/) components (as widely as possible)
-- [ ] with Redis / RabbitMQ for queues and sessions
+- [x] with Redis / RabbitMQ for caches, queues and sessions
 - [ ] with WebSockets for web / mobile clients
 - [ ] puts application level logs, sessions and uploaded files into network / cloud storages only
 - [ ] collects system level logs through Filebeat to ELK 
@@ -156,10 +156,10 @@ or
 
 ### PSR Interfaces Used
 
-* PSR-3: Logger
-* PSR-6: Cache
-* PSR-7: HTTP Message
-* PSR-11: Container
-* PSR-13: SimpleCache
-* PSR-15: Middleware
+* **PSR-3**: Logger
+* **PSR-6**: Cache
+* **PSR-7**: HTTP Message
+* **PSR-11**: Container
+* **PSR-13**: SimpleCache
+* **PSR-15**: Middleware
 

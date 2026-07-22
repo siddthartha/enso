@@ -2,4 +2,5 @@ services:
   nginx:
     volumes:
       - ./nginx/vhost.conf:/etc/nginx/conf.d/vhost.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       #- ./certbot/www:/var/www/certbot:ro # TODO

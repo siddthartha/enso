@@ -123,9 +123,9 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"   # FPM
-#      - "81:81"   # Swoole
-#      - "82:82"   # RoadRunner
- #     - "443:433"
+      - "81:81"   # Swoole
+      - "82:82"   # RoadRunner
+      - "443:443" # SSL
     volumes:
       - ./enso-psr:/var/www/html:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro

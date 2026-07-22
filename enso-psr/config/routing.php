@@ -20,6 +20,7 @@ return [
         'open-api' => new Target('Application\OpenApiAction', ['POST']),
         'open-api-alias' => 'default/open-api',
         'docs' => new Target('Application\DocsAction', ['POST']),
+        'cv' => new Target('Application\CVAction'),
         'test' => ['value' => 123],
     ],
 ];
