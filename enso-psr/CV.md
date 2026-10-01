@@ -7,9 +7,11 @@ Bangkok, Thailand · sadovnikoff@gmail.com · [Telegram](https://t.me/siddtharth
 
 ## Summary
 
-Backend developer with 20+ years of experience, specialising in PHP 8+ using Yii, Laravel, Lumen, and pure PSR-style PHP. Strong mathematical background and a formal degree in software engineering.
+Backend developer with ~20 years of experience, specialising now in PHP 8+ using _Yii_, _Laravel_, _Lumen_, and pure _PSR-style PHP_. Strong mathematical background and a formal degree in software engineering.
 
-Focused on building scalable, asynchronous (Swoole / RoadRunner), and fault-tolerant systems. Interested in Rust, machine learning, GIS systems, IoT services, and agentic development. Open-source contributor.
+Focused on building scalable, asynchronous, and fault-tolerant systems. 
+
+Interested in Machine learning, GIS systems, IoT services, and agentic development. Open-source contributor.
 
 Actively leverages AI coding agents in day-to-day development and explores productivity patterns for AI-assisted workflows. Ready to introduce these practices to small teams or take on a Staff Engineer role for an AI-native product.
 
@@ -17,22 +19,41 @@ Targeting **Tech Lead**, **Lead Developer**, or **AI Staff Engineer** positions.
 
 Fully remote, full-time, long-term (1+ year minimum) positions only.
 
-Based in Bangkok, available to work MSK/European timezones.
+Based in Bangkok, comfortable to work MSK/European timezones.
 
 #### HR FAQ
 
-**Why have you stayed less than two years in most positions? Why are you currently looking for a new opportunity?**
+**Why have you stayed less than two years in most positions?**
 * Most of my experience has been in **contract-based software development**, primarily working with startups and early-stage companies.
 * I have been working **fully remotely by choice since the early 2000s**, long before remote work became mainstream.
 * I am **open to long-term collaboration (2+ years)** when there are challenging technical problems, meaningful impact, and opportunities to contribute to the company's growth.
-* My most recent engagement (ApolloRise Tech) concluded in May 2026, and I am now looking for my next long-term role.
 
 ---
 
 ## Experience
 
+### SRE / Architecture Lead, AI-first engineering — Turkarta
+*Jul 2026 – Present*
+
+AI-first fintech startup: USD virtual cards for travellers, funded in RUB via SBP, shipped as a Telegram Mini App, PWA, and a business cabinet. The founder, with no engineering background, vibe-coded the MVP to its first paying customers. I joined to bring SRE, engineering expertise, and architecture re-engineering to a live product — without stopping feature delivery.
+
+**The stack is Python + React, which I had never written professionally.** Every change was delivered through AI coding agents working under my architectural direction, code review, and verification — a deliberate test of the "experienced engineer + agent" model on a non-native stack, in production, with real money.
+
+- Built the agent operating environment first: sandboxed containers for Claude Code with a persistent project memory, and an MCP control plane giving the agent governed access to Docker, Fly.io, Render, GitHub, New Relic, Playwright, and library docs — read-only where live money is involved
+- Stood up a fully mocked local stand in Docker (API, worker, bot, webapp, PostgreSQL, Redis) walking the entire funnel — KYC, issuance, top-up, requisites reveal — so agents could verify behaviour without touching live providers
+- Introduced the first test safety net: Playwright e2e acceptance suite (Chromium + WebKit, including the Telegram surface through real auth) plus a parallel `pytest-xdist` gate with hard timeouts in GitHub Actions
+- Re-engineered the MVP from single-process to a horizontally scalable runtime: Redis-shared freshness state and refresh locks, a Redis lease serialising the provider chain across processes, split DB pools, job-period leases so the worker runs as N replicas
+- Migrated dev and prod from Render + Vercel to Fly.io (Frankfurt) after a cost analysis: process groups, Valkey with persistent volume, pre-validated TLS — no webhook re-registration, no downtime
+- SRE routine over a live product: daily New Relic APM / NRQL reviews, GitHub CI/CD, deploy status, incident reports with provider tickets, reachability monitoring from Russian ISPs via RIPE Atlas after prod went dark behind DPI, client geo analysis from prod logs
+- Hardened the money path: exact USD top-ups with server-side RUB rounding, fee retention across authorisation → clearing, sub-cent ledger rounding, atomic upserts in concurrent transaction sync, balance reconciliation against the provider feed
+- Reconciled long-diverged `main` / `prod` branches (≈200 files, 140 conflicts, separate migration chains) and established a PR-based workflow with required checks
+
+Stack: `Python 3.12` `FastAPI` `SQLAlchemy` `PostgreSQL` `Redis` `aiogram` `React` `Playwright` `Docker` `Fly.io` `GitHub Actions` `New Relic` `MCP` `Claude Code`
+
+---
+
 ### Lead Backend Developer / Tech Lead — ApolloRise Tech
-*Nov 2025 – May 2026*
+*Nov 2025 – Jun 2026*
 
 Cloud-based EdTech platform for foreign language learning: media handling, S3 cloud storage, interactive exercises, course purchases via Stripe.
 
