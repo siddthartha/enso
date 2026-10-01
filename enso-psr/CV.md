@@ -9,15 +9,14 @@ Bangkok, Thailand · sadovnikoff@gmail.com · [Telegram](https://t.me/siddtharth
 
 Backend developer with 20+ years of experience, specialising in PHP 8+ using Yii, Laravel, Lumen, and pure PSR-style PHP. Strong mathematical background and a formal degree in software engineering.
 
-Focused on building scalable, asynchronous (Swoole / RoadRunner), and fault-tolerant systems. Actively interested in Rust, machine learning, GIS systems, IoT services, and agentic development. Open-source contributor.
+Focused on building scalable, asynchronous (Swoole / RoadRunner), and fault-tolerant systems. Interested in Rust, machine learning, GIS systems, IoT services, and agentic development. Open-source contributor.
 
 Actively leverages AI coding agents in day-to-day development and explores productivity patterns for AI-assisted workflows. Ready to introduce these practices to small teams or take on a Staff Engineer role for an AI-native product.
 
 Targeting **Tech Lead**, **Lead Developer**, or **AI Staff Engineer** positions. Interested in modern, technically ambitious products and working alongside strong professionals.
 
-Prefers permanent or long-term project (1+ year) fully remote full-time employment ONLY. 
+Fully remote, full-time, long-term (1+ year minimum) positions only.
 
-English: EFSET 54 Upper Intermediate (CEFR B2). 
 Based in Bangkok, available to work MSK/European timezones.
 
 #### HR FAQ
@@ -25,13 +24,14 @@ Based in Bangkok, available to work MSK/European timezones.
 **Why have you stayed less than two years in most positions? Why are you currently looking for a new opportunity?**
 * Most of my experience has been in **contract-based software development**, primarily working with startups and early-stage companies.
 * I have been working **fully remotely by choice since the early 2000s**, long before remote work became mainstream.
-* I am **open to long-term collaboration (2+ years)** when there are challenging technical problems, meaningful impact, and opportunities to contribute to the company's growth. 
+* I am **open to long-term collaboration (2+ years)** when there are challenging technical problems, meaningful impact, and opportunities to contribute to the company's growth.
+* My most recent engagement (ApolloRise Tech) concluded in May 2026, and I am now looking for my next long-term role.
 
 ---
 
 ## Experience
 
-### Lead Backend Developer / Technical Lead — ApolloRise Tech
+### Lead Backend Developer / Tech Lead — ApolloRise Tech
 *Nov 2025 – May 2026*
 
 Cloud-based EdTech platform for foreign language learning: media handling, S3 cloud storage, interactive exercises, course purchases via Stripe.
@@ -41,7 +41,7 @@ Cloud-based EdTech platform for foreign language learning: media handling, S3 cl
 - Delivered to production within 2 months with continuous feature delivery
 - Full REST-like JSON API covered with PHPUnit tests and up-to-date OpenAPI documentation
 
-Stack: `PHP`, `Laravel`, `PostgresSQL`, `Redis`, `MinIO` 
+Stack: `PHP` `Laravel` `PostgreSQL` `Redis` `MinIO`
 
 ---
 
@@ -58,7 +58,7 @@ Built an AI platform aggregating popular ML models into a unified web service an
 - Built a custom multi-model agent pipeline (GPT-4o · GPT-4o-mini · Flux.1 · SDXL) to generate 10,000 chatbot personas on demand — covering character backstory, system prompts, and AI-generated portraits
 - Deployed an internal token smart contract to the Ethereum testnet
 
-Stack: `PHP`, `Laravel`, `PostgresSQL`, `Redis`, `Google Cloud` 
+Stack: `PHP` `Laravel` `PostgreSQL` `Redis` `Google Cloud`
 
 ---
 
@@ -69,6 +69,8 @@ Designed and developed an image generation service based on StableDiffusion manu
 
 - Built a Lumen / Swoole microservice with API for running ML pipelines in a serverless environment (RunPod.io): SD, upscale, age detection, face swap, and others
 
+Stack: `PHP` `Lumen` `Swoole` `RunPod` `StableDiffusion`
+
 ---
 
 ### Lead Backend Developer / CTO — FIT Studio (Startup Development Studio)
@@ -76,24 +78,14 @@ Designed and developed an image generation service based on StableDiffusion manu
 
 CTO role: team hiring, process setup, technical leading, production launches across multiple startup projects.
 
-- **[GetPower](https://getpower.ru)** — power bank rental vending service. Async agent system: dispensing stations + mobile clients. Communication via MQTT over Redis. Containerisation, ELK logging, async debugging, production deployment.
-- **[Loginio](https://loginio.com)** — public and rental transport search service. Team hiring, architecture design, MVP implementation. 
-Stack: `PHP`, `PostgreSQL`, `PostGIS`, `Redis`, `WebSockets`
-- **[GolosOnline](https://golosonline.com)** — legally significant online voting service. Cloud solution with qualified electronic signatures and blockchain. Deployed HyperLedger cluster, integrated GOST cryptography, set up GitLab CI/CD. 
-Stack: `PHP`, `Etherium`, `CryptoPro`, `Node.js`, `Redis`, `MongoDB`
-- **[24Service](https://24servis.online)** — cloud access control system. Video stream monitoring (OpenVidu) and barrier management. Containerisation, API standardisation, OpenVidu client debugging in Dart. 
-Stack: `PHP`, `Dart`, `JavaScript`, `WebSockets`
-
----
-
-### Backend Developer (Contract) — Various Projects
-*Feb 2016 – Sep 2019*
-
-Short-term contracts and project-based engagements across fintech, fitness, and utilities sectors.
-
-- **GlobalPayments** *(Berlin)* — Banking notification service for credit status updates. Resolved billing data integrity issues, queue prioritisation and logging, storage layer unification. Stack: `PHP` `Yii` `MySQL` `RabbitMQ`
-- **4warranty.ru** *(Moscow)* — CRM for a warranty repair intermediary between mobile device manufacturers and service centres. Implemented billing, logging, external API integrations, and reporting subsystem. Stack: `PHP` `Yii2`
-- **FITBAR / sportmenu.com** *(Moscow)* — Backend architecture and development for a sports nutrition marketplace. Stack: `PHP` `Yii2` `MySQL`
+- **[GetPower](https://get-power.ru)** — power bank rental vending service. Async agent system: dispensing stations + mobile clients. Communication via MQTT over Redis. Containerisation, ELK logging, async debugging, production deployment.
+  Stack: `PHP` `Redis` `MQTT` `Docker` `ELK`
+- **[Loginio](https://loginio.com)** — public and rental transport search service. Team hiring, architecture design, MVP implementation.
+  Stack: `PHP` `PostgreSQL` `PostGIS` `Redis` `WebSockets`
+- **GolosOnline** — legally significant online voting service. Cloud solution with qualified electronic signatures and blockchain. Deployed HyperLedger cluster, integrated GOST cryptography, set up GitLab CI/CD.
+  Stack: `PHP` `Ethereum` `CryptoPro` `Node.js` `Redis` `MongoDB`
+- **24Service** — cloud access control system. Video stream monitoring (OpenVidu) and barrier management. Containerisation, API standardisation, OpenVidu client debugging in Dart.
+  Stack: `PHP` `Dart` `JavaScript` `WebSockets`
 
 ---
 
@@ -120,12 +112,23 @@ Inherited a failing CRM for housing & utilities management companies — 3 years
 
 - Conducted a full technical audit over one sprint to assess viability; recommended refactor over rewrite and assembled a team of 4 (senior frontend, senior backend, mid-level dev, systems analyst)
 - Bottleneck #1: no engineering process — no containerisation, no CI/CD, no async collaboration; set up Docker, Bitbucket Pipelines, and a full Agile workflow for a distributed remote team, which proved more effective than their previous 15-person on-site setup
-- Bottleneck #2: no job queue — EPD generation across thousands of apartments per management company had to complete within a strict post-period accounting window; sequential processing made this impossible; resolved with RabbitMQ queue-based distributed computation with parallel job processing across dedicated workers
+- Bottleneck #2: no job queue — unified utility bill (EPD) generation across thousands of apartments per management company had to complete within a strict post-period accounting window; sequential processing made this impossible; resolved with RabbitMQ queue-based distributed computation with parallel job processing across dedicated workers
 - Bottleneck #3: monolithic SPA with deeply nested tables and forms taking minutes to load; decomposed into independently loadable modules via webpack code splitting and lazy API loading — effectively a micro-frontend architecture
 - Bottleneck #4: single shared database made onboarding new management companies a scaling risk; introduced PostgreSQL sharding via a custom Yii2 behavior integrated transparently into the ORM layer — effectively transforming the product from a single-tenant CRM into a scalable multi-tenant cloud platform capable of serving thousands of companies
 - Delivered full refactor in 8 months against a 6–12 month estimate; successfully onboarded first external management companies post-launch — the primary business goal that had been blocked for years
 
 Stack: `Yii2` `PostgreSQL` `RabbitMQ` `Docker` `AureliaJS` `Bitbucket Pipelines`
+
+---
+
+### Backend Developer (Contract) — Various Projects
+*Feb 2016 – Sep 2019*
+
+Short-term contracts and project-based engagements across fintech, fitness, and utilities sectors.
+
+- **GlobalPayments** *(Berlin)* — Banking notification service for credit status updates. Resolved billing data integrity issues, queue prioritisation and logging, storage layer unification. Stack: `PHP` `Yii` `MySQL` `RabbitMQ`
+- **4warranty.ru** *(Moscow)* — CRM for a warranty repair intermediary between mobile device manufacturers and service centres. Implemented billing, logging, external API integrations, and reporting subsystem. Stack: `PHP` `Yii2`
+- **FITBAR / sportmenu.com** *(Moscow)* — Backend architecture and development for a sports nutrition marketplace. Stack: `PHP` `Yii2` `MySQL`
 
 ---
 
@@ -156,10 +159,10 @@ Built a prepaid traffic accounting system for a local ISP (Perl + MySQL, ipchain
 |---|---|
 | **Languages** | `PHP 8+` `Rust` `Node.js` `Shell` `C++` |
 | **Frameworks** | `Yii` `Laravel` `Lumen` `Swoole` `RoadRunner` |
-| **Databases** | `PostgreSQL` `MySQL` `MongoDB` `PostGIS` `MinIO` |
+| **Databases** | `PostgreSQL` `MySQL` `MongoDB` `PostGIS` |
 | **Queue / Cache / Search** | `Redis` `RabbitMQ` `Elasticsearch` `Sphinx` |
 | **DevOps** | `Docker` `Docker Compose` `Kubernetes` `Linux` `GitHub Actions` `GitLab CI` `Bitbucket Pipelines` `ELK` `New Relic` `n8n` |
-| **Cloud** | `AWS` `Google Cloud` `RunPod` |
+| **Cloud / Storage** | `AWS` `Google Cloud` `RunPod` `MinIO` |
 | **Architecture** | `OOP` `async programming` `microservices` `REST API` `WebSockets` `MQTT` |
 | **AI / ML** | `OpenAI API` `StableDiffusion` `ML pipelines` `agentic systems` `AI-assisted development` `Claude Code` `Qwen Code` |
 | **Blockchain** | `HyperLedger` `Ethereum` `Solidity` |
