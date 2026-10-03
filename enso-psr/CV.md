@@ -7,9 +7,10 @@ Bangkok, Thailand · sadovnikoff@gmail.com · [Telegram](https://t.me/siddtharth
 
 ## Summary
 
-Backend developer with ~20 years of experience, specialising now in PHP 8+ using _Yii_, _Laravel_, _Lumen_, and pure _PSR-style PHP_. Strong mathematical background and a formal degree in software engineering.
+Backend developer with ~20 years of experience, specialising now in PHP 8+ using _Yii_, _Laravel_, _Lumen_, and pure _PSR-style PHP_. Strong mathematical background and a formal degree in computer science.
 
-Most of my career has been contract-based work (lately with early-stage startups).
+Most of my career has been contract-based work (lately mostly with early-stage startups).
+Fully remote, full-time, long-term (1+ year minimum) positions only.
 
 Focused on building scalable, asynchronous, and fault-tolerant systems. 
 Interested in Machine learning, GIS systems, IoT services, and agentic development. Open-source contributor.
@@ -19,11 +20,9 @@ Actively leverages AI coding agents in day-to-day development and explores produ
 **What I offer:**
 
 - **Production hardening of vibe-coded products** — turning AI-generated MVPs into stable, observable, test-covered systems without a rewrite: architecture review, test coverage, CI/CD, logging and monitoring, performance and security fixes.
-- **Agent harness engineering** — equipping a codebase for AI coding agents: project context and conventions, sandboxed agent containers with access to the project infrastructure, custom skills and tooling, CI-integrated review and triage agents.
+- **Agent harness engineering** — equipping a codebase for AI coding agents: project context and conventions, sandboxed agent containers with infrastructure access, the required MCP/CLI tools, custom skills and tooling, CI-integrated review agents.
 
 Targeting **Tech Lead**, **Lead Developer**, or **AI Staff Engineer** positions. Interested in modern, technically ambitious products and working alongside strong professionals.
-
-Fully remote, full-time, long-term (1+ year minimum) positions only.
 
 Based in Bangkok, comfortable to work MSK/European timezones.
 
@@ -38,16 +37,14 @@ AI-first fintech startup: USD virtual cards for travellers, funded in RUB via SB
 
 **The stack is Python + React, which I had never written professionally.** Every change was delivered through AI coding agents working under my architectural direction, code review, and verification — a deliberate test of the "experienced engineer + agent" model on a non-native stack, in production, with real money.
 
-- Built the agent operating environment first: sandboxed containers for Claude Code with a persistent project memory, and an MCP control plane giving the agent governed access to Docker, Fly.io, Render, GitHub, New Relic, Playwright, and library docs — read-only where live money is involved
-- Stood up a fully mocked local stand in Docker (API, worker, bot, webapp, PostgreSQL, Redis) walking the entire funnel — KYC, issuance, top-up, requisites reveal — so agents could verify behaviour without touching live providers
-- Introduced the first test safety net: Playwright e2e acceptance suite (Chromium + WebKit, including the Telegram surface through real auth) plus a parallel `pytest-xdist` gate with hard timeouts in GitHub Actions
-- Re-engineered the MVP from single-process to a horizontally scalable runtime: Redis-shared freshness state and refresh locks, a Redis lease serialising the provider chain across processes, split DB pools, job-period leases so the worker runs as N replicas
-- Migrated dev and prod from Render + Vercel to Fly.io (Frankfurt) after a cost analysis: process groups, Valkey with persistent volume, pre-validated TLS — no webhook re-registration, no downtime
-- SRE routine over a live product: daily New Relic APM / NRQL reviews, GitHub CI/CD, deploy status, incident reports with provider tickets, reachability monitoring from Russian ISPs via RIPE Atlas after prod went dark behind DPI, client geo analysis from prod logs
-- Hardened the money path: exact USD top-ups with server-side RUB rounding, fee retention across authorisation → clearing, sub-cent ledger rounding, atomic upserts in concurrent transaction sync, balance reconciliation against the provider feed
-- Reconciled long-diverged `main` / `prod` branches (≈200 files, 140 conflicts, separate migration chains) and established a PR-based workflow with required checks
+- Built the agent operating environment first: sandboxed containers for Claude Code with a persistent project memory, and an MCP control plane giving the agent governed access to Docker, Fly.io, Render, GitHub, New Relic, Playwright
+- Pinned the environment in Docker Compose for local and ephemeral setups
+- Introduced Playwright e2e acceptance tests (Chromium + WebKit, including the Telegram surface through real auth) in GitHub Actions
+- Re-engineered the MVP from single-process to a horizontally scalable runtime: shared cache and locks in Redis to serialise the state machine across processes, split DB pools
+- Migrated from Render and Vercel to Fly.io (by the agent, via MCP)
+- SRE and observability: daily New Relic APM / NRQL reviews, GitHub CI/CD, deploy status, incident reports with provider tickets, reachability monitoring from Russian ISPs via RIPE Atlas
 
-Stack: `Python 3.12` `FastAPI` `SQLAlchemy` `PostgreSQL` `Redis` `aiogram` `React` `Playwright` `Docker` `Fly.io` `GitHub Actions` `New Relic` `MCP` `Claude Code`
+Stack: `Claude Code` `MCP` `Docker` `Fly.io` `GitHub Actions` `New Relic` `Playwright` `Python` `FastAPI` `PostgreSQL` `Redis` `aiogram` `React`
 
 ---
 
