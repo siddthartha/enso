@@ -9,11 +9,17 @@ Bangkok, Thailand · sadovnikoff@gmail.com · [Telegram](https://t.me/siddtharth
 
 Backend developer with ~20 years of experience, specialising now in PHP 8+ using _Yii_, _Laravel_, _Lumen_, and pure _PSR-style PHP_. Strong mathematical background and a formal degree in software engineering.
 
-Focused on building scalable, asynchronous, and fault-tolerant systems. 
+Most of my career has been contract-based work (lately with early-stage startups).
 
+Focused on building scalable, asynchronous, and fault-tolerant systems. 
 Interested in Machine learning, GIS systems, IoT services, and agentic development. Open-source contributor.
 
 Actively leverages AI coding agents in day-to-day development and explores productivity patterns for AI-assisted workflows. Ready to introduce these practices to small teams or take on a Staff Engineer role for an AI-native product.
+
+**What I offer:**
+
+- **Production hardening of vibe-coded products** — turning AI-generated MVPs into stable, observable, test-covered systems without a rewrite: architecture review, test coverage, CI/CD, logging and monitoring, performance and security fixes.
+- **Agent harness engineering** — equipping a codebase for AI coding agents: project context and conventions, sandboxed agent containers with access to the project infrastructure, custom skills and tooling, CI-integrated review and triage agents.
 
 Targeting **Tech Lead**, **Lead Developer**, or **AI Staff Engineer** positions. Interested in modern, technically ambitious products and working alongside strong professionals.
 
@@ -21,18 +27,11 @@ Fully remote, full-time, long-term (1+ year minimum) positions only.
 
 Based in Bangkok, comfortable to work MSK/European timezones.
 
-#### HR FAQ
-
-**Why have you stayed less than two years in most positions?**
-* Most of my experience has been in **contract-based software development**, primarily working with startups and early-stage companies.
-* I have been working **fully remotely by choice since the early 2000s**, long before remote work became mainstream.
-* I am **open to long-term collaboration (2+ years)** when there are challenging technical problems, meaningful impact, and opportunities to contribute to the company's growth.
-
 ---
 
 ## Experience
 
-### SRE / Architecture Lead, AI-first engineering — Turkarta
+### SRE / Architecture Lead, AI-first engineering — [Turkarta](https://turkarta.me)
 *Jul 2026 – Present*
 
 AI-first fintech startup: USD virtual cards for travellers, funded in RUB via SBP, shipped as a Telegram Mini App, PWA, and a business cabinet. The founder, with no engineering background, vibe-coded the MVP to its first paying customers. I joined to bring SRE, engineering expertise, and architecture re-engineering to a live product — without stopping feature delivery.
