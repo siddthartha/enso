@@ -1,8 +1,15 @@
 <?php
 /** @var string $html */
+/** @var string $lang */
+$lang = $lang ?? 'en';
+
+// cross-link to the other language edition
+$switch = $lang === 'ru'
+    ? ['href' => '/default/cv',    'label' => 'English version', 'hreflang' => 'en']
+    : ['href' => '/default/cv-ru', 'label' => 'Русская версия',  'hreflang' => 'ru'];
 ?>
-<html lang="en">
-<head><title>CV - Anton Sadovnikov</title>
+<html lang="<?= htmlspecialchars($lang) ?>">
+<head><title><?= $lang === 'ru' ? 'Резюме - Антон Садовников' : 'CV - Anton Sadovnikov' ?></title>
     <meta name="color-scheme" content="light dark" />
 <!--    <link rel="stylesheet" href="https://markdowncss.github.io/retro/css/retro.css" type="text/css" />-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" />
@@ -21,10 +28,20 @@
             background-color: #333;
             border-radius: 5px;
         }
+        .lang-switch {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            margin: 0;
+            padding: .2em .6em;
+            font-size: 85%;
+            background: none;
+        }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
+<p class="markdown-body lang-switch"><a href="<?= $switch['href'] ?>" hreflang="<?= $switch['hreflang'] ?>" rel="alternate"><?= $switch['label'] ?></a></p>
 <div class="row around-xs">
     <div class="col-xs-10">
         <div class="markdown-body box"><?= $html; ?></div>
