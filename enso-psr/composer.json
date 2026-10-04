@@ -33,7 +33,8 @@
         "yiisoft/cache": "^3.1",
         "loophp/collection": "^7.6",
         "fp4php/functional": "^6.0",
-        "psr7-sessions/storageless": "^9.0"
+        "psr7-sessions/storageless": "^9.0",
+        "dompdf/dompdf": "^3.1"
     },
     "autoload": {
         "psr-4": {

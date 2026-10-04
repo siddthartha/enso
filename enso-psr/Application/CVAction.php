@@ -7,6 +7,7 @@ declare(strict_types = 1);
 
 namespace Application;
 
+use Dompdf\Dompdf;
 use Enso\System\ActionHandler;
 use Enso\System\Template;
 use GuzzleHttp\Psr7\BufferStream;
@@ -30,29 +31,49 @@ class CVAction extends ActionHandler
         'ru' => 'CV.ru.md',
     ];
 
+    /** Download file name of the PDF edition per language */
+    protected const PDF_FILES = [
+        'en' => 'Anton_Sadovnikov_CV.pdf',
+        'ru' => 'Anton_Sadovnikov_CV_ru.pdf',
+    ];
+
     /**
      * @OA\Get(
      *     path="/default/cv",
      *     @OA\Parameter(name="lang", in="query", required=false, @OA\Schema(type="string", enum={"en", "ru"})),
-     *     @OA\Response(response="200", description="Curriculum Vitae")
+     *     @OA\Parameter(name="format", in="query", required=false, @OA\Schema(type="string", enum={"html", "pdf"})),
+     *     @OA\Response(response="200", description="Curriculum Vitae (HTML, or a PDF download with ?format=pdf)")
      * )
      */
     #[Route("/default/cv", methods: ["GET"])]
     public function __invoke(): ResponseInterface
     {
-        $lang = $this->resolveLang();
+        $params = $this->queryParams();
+        $lang = $this->resolveLang($params);
+        $pdf = ($params['format'] ?? '') === 'pdf';
 
         $cv = file_get_contents(__DIR__ . '/../' . self::LANG_FILES[$lang]);
         $html = (new \ParsedownExtra())
             ->text($cv);
 
-        $body = new BufferStream();
-        $body->write(
-            (new Template(__DIR__ . '/views/cv.php'))
+        $page = (new Template(__DIR__ . '/views/cv.php'))
             ->render(
-                vars: compact('html', 'lang')
-            )
-        );
+                vars: compact('html', 'lang', 'pdf')
+            );
+
+        $body = new BufferStream();
+
+        if ($pdf)
+        {
+            $body->write($this->toPdf($page));
+
+            return (new PSRResponse())
+                ->withHeader('Content-type', 'application/pdf')
+                ->withHeader('Content-Disposition', 'attachment; filename="' . self::PDF_FILES[$lang] . '"')
+                ->withBody($body);
+        }
+
+        $body->write($page);
 
         return (new PSRResponse())
             ->withHeader('Content-type', 'text/html; charset=utf-8')
@@ -60,17 +81,44 @@ class CVAction extends ActionHandler
     }
 
     /**
-     * Picks the CV language from `?lang=`, falling back to English.
-     * Query params live in `queryParams` under FPM/Swoole and only in the URI under RoadRunner,
-     * so both sources are consulted.
+     * Renders the already-built page (PDF variant of the view) into an A4 PDF document.
      */
-    protected function resolveLang(): string
+    protected function toPdf(string $html): string
+    {
+        $dompdf = new Dompdf([
+            'defaultFont' => 'DejaVu Sans',
+            'isRemoteEnabled' => false,
+            'tempDir' => sys_get_temp_dir(),
+        ]);
+
+        $dompdf->loadHtml($html, 'UTF-8');
+        $dompdf->setPaper('A4');
+        $dompdf->render();
+
+        return $dompdf->output();
+    }
+
+    /**
+     * Picks the CV language from `?lang=`, falling back to English.
+     */
+    protected function resolveLang(array $params): string
     {
         if (static::LANG !== null)
         {
             return static::LANG;
         }
 
+        $lang = strtolower((string) ($params['lang'] ?? 'en'));
+
+        return isset(self::LANG_FILES[$lang]) ? $lang : 'en';
+    }
+
+    /**
+     * Query params live in `queryParams` under FPM/Swoole and only in the URI under RoadRunner,
+     * so both sources are consulted.
+     */
+    protected function queryParams(): array
+    {
         $request = $this->getRequest();
 
         // `queryParams` is a magic Subject attribute (no __isset), so read the attribute bag directly
@@ -83,8 +131,6 @@ class CVAction extends ActionHandler
             parse_str($request->getUri()->getQuery(), $params);
         }
 
-        $lang = strtolower((string) ($params['lang'] ?? 'en'));
-
-        return isset(self::LANG_FILES[$lang]) ? $lang : 'en';
+        return $params;
     }
 }
