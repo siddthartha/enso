@@ -1,20 +1,53 @@
 <?php
 /** @var string $html */
 /** @var string $lang */
+/** @var bool   $pdf   true when rendering the PDF edition (no CDN assets, print styles, no toolbar) */
 $lang = $lang ?? 'en';
+$pdf = $pdf ?? false;
+
+$self = $lang === 'ru' ? '/default/cv-ru' : '/default/cv';
 
 // cross-link to the other language edition
 $switch = $lang === 'ru'
     ? ['href' => '/default/cv',    'label' => 'English version', 'hreflang' => 'en']
     : ['href' => '/default/cv-ru', 'label' => 'Русская версия',  'hreflang' => 'ru'];
+
+$title = $lang === 'ru' ? 'Резюме - Антон Садовников' : 'CV - Anton Sadovnikov';
 ?>
 <html lang="<?= htmlspecialchars($lang) ?>">
-<head><title><?= $lang === 'ru' ? 'Резюме - Антон Садовников' : 'CV - Anton Sadovnikov' ?></title>
+<head><title><?= $title ?></title>
+<?php if ($pdf): ?>
+    <style>
+        @page { margin: 14mm 15mm; }
+        body { font-family: "DejaVu Sans", sans-serif; font-size: 9.5pt; line-height: 1.4; color: #222; }
+        h1 { font-size: 20pt; margin: 0 0 2pt 0; }
+        h2 { font-size: 13pt; margin: 14pt 0 6pt 0; padding-bottom: 2pt; border-bottom: 1px solid #ccc; }
+        h3 { font-size: 10.5pt; margin: 10pt 0 3pt 0; }
+        h4 { font-size: 9.5pt; margin: 8pt 0 3pt 0; }
+        p { margin: 0 0 6pt 0; }
+        ul { margin: 0 0 6pt 0; padding-left: 14pt; }
+        li { margin: 0 0 2pt 0; }
+        a { color: #0366d6; text-decoration: none; }
+        hr { border: 0; border-top: 1px solid #ccc; margin: 8pt 0; }
+        code { font-family: "DejaVu Sans Mono", monospace; font-size: 8pt; background: #f0f0f0; padding: 0 2pt; }
+        table { border-collapse: collapse; width: 100%; margin: 0 0 8pt 0; }
+        th, td { border: 1px solid #ccc; padding: 3pt 5pt; vertical-align: top; text-align: left; }
+        th { background: #f4f4f4; }
+        i.fa-solid, i.fa-brands { display: none; }
+    </style>
+<?php else: ?>
     <meta name="color-scheme" content="light dark" />
 <!--    <link rel="stylesheet" href="https://markdowncss.github.io/retro/css/retro.css" type="text/css" />-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" />
     <link rel="stylesheet" href="https://sindresorhus.com/github-markdown-css/github-markdown.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" type="text/css" />
     <style>
+        /* contact icons in the header */
+        .markdown-body .fa-solid,
+        .markdown-body .fa-brands {
+            font-size: 90%;
+            opacity: .85;
+        }
         body {
             font-family: monospace;
             margin: 1rem 0 1rem 0;
@@ -39,9 +72,13 @@ $switch = $lang === 'ru'
         }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<?php endif; ?>
 </head>
 <body>
-<p class="markdown-body lang-switch"><a href="<?= $switch['href'] ?>" hreflang="<?= $switch['hreflang'] ?>" rel="alternate"><?= $switch['label'] ?></a></p>
+<?php if ($pdf): ?>
+<?= $html; ?>
+<?php else: ?>
+<p class="markdown-body lang-switch"><a href="<?= $self ?>?format=pdf" download title="<?= $lang === 'ru' ? 'Скачать PDF' : 'Download PDF' ?>"><i class="fa-solid fa-file-pdf"></i> PDF</a> · <a href="<?= $switch['href'] ?>" hreflang="<?= $switch['hreflang'] ?>" rel="alternate"><?= $switch['label'] ?></a></p>
 <div class="row around-xs">
     <div class="col-xs-10">
         <div class="markdown-body box"><?= $html; ?></div>
@@ -51,6 +88,7 @@ $switch = $lang === 'ru'
 <!--        </div>-->
     </div>
 </div>
+<?php endif; ?>
 
 </body>
 </html>
