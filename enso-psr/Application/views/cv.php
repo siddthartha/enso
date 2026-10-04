@@ -14,7 +14,14 @@ $switch = $lang === 'ru'
 <!--    <link rel="stylesheet" href="https://markdowncss.github.io/retro/css/retro.css" type="text/css" />-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" />
     <link rel="stylesheet" href="https://sindresorhus.com/github-markdown-css/github-markdown.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" type="text/css" />
     <style>
+        /* contact icons in the header */
+        .markdown-body .fa-solid,
+        .markdown-body .fa-brands {
+            font-size: 90%;
+            opacity: .85;
+        }
         body {
             font-family: monospace;
             margin: 1rem 0 1rem 0;

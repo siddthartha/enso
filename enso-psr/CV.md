@@ -1,7 +1,7 @@
 # Anton Sadovnikov
 **CTO / Lead Backend Developer**
 
-Bangkok, Thailand · sadovnikoff@gmail.com · [Telegram](https://t.me/siddthartha) · [LinkedIn](https://www.linkedin.com/in/anton-sadovnikov-developer) · [GitHub](https://github.com/siddthartha) · [sadovnikov.space](http://sadovnikov.space/default/docs)
+<i class="fa-solid fa-location-dot"></i> Bangkok, Thailand · <i class="fa-solid fa-envelope"></i> [sadovnikoff@gmail.com](mailto:sadovnikoff@gmail.com) · <i class="fa-brands fa-telegram"></i> [Telegram](https://t.me/siddthartha) · <i class="fa-brands fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/anton-sadovnikov-developer) · <i class="fa-brands fa-github"></i> [GitHub](https://github.com/siddthartha) · <i class="fa-solid fa-globe"></i> [sadovnikov.space](http://sadovnikov.space/default/docs)
 
 ---
 
