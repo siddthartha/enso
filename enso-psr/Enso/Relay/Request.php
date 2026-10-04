@@ -8,6 +8,7 @@
 namespace Enso\Relay;
 
 use Enso\Subject;
+use Enso\System\Environment;
 use Psr\Http\Message\RequestInterface as PSRRequestInterface;
 use HttpSoft\Message\RequestTrait;
 
@@ -60,5 +61,10 @@ abstract class Request implements RequestInterface, PSRRequestInterface
     public function getTarget(): mixed
     {
         return $this->getRoute();
+    }
+
+    public function getEnvironment(): Environment
+    {
+        return Environment::fromRuntime();
     }
 }

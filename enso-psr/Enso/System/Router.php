@@ -21,6 +21,8 @@ use Psr\Http\Message\ResponseInterface;
 class Router implements MiddlewareInterface
 {
     public const NO_ROUTE_FOUND_MESSAGE = 'No route found';
+    public const METHOD_NOT_ALLOWED_MESSAGE = 'Method not allowed';
+    public const ENVIRONMENT_NOT_ALLOWED_MESSAGE = 'Environment not allowed';
     public const ROUTE_TOKEN_DELIMITER = '/';
     public const ROUTE_TRIM_PREFIX = '\n\r\t\0\x0B ';
 
@@ -44,7 +46,27 @@ class Router implements MiddlewareInterface
         $targetRoute = $request->getRoute();
         $routesTree = $this->getRoutes();
 
-        $action = $this->resolve($targetRoute, $routesTree);
+        $target = $this->resolve($targetRoute, $routesTree);
+        $action = $target->getInstance();
+
+        $method = Method::fromString($request->getMethod());
+        $environment = Environment::fromRuntime();
+
+        if ($method !== null && !$target->allowsMethod($method))
+        {
+            return new Response(
+                ['error' => self::METHOD_NOT_ALLOWED_MESSAGE],
+                405
+            );
+        }
+
+        if (!$target->allowsEnvironment($environment))
+        {
+            return new Response(
+                ['error' => self::ENVIRONMENT_NOT_ALLOWED_MESSAGE],
+                405
+            );
+        }
 
         return $action->handle($request);
     }
@@ -52,9 +74,9 @@ class Router implements MiddlewareInterface
     /**
      * @param array $path
      * @param array $routesTree
-     * @return ActionHandler
+     * @return Target
      */
-    protected function resolve(array $path, array $routesTree): ActionHandler
+    protected function resolve(array $path, array $routesTree): Target
     {
         reset($path);
 
@@ -70,7 +92,7 @@ class Router implements MiddlewareInterface
 
             if ($entry instanceof Target)
             {
-                return $entry->getInstance();
+                return $entry; // ->getInstance() to call ActionHandler instance
             }
 
             if (is_string($entry))

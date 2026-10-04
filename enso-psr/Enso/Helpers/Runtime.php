@@ -97,6 +97,20 @@ final class Runtime
         return isset($_ENV['RR_MODE']);
     }
 
+    public static function isBot(): bool
+    {
+        return !empty($_SERVER['HTTP_X_TELEGRAM_BOT_API'])
+            || !empty($_GET['bot'])
+            || !empty($_POST['bot']);
+    }
+
+    public static function isMcp(): bool
+    {
+        return !empty($_SERVER['HTTP_X_MCP'])
+            || !empty($_GET['mcp'])
+            || str_contains($_SERVER['REQUEST_URI'] ?? '', '/mcp');
+    }
+
     public static function isOutputPiped(): bool
     {
         return !self::isOutputTty();

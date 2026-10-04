@@ -101,6 +101,24 @@ services:
         "
 
   #
+  # MCP server for Vultr (HTTP transport) for local AI-agent sandboxes.
+  # Reachable by name on the shared external `mcp` network: http://mcp-vultr:8080/mcp
+  # Disabled in production via docker-compose.prod.yml (profile override).
+  #
+  mcp-vultr:
+    build:
+      context: ./mcp/vultr
+    image: mcp-vultr:latest
+    container_name: mcp-vultr
+    restart: unless-stopped
+    environment:
+      - VULTR_API_KEY=${VULTR_API_KEY:-}
+      - VULTR_PROXY=${VULTR_PROXY:-}
+    networks:
+      - default
+      - mcp
+
+  #
   # front Nginx for proxying all servers: FPM (port 80) and Swoole (port 81) and RoadRunner (port 82)
   # except static files
   #
@@ -153,3 +171,7 @@ services:
 #    depends_on:
 #      - php
 
+networks:
+  # shared network of local MCP servers and agent sandboxes (created outside compose)
+  mcp:
+    external: true

@@ -4,3 +4,8 @@ services:
       - ./nginx/vhost.prod.conf:/etc/nginx/conf.d/vhost.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       #- ./certbot/www:/var/www/certbot:ro # TODO
+
+  # local-only MCP server: never started in production (unless --profile mcp is given explicitly)
+  mcp-vultr:
+    profiles: ["mcp"]
+    restart: "no"
