@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 /**
- * Class Enso\System\Entry
+ * Class Enso\System\Target
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
 
@@ -11,7 +11,7 @@ use Enso\Enso;
 use function class_exists;
 
 /**
- * Description of Entry
+ * Description of Target
  *
  * @author Anton Sadovnikoff <sadovnikoff@gmail.com>
  */
@@ -19,22 +19,35 @@ class Target
 {
     protected string $_className;
 
-    protected string | array $_methods;
+    /** @var Method[] */
+    protected array $_methods = [];
+
+    /** @var Environment[] */
+    protected array $_environments = [];
 
     protected ?Enso $_context;
 
     /**
-     *
      * @param string $className
-     * @param string|array $methods
+     * @param Method|string|array<int, Method|string>|null $methods
+     * @param Environment|string|array<int, Environment|string>|null $environments
      * @param Enso|null $context
      */
-    public function __construct(string $className, string|array $methods = [], ?Enso &$context = null)
-    {
+    public function __construct(
+        string $className,
+        Method|string|array|null $methods = null,
+        Environment|string|array|null $environments = null,
+        ?Enso &$context = null,
+    ) {
         $this->_className = $className;
-        $this->_methods = is_array($methods)
-            ? $methods
-            : [$methods];
+
+        if ($methods !== null) {
+            $this->_methods = $this->normalizeMethods($methods);
+        }
+
+        if ($environments !== null) {
+            $this->_environments = $this->normalizeEnvironments($environments);
+        }
 
         if (!class_exists($className, true))
         {
@@ -45,7 +58,38 @@ class Target
     }
 
     /**
-     *
+     * @param Method|string|array<int, Method|string> $methods
+     * @return Method[]
+     */
+    protected function normalizeMethods(Method|string|array $methods): array
+    {
+        if (!is_array($methods)) {
+            $methods = [$methods];
+        }
+
+        return array_map(
+            fn ($m) => $m instanceof Method ? $m : Method::from(strtoupper($m)),
+            $methods,
+        );
+    }
+
+    /**
+     * @param Environment|string|array<int, Environment|string> $environments
+     * @return Environment[]
+     */
+    protected function normalizeEnvironments(Environment|string|array $environments): array
+    {
+        if (!is_array($environments)) {
+            $environments = [$environments];
+        }
+
+        return array_map(
+            fn ($e) => $e instanceof Environment ? $e : Environment::from(strtoupper($e)),
+            $environments,
+        );
+    }
+
+    /**
      * @return object
      */
     public function getInstance(): object
@@ -56,11 +100,36 @@ class Target
     }
 
     /**
-     * @return array
+     * @return Method[]
      */
     public function getMethods(): array
     {
         return $this->_methods;
     }
 
+    /**
+     * @return Environment[]
+     */
+    public function getEnvironments(): array
+    {
+        return $this->_environments;
+    }
+
+    /**
+     * Set the Enso context (called at runtime by entrypoint)
+     */
+    public function setContext(Enso &$context): void
+    {
+        $this->_context = &$context;
+    }
+
+    public function allowsMethod(Method $method): bool
+    {
+        return empty($this->_methods) || in_array($method, $this->_methods, true);
+    }
+
+    public function allowsEnvironment(Environment $env): bool
+    {
+        return empty($this->_environments) || in_array($env, $this->_environments, true);
+    }
 }

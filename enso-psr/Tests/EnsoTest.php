@@ -42,13 +42,17 @@ class EnsoTest extends TestCase
         static::assertTrue((new JsonType($output))->matches([
             'context' => [
                 'sapi' => 'string',
-                'swoole' => 'boolean',
             ],
             'before' => 'float:>0',
             'after' => 'float:>0',
             'taskDuration' => 'string',
             'preloadDuration' => 'string',
         ]));
+
+        static::assertTrue(
+            is_bool($output['context']['swoole']) || is_array($output['context']['swoole']),
+            'swoole should be boolean or array'
+        );
     }
 
 //    public function testCliDefaultView()

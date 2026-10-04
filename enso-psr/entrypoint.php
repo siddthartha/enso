@@ -8,6 +8,7 @@ use Enso\Relay\
     {MiddlewareInterface, Request, Response};
 use Enso\System\
     {WebRequest,  Router};
+use Enso\System\Target;
 use Psr\Http\Message\
     {ResponseInterface, ServerRequestInterface};
 use Swoole\Http\Request as SwooleRequest;
@@ -25,6 +26,17 @@ if (Runtime::isSapiAsIsHandled())
 require_once __DIR__ . '/preload.php';
 
 $preloaded_ts = microtime(as_float: true);
+
+/**
+ * Recursively inject Enso context into all Target instances in the routing tree.
+ */
+function injectContextIntoRoutes(array &$routes, EnsoApplication &$app): void
+{
+    array_walk_recursive(
+        $routes,
+        static fn (Target|array|string &$r) => $r instanceof Target ? $r->setContext($app) : null,
+    );
+}
 
 return static function ($_injectedRequest = null) use ($started_ts, $preloaded_ts): ResponseInterface
 {
@@ -50,6 +62,8 @@ return static function ($_injectedRequest = null) use ($started_ts, $preloaded_t
     }
 
     $routingTree = $app->getRoutingTree();
+
+    injectContextIntoRoutes($routingTree, $app);
 
     $app
         ->addLayer(
